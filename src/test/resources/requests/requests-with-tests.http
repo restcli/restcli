@@ -1,0 +1,43 @@
+### Successful test: check response status is 200
+GET https://httpbin.org/status/200
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### Failed test: check response status is 200
+GET https://httpbin.org/status/404
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### Check response status and content-type
+GET https://httpbin.org/get
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+client.test("Response content-type is json", function() {
+  var type = response.contentType.mimeType;
+  client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+});
+%}
+
+### Check response body
+GET https://httpbin.org/get
+
+> {%
+client.test("Headers option exists", function() {
+  client.assert(response.body.hasOwnProperty("headers"), "Cannot find 'headers' option in response");
+});
+%}
+
+###
+

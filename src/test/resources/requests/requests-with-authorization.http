@@ -1,0 +1,31 @@
+### Basic authorization.
+GET https://httpbin.org/basic-auth/user/passwd
+Authorization: Basic user passwd
+
+### Basic authorization with variables.
+GET https://httpbin.org/basic-auth/user/passwd
+Authorization: Basic {{username}} {{password}}
+
+### Digest authorization.
+GET https://httpbin.org/digest-auth/realm/user/passwd
+Authorization: Digest user passwd
+
+### Digest authorization with variables.
+GET https://httpbin.org/digest-auth/realm/user/passwd
+Authorization: Digest {{username}} {{password}}
+
+### Authorization by token, part 1. Retrieve and save token.
+POST https://httpbin.org/post
+Content-Type: application/json
+
+{
+  "token": "my-secret-token"
+}
+
+> {% client.global.set("auth_token", response.body.json.token); %}
+
+### Authorization by token, part 2. Use token to authorize.
+GET https://httpbin.org/headers
+Authorization: Bearer {{auth_token}}
+
+###
