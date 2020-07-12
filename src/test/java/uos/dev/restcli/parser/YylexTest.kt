@@ -15,12 +15,14 @@ class YylexTest {
     @MethodSource("provideTestCases")
     fun generate_token(
         name: String,
+        state: Int,
         input: String,
         expectedType: Int,
         expectedValue: Any?
     ) {
         println("Input: $input")
         lexer.yyreset(input.toReader())
+        lexer.yybegin(state)
         val token = lexer.yylex()
         assertThat(token.type).isEqualTo(expectedType)
         assertThat(token.value).isEqualTo(expectedValue)
@@ -31,24 +33,31 @@ class YylexTest {
 
         private fun createArgument(
             name: String,
+            state: Int = Yylex.YYINITIAL,
             input: String,
             expectedType: Int,
             expectedValue: Any? = null
-        ): Arguments = Arguments.of(name, input, expectedType, expectedValue)
+        ): Arguments = Arguments.of(name, state, input, expectedType, expectedValue)
 
         @JvmStatic
         private fun provideTestCases(): Stream<Arguments> = Stream.of(
             createArgument(
                 name = "Request separator token with text.",
-                input = "### The request separator.",
+                input = "### The request separator.\n",
                 expectedType = Yytoken.TYPE_SEPARATOR,
                 expectedValue = "### The request separator."
             ),
             createArgument(
                 name = "Request separator token.",
-                input = "###",
+                input = "###\n",
                 expectedType = Yytoken.TYPE_SEPARATOR,
                 expectedValue = "###"
+            ),
+            createArgument(
+                name = "Request target method.",
+                input = "POST http://localhost.com",
+                expectedType = Yytoken.TYPE_REQUEST_METHOD,
+                expectedValue = "POST"
             )
 
         )
