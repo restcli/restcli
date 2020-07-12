@@ -54,12 +54,24 @@ class YylexTest {
                 expectedValue = "###"
             ),
             createArgument(
-                name = "Request target method.",
+                name = "Request line method.",
                 input = "POST http://localhost.com",
                 expectedType = Yytoken.TYPE_REQUEST_METHOD,
                 expectedValue = "POST"
+            ),
+            createArgument(
+                name = "Request line target.",
+                input = "http://localhost.com",
+                expectedType = Yytoken.TYPE_VALUE,
+                expectedValue = "http://localhost.com"
+            ),
+            createArgument(
+                name = "Header field.",
+                input = "Content-Type: application/json\n",
+                expectedType = Yytoken.TYPE_VALUE,
+                expectedValue = "Content-Type: application/json",
+                state = Yylex.S_HEADER
             )
-
         )
     }
 }
