@@ -93,58 +93,49 @@ ResponseReference = <>{RequiredWhiteSpace}{FilePath}
 FallbackCharacter = .
 %%
 
-{RequestSeparator} {
-  reset();
-  yybegin(S_REQUEST_SEPARATOR);
-  return createTokenTrimmed(Yytoken.TYPE_SEPARATOR);
-}
+{RequestSeparator}                         { reset();
+                                             yybegin(S_REQUEST_SEPARATOR);
+                                             return createTokenTrimmed(Yytoken.TYPE_SEPARATOR);
+                                           }
 
-<S_REQUEST_SEPARATOR> {
-  {LineComment} { return createTokenNormal(Yytoken.TYPE_COMMENT); }
-  {FallbackCharacter} { yypushback(1); yybegin(S_REQUEST_LINE);}
+<S_REQUEST_SEPARATOR>{
+  {LineComment}                            { return createTokenNormal(Yytoken.TYPE_COMMENT); }
+  {FallbackCharacter}                      { yypushback(1); yybegin(S_REQUEST_LINE);}
 }
 
 <YYINITIAL> {
-  {AnySpace}+                  { T("Ignore any space in YYINITIAL"); }
-  {FallbackCharacter}		{ yypushback(1); yybegin(S_REQUEST_LINE); }
+  {AnySpace}+                              { T("Ignore any space in YYINITIAL"); }
+  {FallbackCharacter}		                   { yypushback(1); yybegin(S_REQUEST_LINE); }
 }
 
 <S_REQUEST_LINE> {
-  {WhiteSpace}+ { T("Ignore {WhiteSpace}+ in S_REQUEST_LINE"); }
-  {RequestMethod} /{RequiredWhiteSpace} { return createTokenTrimmed(Yytoken.TYPE_REQUEST_METHOD); }
-  {RequestTarget} { hasRequestTarget = true; return createTokenTrimmed(Yytoken.TYPE_REQUEST_TARGET); }
+  {WhiteSpace}+                            { T("Ignore {WhiteSpace}+ in S_REQUEST_LINE"); }
+  {RequestMethod} /{RequiredWhiteSpace}    { return createTokenTrimmed(Yytoken.TYPE_REQUEST_METHOD); }
+  {RequestTarget}                          { hasRequestTarget = true; return createTokenTrimmed(Yytoken.TYPE_REQUEST_TARGET); }
   {RequiredWhiteSpace}{RequestHttpVersion} { return createTokenTrimmed(Yytoken.TYPE_REQUEST_HTTP_VERSION); }
-
-  {LineTerminator}? {
-    if (!hasRequestTarget) throwError();
-    yybegin(S_HEADER);
-  }
-
+  {LineTerminator}?                        { if (!hasRequestTarget) throwError(); yybegin(S_HEADER); }
   {FallbackCharacter} { throwError(); }
 }
 
 <S_HEADER> {
-  {FieldName}/: { return createTokenTrimmed(Yytoken.TYPE_FIELD_NAME); }
-  :{OptionalWhiteSpace}{FieldValue} { return createFieldValueToken(); }
-  {LineComment} { return createTokenNormal(Yytoken.TYPE_COMMENT); }
-  {LineTerminator}|{AnySpace}+ { yybegin(S_BODY); }
-  {FallbackCharacter} {
-    T("State S_HEADER fallback for: " + yytext());
-    yypushback(1);
-    yybegin(YYINITIAL);
-  }
-}
+  {FieldName}/:                            { return createTokenTrimmed(Yytoken.TYPE_FIELD_NAME); }
+  :{OptionalWhiteSpace}{FieldValue}        { return createFieldValueToken(); }
+  {LineComment}                            { return createTokenNormal(Yytoken.TYPE_COMMENT); }
+  {LineTerminator}|{AnySpace}+             { yybegin(S_BODY); }
+  {FallbackCharacter}                      { T("State S_HEADER fallback for: " + yytext());
+                                             yypushback(1);
+                                             yybegin(YYINITIAL); }
+                                           }
 
 <S_BODY> {
-  {LineComment} { return createTokenNormal(Yytoken.TYPE_COMMENT); }
-  {MessageLineText} { return createTokenNormal(Yytoken.TYPE_BODY_MESSAGE); }
-  {MessageLineFile} { return createTokenNormal(Yytoken.TYPE_VALUE_FILE_REF); }
-//  {MultiplePartBoundary} { isMultiplePart = true; yybegin(S_MULTIPLE_PART_HEADER); }
-  {FallbackCharacter} {
-        T("State S_BODY falback for: " + yytext());
-    yypushback(1);
-    yybegin(YYINITIAL);
-  }
+  {LineComment}                            { return createTokenNormal(Yytoken.TYPE_COMMENT); }
+  {MessageLineText}                        { return createTokenNormal(Yytoken.TYPE_BODY_MESSAGE); }
+  {MessageLineFile}                        { return createTokenNormal(Yytoken.TYPE_VALUE_FILE_REF); }
+  {MultiplePartBoundary}                   { isMultiplePart = true; yybegin(S_MULTIPLE_PART_HEADER); }
+  {FallbackCharacter}                      { T("State S_BODY falback for: " + yytext());
+                                             yypushback(1);
+                                             yybegin(YYINITIAL);
+                                           }
 }
 
 //<S_MULTIPLE_PART_HEADER> {
