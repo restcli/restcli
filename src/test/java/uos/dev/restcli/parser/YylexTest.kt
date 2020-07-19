@@ -28,6 +28,15 @@ class YylexTest {
         assertThat(token.value).isEqualTo(expectedValue)
     }
 
+    @Test
+    fun token_for_message_body_line() {
+        val input = "### the separator.\n"
+        lexer.yyreset(input.toReader())
+        lexer.yybegin(Yylex.S_BODY)
+        val token = lexer.yylex()
+        assertThat(token.type).isEqualTo(Yytoken.TYPE_SEPARATOR)
+    }
+
     companion object {
         private fun String.toReader(): StringReader = StringReader(this)
 
@@ -62,15 +71,8 @@ class YylexTest {
             createArgument(
                 name = "Request line target.",
                 input = "http://localhost.com",
-                expectedType = Yytoken.TYPE_VALUE,
+                expectedType = Yytoken.TYPE_REQUEST_TARGET,
                 expectedValue = "http://localhost.com"
-            ),
-            createArgument(
-                name = "Header field.",
-                input = "Content-Type: application/json\n",
-                expectedType = Yytoken.TYPE_VALUE,
-                expectedValue = "Content-Type: application/json",
-                state = Yylex.S_HEADER
             )
         )
     }

@@ -12,7 +12,7 @@ enum class RequestMethod {
     TRACE;
 
     companion object {
-        fun from(value: String, ignoreCase: Boolean = true): RequestMethod? =
-            values().firstOrNull { it.name.equals(value, ignoreCase) }
+        fun from(value: String?, ignoreCase: Boolean = true): RequestMethod =
+            values().firstOrNull { it.name.equals(value, ignoreCase) } ?: GET
     }
 }

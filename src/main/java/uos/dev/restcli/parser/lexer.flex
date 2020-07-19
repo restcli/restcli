@@ -11,6 +11,17 @@ package uos.dev.restcli.parser;
 %{
 private boolean hasRequestTarget = false;
 private boolean isMultiplePart = false;
+private int previousState = -1;
+
+public int getPreviousState() {
+  return previousState;
+}
+
+private void switchState(int newState) {
+  previousState = yystate();
+  yybegin(newState);
+}
+
 private void reset() {
     hasRequestTarget = false;
     isMultiplePart = false;
@@ -94,18 +105,18 @@ FallbackCharacter = .
 %%
 
 {RequestSeparator}                         { reset();
-                                             yybegin(S_REQUEST_SEPARATOR);
+                                             switchState(S_REQUEST_SEPARATOR);
                                              return createTokenTrimmed(Yytoken.TYPE_SEPARATOR);
                                            }
 
-<S_REQUEST_SEPARATOR>{
-  {LineComment}                            { return createTokenNormal(Yytoken.TYPE_COMMENT); }
-  {FallbackCharacter}                      { yypushback(1); yybegin(S_REQUEST_LINE);}
-}
-
 <YYINITIAL> {
   {AnySpace}+                              { T("Ignore any space in YYINITIAL"); }
-  {FallbackCharacter}		                   { yypushback(1); yybegin(S_REQUEST_LINE); }
+  {FallbackCharacter}		                   { yypushback(1); switchState(S_REQUEST_LINE); }
+}
+
+<S_REQUEST_SEPARATOR>{
+  {LineComment}                            { return createTokenNormal(Yytoken.TYPE_COMMENT); }
+  {FallbackCharacter}                      { yypushback(1); switchState(S_REQUEST_LINE);}
 }
 
 <S_REQUEST_LINE> {
@@ -113,7 +124,7 @@ FallbackCharacter = .
   {RequestMethod} /{RequiredWhiteSpace}    { return createTokenTrimmed(Yytoken.TYPE_REQUEST_METHOD); }
   {RequestTarget}                          { hasRequestTarget = true; return createTokenTrimmed(Yytoken.TYPE_REQUEST_TARGET); }
   {RequiredWhiteSpace}{RequestHttpVersion} { return createTokenTrimmed(Yytoken.TYPE_REQUEST_HTTP_VERSION); }
-  {LineTerminator}?                        { if (!hasRequestTarget) throwError(); yybegin(S_HEADER); }
+  {LineTerminator}?                        { if (!hasRequestTarget) throwError(); switchState(S_HEADER); }
   {FallbackCharacter} { throwError(); }
 }
 
@@ -121,47 +132,47 @@ FallbackCharacter = .
   {FieldName}/:                            { return createTokenTrimmed(Yytoken.TYPE_FIELD_NAME); }
   :{OptionalWhiteSpace}{FieldValue}        { return createFieldValueToken(); }
   {LineComment}                            { return createTokenNormal(Yytoken.TYPE_COMMENT); }
-  {LineTerminator}|{AnySpace}+             { yybegin(S_BODY); }
+  {LineTerminator}|{AnySpace}+             { switchState(S_BODY); }
   {FallbackCharacter}                      { T("State S_HEADER fallback for: " + yytext());
                                              yypushback(1);
-                                             yybegin(YYINITIAL); }
+                                             switchState(YYINITIAL); }
                                            }
 
 <S_BODY> {
   {LineComment}                            { return createTokenNormal(Yytoken.TYPE_COMMENT); }
   {MessageLineText}                        { return createTokenNormal(Yytoken.TYPE_BODY_MESSAGE); }
   {MessageLineFile}                        { return createTokenNormal(Yytoken.TYPE_VALUE_FILE_REF); }
-  {MultiplePartBoundary}                   { isMultiplePart = true; yybegin(S_MULTIPLE_PART_HEADER); }
+  {MultiplePartBoundary}                   { isMultiplePart = true; switchState(S_MULTIPLE_PART_HEADER); }
   {FallbackCharacter}                      { T("State S_BODY falback for: " + yytext());
                                              yypushback(1);
-                                             yybegin(YYINITIAL);
+                                             switchState(YYINITIAL);
                                            }
 }
 
 //<S_MULTIPLE_PART_HEADER> {
 //{FeaderField} { return new Yytoken(Yytoken.TYPE_VALUE, yytext().trim()); }
-//{LineTerminator}|{NewLineWithIntent} { yybegin(S_MULTIPLE_PART_BODY); }
+//{LineTerminator}|{NewLineWithIntent} { switchState(S_MULTIPLE_PART_BODY); }
 //{FallbackCharacter} { throwError(); }
 //}
 //
 //<S_MULTIPLE_PART_BODY> {
 //{MessageLineText} { return new Yytoken(Yytoken.TYPE_VALUE, yytext()); }
 //{MessageLineFile} { return new Yytoken(Yytoken.TYPE_VALUE_FILE_REF, yytext()); }
-//{FallbackCharacter} { yypushback(1); yybegin(S_SCRIPT_HANDLER); }
+//{FallbackCharacter} { yypushback(1); switchState(S_SCRIPT_HANDLER); }
 //}
 //
 //<S_SCRIPT_HANDLER> {
 //{ResponseHandlerScript} {
-//          yybegin(S_SCRIPT_REFERENCE);
+//          switchState(S_SCRIPT_REFERENCE);
 //          return new Yytoken(Yytoken.TYPE_VALUE_FILE_REF, yytext());
 //      }
 //{ResponseHandlerEmbededOpen} { return new Yytoken(Yytoken.TYPE_OPEN_SCRIPT_HANDLER); }
 //{ResponseHandlerEmbededClose} { return new Yytoken(Yytoken.TYPE_CLOSE_SCRIPT_HANDLER); }
 //{HandlerScript} { return new Yytoken(Yytoken.TYPE_VALUE, yytext()); }
-//{FallbackCharacter} { yypushback(1); yybegin(S_SCRIPT_HANDLER); }
+//{FallbackCharacter} { yypushback(1); switchState(S_SCRIPT_HANDLER); }
 //}
 //
 //<S_SCRIPT_REFERENCE> {
 //{ResponseReference} { return new Yytoken(Yytoken.TYPE_VALUE_FILE_REF, yytext()); }
-//{FallbackCharacter} { yypushback(1); yybegin(YYINITIAL); }
+//{FallbackCharacter} { yypushback(1); switchState(YYINITIAL); }
 //}
