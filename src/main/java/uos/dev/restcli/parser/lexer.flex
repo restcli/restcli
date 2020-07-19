@@ -3,8 +3,10 @@ package uos.dev.restcli.parser;
 
 %public
 
+%debug
 %unicode
-%state S_REQUEST_LINE, S_HEADER, S_BODY, S_SCRIPT_HANDLER, S_SCRIPT_REFERENCE
+%state S_REQUEST_SEPARATOR, S_REQUEST_LINE, S_HEADER, S_BODY, S_SCRIPT_HANDLER, S_SCRIPT_REFERENCE
+%state S_MULTIPLE_PART_HEADER, S_MULTIPLE_PART_BODY
 
 %{
 private boolean hasRequestTarget = false;
@@ -21,117 +23,154 @@ public boolean isMultiplePart() {
 private void throwError() throws ParserException {
     throw new ParserException("Error while parsing: " + yytext());
 }
+
+private Yytoken createTokenNormal(int type) {
+  return new Yytoken(type, yytext());
+}
+
+private Yytoken createTokenTrimmed(int type) {
+  return new Yytoken(type, yytext().trim());
+}
+
+private Yytoken createFieldValueToken() {
+  String fieldValueWithColonPrefix = yytext().trim();
+  String fieldValue = fieldValueWithColonPrefix.replaceFirst(": *", "");
+  return new Yytoken(Yytoken.TYPE_FIELD_VALUE, fieldValue);
+}
+
+private static final void T(String text) {
+  System.out.println(text);
+}
 %}
 
 %yylexthrow ParserException
 
-INPUT_CHARACTER = [^\r\n]
-DIGIT = [0-9]
-ALPHA = [a-zA-Z]
+InputCharacter = [^\r\n]
+Digit = [0-9]
+Alpha = [a-zA-Z]
 
 // Line terminators.
-NEW_LINE = \r|\n|\r\n
-NEW_LINE_WITH_INTENT = {NEW_LINE}{WHITE_SPACE}+
-LINE_TAIL = {INPUT_CHARACTER}*{NEW_LINE}
+LineTerminator = [\r|\n|\r\n]
+LineTail = {InputCharacter}* {LineTerminator}?
 
 // White space.
-WHITE_SPACE = [ \t\f]
-OPTIONAL_WHITE_SPACE = {WHITE_SPACE}*
-REQUIRED_WHITE_SPACE = {WHITE_SPACE}+
+WhiteSpace = [ \t]
+AnySpace = {LineTerminator} | {WhiteSpace} | [\f]
+OptionalWhiteSpace = {WhiteSpace}*
+RequiredWhiteSpace = {WhiteSpace}+
 
 // Comments.
-LINE_COMMENT = (#|\/\/){LINE_TAIL}
+LineComment = {OptionalWhiteSpace}(#|\/\/){LineTail}
 
 // Request separator.
-REQUEST_SEPARATOR = ###{LINE_TAIL}
+RequestSeparator = ###{LineTail}
 
 // Request.
-METHOD = GET|HEAD|POST|PUT|DELETE|CONNECT|PATCH|OPTIONS|TRACE
-HTTP_VERSION = HTTP\/{DIGIT}+\.{DIGIT}+
+RequestMethod = GET|HEAD|POST|PUT|DELETE|CONNECT|PATCH|OPTIONS|TRACE
+RequestHttpVersion = HTTP\/{Digit}+\.{Digit}+
 
-REQUEST_TARGET = [^\r\n\s]+
-REQUEST_METHOD = {METHOD}{REQUIRED_WHITE_SPACE}
-REQUEST_HTTP_VERSION = {REQUIRED_WHITE_SPACE}{HTTP_VERSION}
+RequestTarget = [^\r\n\s]+
 
-REQUEST_LINE_IMPLICIT_METHOD = {REQUEST_TARGET}({REQUIRED_WHITE_SPACE}{HTTP_VERSION})?
-REQUEST_LINE_EXPLICIT_METHOD = {REQUEST_METHOD}{REQUEST_LINE_IMPLICIT_METHOD}
-REQUEST_LINE = {REQUEST_LINE_EXPLICIT_METHOD}|{REQUEST_LINE_IMPLICIT_METHOD}
-
-FIELD_NAME = [^\r\n:]+
-FIELD_VALUE = {LINE_TAIL}({NEW_LINE_WITH_INTENT}{LINE_TAIL})*
-HEADER_FIELD = {FIELD_NAME}:{OPTIONAL_WHITE_SPACE}{FIELD_VALUE}{OPTIONAL_WHITE_SPACE}
+FieldName = [^\r\n:]+
+// TODO: Support FieldValue in multiple lines.
+FieldValue = {LineTail}
 
 // Message body.
-MESSAGE_LINE_TEXT = !(\r|\n|<|(<>)).*
-FILE_PATH = {LINE_TAIL}
-MESSAGE_LINE_FILE = <{REQUIRED_WHITE_SPACE}{FILE_PATH}
+MessageLineText = [!<|!(<>)|!(###)]{LineTail}
+FilePath = {LineTail}
+MessageLineFile = <{RequiredWhiteSpace}{FilePath}
 
-MULTIPLE_PART_BOUNDARY = --{LINE_TAIL}
+MultiplePartBoundary = \-\-{LineTail}
 // Response handler.
-HANDLER_SCRIPT = (!(%}|###).)*
-RESPONSE_HANDLER_EMBEDED_OPEN = >{REQUIRED_WHITE_SPACE}\{%
-RESPONSE_HANDLER_EMBEDED_CLOSE = %\}
-RESPONSE_HANDLER_SCRIPT = >{REQUIRED_WHITE_SPACE}{FILE_PATH}
+HandlerScript = (!(%}|###).)*
+ResponseHandlerEmbededOpen = >{RequiredWhiteSpace}\{%
+ResponseHandlerEmbededClose = %\}
+ResponseHandlerScript = >{RequiredWhiteSpace}{FilePath}
 
 // Response reference.
-RESPONSE_REFERENCE = <>{REQUIRED_WHITE_SPACE}{FILE_PATH}
+ResponseReference = <>{RequiredWhiteSpace}{FilePath}
 
-FALLBACK_CH = .
+FallbackCharacter = .
 %%
 
-<YYINITIAL>{
-// Ignore white-space.
-\s+                  {}
-{REQUEST_SEPARATOR} {
-          reset();
-          yybegin(S_REQUEST_LINE);
-          return new Yytoken(Yytoken.TYPE_SEPARATOR, yytext().trim());
-      }
-{LINE_COMMENT} { return new Yytoken(Yytoken.TYPE_COMMENT, yytext()); }
-{FALLBACK_CH}		{ yypushback(1); yybegin(S_REQUEST_LINE); }
+{RequestSeparator} {
+  reset();
+  yybegin(S_REQUEST_SEPARATOR);
+  return createTokenTrimmed(Yytoken.TYPE_SEPARATOR);
+}
+
+<S_REQUEST_SEPARATOR> {
+  {LineComment} { return createTokenNormal(Yytoken.TYPE_COMMENT); }
+  {FallbackCharacter} { yypushback(1); yybegin(S_REQUEST_LINE);}
+}
+
+<YYINITIAL> {
+  {AnySpace}+                  { T("Ignore any space in YYINITIAL"); }
+  {FallbackCharacter}		{ yypushback(1); yybegin(S_REQUEST_LINE); }
 }
 
 <S_REQUEST_LINE> {
-{REQUEST_METHOD} { return new Yytoken(Yytoken.TYPE_REQUEST_METHOD, yytext().trim()); }
-{REQUEST_TARGET} { hasRequestTarget = true; return new Yytoken(Yytoken.TYPE_VALUE, yytext()); }
+  {WhiteSpace}+ { T("Ignore {WhiteSpace}+ in S_REQUEST_LINE"); }
+  {RequestMethod} /{RequiredWhiteSpace} { return createTokenTrimmed(Yytoken.TYPE_REQUEST_METHOD); }
+  {RequestTarget} { hasRequestTarget = true; return createTokenTrimmed(Yytoken.TYPE_REQUEST_TARGET); }
+  {RequiredWhiteSpace}{RequestHttpVersion} { return createTokenTrimmed(Yytoken.TYPE_REQUEST_HTTP_VERSION); }
 
-{NEW_LINE}|{NEW_LINE_WITH_INTENT} { yybegin(S_BODY); }
+  {LineTerminator}? {
+    if (!hasRequestTarget) throwError();
+    yybegin(S_HEADER);
+  }
 
-{FALLBACK_CH} {
-          if (!hasRequestTarget) throwError();
-          yypushback(1);
-          yybegin(S_HEADER);
-      }
+  {FallbackCharacter} { throwError(); }
 }
 
 <S_HEADER> {
-{HEADER_FIELD} { return new Yytoken(Yytoken.TYPE_VALUE, yytext().trim()); }
-{NEW_LINE}|{NEW_LINE_WITH_INTENT} { yybegin(S_BODY); }
-{LINE_COMMENT} { return new Yytoken(Yytoken.TYPE_COMMENT, yytext()); }
-{FALLBACK_CH} { yypushback(1); yybegin(YYINITIAL); }
+  {FieldName}/: { return createTokenTrimmed(Yytoken.TYPE_FIELD_NAME); }
+  :{OptionalWhiteSpace}{FieldValue} { return createFieldValueToken(); }
+  {LineComment} { return createTokenNormal(Yytoken.TYPE_COMMENT); }
+  {LineTerminator}|{AnySpace}+ { yybegin(S_BODY); }
+  {FallbackCharacter} {
+    T("State S_HEADER fallback for: " + yytext());
+    yypushback(1);
+    yybegin(YYINITIAL);
+  }
 }
 
 <S_BODY> {
-{MESSAGE_LINE_TEXT} { return new Yytoken(Yytoken.TYPE_VALUE, yytext()); }
-{MESSAGE_LINE_FILE} { return new Yytoken(Yytoken.TYPE_VALUE_FILE_REF, yytext()); }
-{MULTIPLE_PART_BOUNDARY} { isMultiplePart = true; }
-{REQUEST_SEPARATOR} { yypushback(1); yybegin(YYINITIAL); }
-{LINE_COMMENT} { return new Yytoken(Yytoken.TYPE_COMMENT, yytext()); }
-{FALLBACK_CH} { yypushback(1); yybegin(S_SCRIPT_HANDLER); }
+  {LineComment} { return createTokenNormal(Yytoken.TYPE_COMMENT); }
+  {MessageLineText} { return createTokenNormal(Yytoken.TYPE_BODY_MESSAGE); }
+  {MessageLineFile} { return createTokenNormal(Yytoken.TYPE_VALUE_FILE_REF); }
+//  {MultiplePartBoundary} { isMultiplePart = true; yybegin(S_MULTIPLE_PART_HEADER); }
+  {FallbackCharacter} {
+        T("State S_BODY falback for: " + yytext());
+    yypushback(1);
+    yybegin(YYINITIAL);
+  }
 }
 
-<S_SCRIPT_HANDLER> {
-{RESPONSE_HANDLER_SCRIPT} {
-          yybegin(S_SCRIPT_REFERENCE);
-          return new Yytoken(Yytoken.TYPE_VALUE_FILE_REF, yytext());
-      }
-{RESPONSE_HANDLER_EMBEDED_OPEN} { return new Yytoken(Yytoken.TYPE_OPEN_SCRIPT_HANDLER); }
-{RESPONSE_HANDLER_EMBEDED_CLOSE} { return new Yytoken(Yytoken.TYPE_CLOSE_SCRIPT_HANDLER); }
-{HANDLER_SCRIPT} { return new Yytoken(Yytoken.TYPE_VALUE, yytext()); }
-{FALLBACK_CH} { yypushback(1); yybegin(S_SCRIPT_HANDLER); }
-}
-
-<S_SCRIPT_REFERENCE> {
-{RESPONSE_REFERENCE} { return new Yytoken(Yytoken.TYPE_VALUE_FILE_REF, yytext()); }
-{FALLBACK_CH} { yypushback(1); yybegin(YYINITIAL); }
-}
+//<S_MULTIPLE_PART_HEADER> {
+//{FeaderField} { return new Yytoken(Yytoken.TYPE_VALUE, yytext().trim()); }
+//{LineTerminator}|{NewLineWithIntent} { yybegin(S_MULTIPLE_PART_BODY); }
+//{FallbackCharacter} { throwError(); }
+//}
+//
+//<S_MULTIPLE_PART_BODY> {
+//{MessageLineText} { return new Yytoken(Yytoken.TYPE_VALUE, yytext()); }
+//{MessageLineFile} { return new Yytoken(Yytoken.TYPE_VALUE_FILE_REF, yytext()); }
+//{FallbackCharacter} { yypushback(1); yybegin(S_SCRIPT_HANDLER); }
+//}
+//
+//<S_SCRIPT_HANDLER> {
+//{ResponseHandlerScript} {
+//          yybegin(S_SCRIPT_REFERENCE);
+//          return new Yytoken(Yytoken.TYPE_VALUE_FILE_REF, yytext());
+//      }
+//{ResponseHandlerEmbededOpen} { return new Yytoken(Yytoken.TYPE_OPEN_SCRIPT_HANDLER); }
+//{ResponseHandlerEmbededClose} { return new Yytoken(Yytoken.TYPE_CLOSE_SCRIPT_HANDLER); }
+//{HandlerScript} { return new Yytoken(Yytoken.TYPE_VALUE, yytext()); }
+//{FallbackCharacter} { yypushback(1); yybegin(S_SCRIPT_HANDLER); }
+//}
+//
+//<S_SCRIPT_REFERENCE> {
+//{ResponseReference} { return new Yytoken(Yytoken.TYPE_VALUE_FILE_REF, yytext()); }
+//{FallbackCharacter} { yypushback(1); yybegin(YYINITIAL); }
+//}
