@@ -26,7 +26,6 @@ class ParserTest {
         assertThat(r1.requestTarget).isEqualTo(r2.requestTarget)
         assertThat(r1.httpVersion).isEqualTo(r2.httpVersion)
         assertThat(r1.headers).isEqualTo(r2.headers)
-        assertThat(r1.comments).isEqualTo(r2.comments)
         assertThat(r1.body).isEqualTo(r2.body)
         assertThat(r1.fileLoad).isEqualTo(r2.fileLoad)
 
@@ -49,7 +48,6 @@ class ParserTest {
                 Request(
                     method = RequestMethod.POST,
                     requestTarget = "https://httpbin.org/post",
-                    comments = "Send POST request with json body",
                     headers = mapOf(
                         "Content-Type" to "application/json"
                     ),
@@ -66,7 +64,6 @@ class ParserTest {
                 Request(
                     method = RequestMethod.POST,
                     requestTarget = "https://httpbin.org/post",
-                    comments = "Send POST request with body as parameters",
                     headers = mapOf(
                         "Content-Type" to "application/x-www-form-urlencoded"
                     ),
@@ -80,7 +77,6 @@ class ParserTest {
                 Request(
                     method = RequestMethod.POST,
                     requestTarget = "https://httpbin.org/post",
-                    comments = "Send a form with the text and file fields",
                     headers = mapOf(
                         "Content-Type" to "multipart/form-data; boundary=WebAppBoundary"
                     ),
@@ -112,7 +108,6 @@ class ParserTest {
                 Request(
                     method = RequestMethod.POST,
                     requestTarget = "https://httpbin.org/post",
-                    comments = "Send request with dynamic variables in request's body",
                     headers = mapOf(
                         "Content-Type" to "application/json"
                     ),

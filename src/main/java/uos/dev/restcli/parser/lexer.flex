@@ -62,7 +62,7 @@ Alpha = [a-zA-Z]
 
 // Line terminators.
 LineTerminator = [\r|\n|\r\n]
-LineTail = {InputCharacter}* {LineTerminator}?
+LineTail = {InputCharacter}* {LineTerminator}
 
 // White space.
 WhiteSpace = [ \t]
@@ -87,9 +87,9 @@ FieldName = [^\r\n:]+
 FieldValue = {LineTail}
 
 // Message body.
-MessageLineText = [!<|!(<>)|!(###)]{LineTail}
+MessageLineText = {LineTail}
 FilePath = {LineTail}
-MessageLineFile = <{RequiredWhiteSpace}{FilePath}
+MessageLineFile = "<"{RequiredWhiteSpace}{FilePath}
 
 MultiplePartBoundary = \-\-{LineTail}
 // Response handler.
@@ -124,7 +124,7 @@ FallbackCharacter = .
   {RequestMethod} /{RequiredWhiteSpace}    { return createTokenTrimmed(Yytoken.TYPE_REQUEST_METHOD); }
   {RequestTarget}                          { hasRequestTarget = true; return createTokenTrimmed(Yytoken.TYPE_REQUEST_TARGET); }
   {RequiredWhiteSpace}{RequestHttpVersion} { return createTokenTrimmed(Yytoken.TYPE_REQUEST_HTTP_VERSION); }
-  {LineTerminator}?                        { if (!hasRequestTarget) throwError(); switchState(S_HEADER); }
+  {LineTerminator}                        { if (!hasRequestTarget) throwError(); switchState(S_HEADER); }
   {FallbackCharacter} { throwError(); }
 }
 
@@ -139,9 +139,10 @@ FallbackCharacter = .
                                            }
 
 <S_BODY> {
+  "<>"{LineTail}                           { T("State S_BODY but got <>.* => fallback to response reference"); }
   {LineComment}                            { return createTokenNormal(Yytoken.TYPE_COMMENT); }
-  {MessageLineText}                        { return createTokenNormal(Yytoken.TYPE_BODY_MESSAGE); }
   {MessageLineFile}                        { return createTokenNormal(Yytoken.TYPE_VALUE_FILE_REF); }
+  {MessageLineText}                        { return createTokenNormal(Yytoken.TYPE_BODY_MESSAGE); }
   {MultiplePartBoundary}                   { isMultiplePart = true; switchState(S_MULTIPLE_PART_HEADER); }
   {FallbackCharacter}                      { T("State S_BODY falback for: " + yytext());
                                              yypushback(1);

@@ -7,7 +7,7 @@ class HttpRequestParser {
 
     private fun nextToken(): Yytoken? = lexer.yylex()
 
-    fun reset(input: Reader) {
+    private fun reset(input: Reader) {
         lexer.yyreset(input)
     }
 
@@ -22,14 +22,19 @@ class HttpRequestParser {
             builder = Request.Builder()
         }
 
+        var isFirstTimeInRequestLine = true
         while (true) {
             val token = nextToken() ?: break
             when (lexer.yystate()) {
                 Yylex.YYINITIAL -> buildRequestAndMakeBuilderNew()
-                Yylex.S_REQUEST_SEPARATOR -> buildRequestAndMakeBuilderNew()
+                Yylex.S_REQUEST_SEPARATOR -> {
+                    isFirstTimeInRequestLine = true
+                    buildRequestAndMakeBuilderNew()
+                }
                 Yylex.S_REQUEST_LINE -> {
-                    if (lexer.previousState != Yylex.S_REQUEST_LINE) {
+                    if (isFirstTimeInRequestLine) {
                         buildRequestAndMakeBuilderNew()
+                        isFirstTimeInRequestLine = false
                     }
                 }
                 Yylex.S_HEADER -> Unit
@@ -58,13 +63,13 @@ class HttpRequestParser {
                     headerName = null
                 }
                 Yytoken.TYPE_BODY_MESSAGE -> builder.rawBody.add(token.value)
-                Yytoken.TYPE_SEPARATOR -> builder.comments.add(token.value)
+                Yytoken.TYPE_SEPARATOR -> Unit
                 Yytoken.TYPE_BLANK -> Unit
                 Yytoken.TYPE_PART -> Unit
                 Yytoken.TYPE_OPEN_SCRIPT_HANDLER -> Unit
                 Yytoken.TYPE_CLOSE_SCRIPT_HANDLER -> Unit
                 Yytoken.TYPE_RESPONSE_REFERENCE -> Unit
-                Yytoken.TYPE_COMMENT -> builder.comments.add(token.value)
+                Yytoken.TYPE_COMMENT -> Unit
             }
         }
         return result

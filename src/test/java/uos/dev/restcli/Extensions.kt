@@ -12,7 +12,7 @@ object TestResourceLoader {
     }
 
     fun testResourcePath(path: String): String {
-        val fileUrl = javaClass.classLoader.getResource("requests/get-requests.http")?.file
+        val fileUrl = javaClass.classLoader.getResource(path)?.file
             ?: throw NullPointerException("Can't read input for $path")
         return File(fileUrl).absolutePath
     }

@@ -49,14 +49,10 @@ class Parser {
                     builder.build()?.let(result::add)
                     builder = Request.Builder()
                     val comment = separatorResult.data.comment
-                    if (comment != null && comment.isNotEmpty()) {
-                        builder.comments.add(comment)
-                    }
                     state = ParseState.URL
                     return@forEachLine
                 }
                 commentResult is Outcome.Success -> {
-                    builder.comments.add(commentResult.data.comment)
                     return@forEachLine
                 }
                 openResponseHandlerResult is Outcome.Success -> {
