@@ -8,6 +8,28 @@ class ParserTest {
     private val parser = Parser()
 
     @Test
+    fun parse_get_with_env() {
+        val input = "### GET request with environment variables\n" +
+                "GET {{host}}/get?show_env={{show_env}}\n" +
+                "Accept: application/json\n" +
+                "\n"
+        val reader = input.reader()
+        val env = mapOf(
+            "host" to "https://httpbin.org",
+            "show_env" to "1"
+        )
+        val result = parser.parse(reader, env)
+        assertThat(result.first()).isEqualTo(
+            Request(
+                method = RequestMethod.GET,
+                requestTarget = "https://httpbin.org/get?show_env=1",
+                headers = mapOf("Accept" to "application/json"),
+                httpVersion = Request.DEFAULT_HTTP_VERSION
+            )
+        )
+    }
+
+    @Test
     fun parse_get() {
         val reader = TestResourceLoader.testResourceReader(TEST_GET_REQUESTS_RESOURCE)
         val result = parser.parse(reader)

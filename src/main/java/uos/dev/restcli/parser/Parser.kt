@@ -11,9 +11,14 @@ class Parser {
         lexer.yyreset(input)
     }
 
-    // TODO: parsing with environment config.
     // TODO: parsing with load content from file referenced.
-    fun parse(input: Reader): List<Request> {
+    fun parse(
+        input: Reader,
+        environment: Map<String, String> = emptyMap()
+    ): List<Request> {
+        fun injectEnv(input: String): String =
+            EnvironmentVariableInjector.inject(input, environment)
+
         reset(input)
         val result = mutableListOf<Request>()
         var builder = Request.Builder()
@@ -50,34 +55,35 @@ class Parser {
             when (token.type) {
                 TokenType.TYPE_VALUE_FILE_REF -> Unit
                 TokenType.TYPE_REQUEST_METHOD -> builder.method = RequestMethod.from(token.value)
-                TokenType.TYPE_REQUEST_TARGET -> builder.requestTarget = token.value
+                TokenType.TYPE_REQUEST_TARGET -> builder.requestTarget = injectEnv(token.value)
                 TokenType.TYPE_REQUEST_HTTP_VERSION -> builder.httpVersion = token.value
                 TokenType.TYPE_FIELD_NAME -> {
                     if (headerName != null) {
                         throw IllegalStateException("Header name exist($headerName). Expect header value")
                     }
-                    headerName = token.value
+                    headerName = injectEnv(token.value)
                 }
                 TokenType.TYPE_FIELD_VALUE -> {
                     val nonNullHeaderName = headerName
                         ?: throw IllegalStateException("Header name is null, but got header value ${token.value}")
-
+                    val headerValue = injectEnv(token.value)
                     createNewPartIfNeeded(builder)
                     if (lexer.isMultiplePart && lexer.yystate() != Yylex.S_HEADER) {
-                        builder.parts.last().headers[nonNullHeaderName] = token.value
+                        builder.parts.last().headers[nonNullHeaderName] = headerValue
                         if (nonNullHeaderName.contentEquals("Content-Disposition")) {
-                            builder.parts.last().name = extractPartName(token.value)
+                            builder.parts.last().name = extractPartName(headerValue)
                         }
                     } else {
-                        builder.headers[nonNullHeaderName] = token.value
+                        builder.headers[nonNullHeaderName] = headerValue
                     }
                     headerName = null
                 }
                 TokenType.TYPE_BODY_MESSAGE -> {
+                    val bodyMessage = injectEnv(token.value);
                     if (lexer.isMultiplePart) {
-                        builder.parts.last().rawBody.add(token.value)
+                        builder.parts.last().rawBody.add(bodyMessage)
                     } else {
-                        builder.rawBody.add(token.value)
+                        builder.rawBody.add(bodyMessage)
                     }
                 }
                 TokenType.TYPE_SEPARATOR -> Unit
@@ -88,6 +94,8 @@ class Parser {
                 TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT -> builder.rawScriptHandler.add(token.value)
             }
         }
+        // Build the latest request if exist.
+        buildRequestAndMakeBuilderNew()
         return result
     }
 
