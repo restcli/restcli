@@ -47,15 +47,15 @@ private void throwError() throws ParserException {
     throw new ParserException("Error while parsing: " + yytext());
 }
 
-private Yytoken createTokenNormal(int type) {
+private Yytoken createTokenNormal(TokenType type) {
   return new Yytoken(type, yytext());
 }
 
-private Yytoken createTokenTrimmed(int type) {
+private Yytoken createTokenTrimmed(TokenType type) {
   return new Yytoken(type, yytext().trim());
 }
 
-private Yytoken createAndSaveFieldNameToken(int type) {
+private Yytoken createAndSaveFieldNameToken(TokenType type) {
   String fieldName = yytext().trim();
   currentFieldName = fieldName;
   return new Yytoken(type, fieldName);
@@ -68,7 +68,7 @@ private Yytoken createFieldValueToken() {
   if (isContentTypeHeader && yystate() == S_HEADER) {
     isMultiplePart = fieldValue.toLowerCase().contains("multipart/form-data;");
   }
-  return new Yytoken(Yytoken.TYPE_FIELD_VALUE, fieldValue);
+  return new Yytoken(TokenType.TYPE_FIELD_VALUE, fieldValue);
 }
 
 private static final void T(String text) {
@@ -115,99 +115,110 @@ MessageLineFile = "<"{RequiredWhiteSpace}{FilePath}
 
 MultiplePartBoundary = \-\-{LineTail}
 // Response handler.
-HandlerScript = (!(%}|###).)*
-ResponseHandlerEmbededOpen = >{RequiredWhiteSpace}\{%
-ResponseHandlerEmbededClose = %\}
-ResponseHandlerScript = >{RequiredWhiteSpace}{FilePath}
+ResponseHandlerEmbeddedScript = ">"{RequiredWhiteSpace}"{%"~"%}"
+ResponseHandlerFileScript = ">"{RequiredWhiteSpace}{FilePath}
+ResponseHandler = ">"{RequiredWhiteSpace}({FilePath}|"{%")
 
 // Response reference.
 ResponseReference = <>{RequiredWhiteSpace}{FilePath}
 
-FallbackCharacter = .
+FallbackCharacter = [^]
 %%
 
 {RequestSeparator}                         { reset();
                                              switchState(S_REQUEST_SEPARATOR);
-                                             return createTokenTrimmed(Yytoken.TYPE_SEPARATOR);
+                                             return createTokenTrimmed(TokenType.TYPE_SEPARATOR);
                                            }
 
 <YYINITIAL> {
   {AnySpace}+                              { T("Ignore any space in YYINITIAL"); }
-  {FallbackCharacter}		                   { yypushback(1); switchState(S_REQUEST_LINE); }
+  {FallbackCharacter}		                   { T("In YYINITIAL but got " + yytext() + " switch to S_REQUEST_LINE");
+                                             yypushback(yylength());
+                                             switchState(S_REQUEST_LINE);
+                                           }
 }
 
 <S_REQUEST_SEPARATOR>{
-  {LineComment}                            { return createTokenNormal(Yytoken.TYPE_COMMENT); }
-  {FallbackCharacter}                      { yypushback(1); switchState(S_REQUEST_LINE);}
+  {LineComment}                            { return createTokenNormal(TokenType.TYPE_COMMENT); }
+  {AnySpace}+                              { T("Ignore any space in S_REQUEST_SEPARATOR"); }
+  {FallbackCharacter}                      { yypushback(yylength()); switchState(S_REQUEST_LINE);}
 }
 
 <S_REQUEST_LINE> {
   {WhiteSpace}+                            { T("Ignore {WhiteSpace}+ in S_REQUEST_LINE"); }
-  {RequestMethod} /{RequiredWhiteSpace}    { return createTokenTrimmed(Yytoken.TYPE_REQUEST_METHOD); }
-  {RequestTarget}                          { hasRequestTarget = true; return createTokenTrimmed(Yytoken.TYPE_REQUEST_TARGET); }
-  {RequiredWhiteSpace}{RequestHttpVersion} { return createTokenTrimmed(Yytoken.TYPE_REQUEST_HTTP_VERSION); }
+  {RequestMethod} /{RequiredWhiteSpace}    { return createTokenTrimmed(TokenType.TYPE_REQUEST_METHOD); }
+  {RequestTarget}                          { hasRequestTarget = true; return createTokenTrimmed(TokenType.TYPE_REQUEST_TARGET); }
+  {RequiredWhiteSpace}{RequestHttpVersion} { return createTokenTrimmed(TokenType.TYPE_REQUEST_HTTP_VERSION); }
   {LineTerminator}                         { if (!hasRequestTarget) throwError(); switchState(S_HEADER); }
   {FallbackCharacter} { throwError(); }
 }
 
 <S_HEADER> {
-  {FieldName}/:                            { return createAndSaveFieldNameToken(Yytoken.TYPE_FIELD_NAME); }
+  {FieldName}/:                            { return createAndSaveFieldNameToken(TokenType.TYPE_FIELD_NAME); }
   :{OptionalWhiteSpace}{FieldValue}        { return createFieldValueToken(); }
-  {LineComment}                            { return createTokenNormal(Yytoken.TYPE_COMMENT); }
+  {LineComment}                            { return createTokenNormal(TokenType.TYPE_COMMENT); }
   {LineTerminator}|{AnySpace}+             { if (isMultiplePart) switchState(S_MULTILE_PART); else switchState(S_BODY); }
   {FallbackCharacter}                      { T("State S_HEADER fallback for: " + yytext());
-                                             yypushback(1);
+                                             yypushback(yylength());
                                              switchState(YYINITIAL); }
                                            }
 
 <S_BODY> {
+  {ResponseHandler}                        { T("State S_BODY but got response handler -> switch state to S_SCRIPT_HANDLER");
+                                             yypushback(yylength());
+                                             switchState(S_SCRIPT_HANDLER);
+                                           }
   "<>"{LineTail}                           { T("State S_BODY but got <>.* => fallback to response reference"); }
-  {LineComment}                            { return createTokenNormal(Yytoken.TYPE_COMMENT); }
-  {MessageLineFile}                        { return createTokenNormal(Yytoken.TYPE_VALUE_FILE_REF); }
-  {MessageLineText}                        { return createTokenNormal(Yytoken.TYPE_BODY_MESSAGE); }
+  {LineComment}                            { return createTokenNormal(TokenType.TYPE_COMMENT); }
+  {MessageLineFile}                        { return createTokenNormal(TokenType.TYPE_VALUE_FILE_REF); }
+  {MessageLineText}                        { return createTokenNormal(TokenType.TYPE_BODY_MESSAGE); }
   {FallbackCharacter}                      { T("State S_BODY falback for: " + yytext());
-                                             yypushback(1);
+                                             yypushback(yylength());
                                              switchState(YYINITIAL);
                                            }
 }
 
 <S_MULTILE_PART> {
   "<>"{LineTail}                           { T("State S_BODY_MULTILE_PART but got <>.* => fallback to response reference"); }
-  {LineComment}                            { return createTokenNormal(Yytoken.TYPE_COMMENT); }
+  {LineComment}                            { return createTokenNormal(TokenType.TYPE_COMMENT); }
   {MultiplePartBoundary}                   { isNewPartRequired = true; switchState(S_MULTIPLE_PART_HEADER); }
   {FallbackCharacter}                      { T("State S_BODY falback for: " + yytext());
-                                             yypushback(1);
+                                             yypushback(yylength());
                                              switchState(YYINITIAL);
                                            }
 }
 
 <S_MULTIPLE_PART_HEADER>                   {
-  {FieldName}/:                            { return createTokenTrimmed(Yytoken.TYPE_FIELD_NAME); }
+  {FieldName}/:                            { return createTokenTrimmed(TokenType.TYPE_FIELD_NAME); }
   :{OptionalWhiteSpace}{FieldValue}        { return createFieldValueToken(); }
   {LineTerminator}|{AnySpace}+             { switchState(S_MULTIPLE_PART_BODY); }
   {FallbackCharacter}                      { throwError(); }
 }
 
 <S_MULTIPLE_PART_BODY> {
+  {ResponseHandler}                        { T("State S_BODY but got response handler -> switch state to S_SCRIPT_HANDLER");
+                                               yypushback(yylength());
+                                               switchState(S_SCRIPT_HANDLER);
+                                           }
   "<>"{LineTail}                           { T("State S_BODY but got <>.* => fallback to response reference"); }
   {MultiplePartBoundary}                   { isNewPartRequired = true; switchState(S_MULTIPLE_PART_HEADER); }
-  {LineComment}                            { return createTokenNormal(Yytoken.TYPE_COMMENT); }
-  {MessageLineText}                        { return new Yytoken(Yytoken.TYPE_BODY_MESSAGE, yytext()); }
-  {MessageLineFile}                        { return new Yytoken(Yytoken.TYPE_VALUE_FILE_REF, yytext()); }
-  {FallbackCharacter}                      { yypushback(1); switchState(S_SCRIPT_HANDLER); }
+  {LineComment}                            { return createTokenNormal(TokenType.TYPE_COMMENT); }
+  {MessageLineText}                        { return createTokenNormal(TokenType.TYPE_BODY_MESSAGE); }
+  {MessageLineFile}                        { return createTokenNormal(TokenType.TYPE_VALUE_FILE_REF); }
+  {FallbackCharacter}                      { yypushback(yylength()); switchState(S_SCRIPT_HANDLER); }
 }
 
 <S_SCRIPT_HANDLER> {
-  {ResponseHandlerScript}                  { switchState(S_SCRIPT_REFERENCE);
-                                             return new Yytoken(Yytoken.TYPE_VALUE_FILE_REF, yytext());
+  {ResponseHandlerFileScript}              { switchState(S_SCRIPT_REFERENCE);
+                                             return createTokenNormal(TokenType.TYPE_HANDLER_FILE_SCRIPT);
                                            }
-  {ResponseHandlerEmbededOpen}             { return new Yytoken(Yytoken.TYPE_OPEN_SCRIPT_HANDLER); }
-  {ResponseHandlerEmbededClose}            { return new Yytoken(Yytoken.TYPE_CLOSE_SCRIPT_HANDLER); }
-  {HandlerScript}                          { return new Yytoken(Yytoken.TYPE_HANDLER_SCRIPT, yytext()); }
-  {FallbackCharacter}                      { yypushback(1); switchState(S_SCRIPT_HANDLER); }
+  {ResponseHandlerEmbeddedScript}          { switchState(S_SCRIPT_REFERENCE);
+                                             return createTokenNormal(TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT);
+                                           }
+  {FallbackCharacter}                      { yypushback(yylength()); switchState(S_SCRIPT_HANDLER); }
 }
 
 <S_SCRIPT_REFERENCE> {
-  {ResponseReference}                      { return new Yytoken(Yytoken.TYPE_VALUE_FILE_REF, yytext()); }
-  {FallbackCharacter}                      { yypushback(1); switchState(YYINITIAL); }
+  {ResponseReference}                      { return createTokenNormal(TokenType.TYPE_RESPONSE_REFERENCE); }
+  {FallbackCharacter}                      { T("In S_SCRIPT_REFERENCE but got " + yytext() + " -> switch to YYINITIAL"); yypushback(yylength()); switchState(YYINITIAL); }
 }

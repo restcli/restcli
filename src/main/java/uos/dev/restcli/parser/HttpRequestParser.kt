@@ -46,17 +46,17 @@ class HttpRequestParser {
             }
 
             when (token.type) {
-                Yytoken.TYPE_VALUE_FILE_REF -> Unit
-                Yytoken.TYPE_REQUEST_METHOD -> builder.method = RequestMethod.from(token.value)
-                Yytoken.TYPE_REQUEST_TARGET -> builder.requestTarget = token.value
-                Yytoken.TYPE_REQUEST_HTTP_VERSION -> builder.httpVersion = token.value
-                Yytoken.TYPE_FIELD_NAME -> {
+                TokenType.TYPE_VALUE_FILE_REF -> Unit
+                TokenType.TYPE_REQUEST_METHOD -> builder.method = RequestMethod.from(token.value)
+                TokenType.TYPE_REQUEST_TARGET -> builder.requestTarget = token.value
+                TokenType.TYPE_REQUEST_HTTP_VERSION -> builder.httpVersion = token.value
+                TokenType.TYPE_FIELD_NAME -> {
                     if (headerName != null) {
                         throw IllegalStateException("Header name exist($headerName). Expect header value")
                     }
                     headerName = token.value
                 }
-                Yytoken.TYPE_FIELD_VALUE -> {
+                TokenType.TYPE_FIELD_VALUE -> {
                     val nonNullHeaderName = headerName
                         ?: throw IllegalStateException("Header name is null, but got header value ${token.value}")
 
@@ -71,19 +71,19 @@ class HttpRequestParser {
                     }
                     headerName = null
                 }
-                Yytoken.TYPE_BODY_MESSAGE -> {
+                TokenType.TYPE_BODY_MESSAGE -> {
                     if (lexer.isMultiplePart) {
                         builder.parts.last().rawBody.add(token.value)
                     } else {
                         builder.rawBody.add(token.value)
                     }
                 }
-                Yytoken.TYPE_SEPARATOR -> Unit
-                Yytoken.TYPE_BLANK -> Unit
-                Yytoken.TYPE_OPEN_SCRIPT_HANDLER -> Unit
-                Yytoken.TYPE_CLOSE_SCRIPT_HANDLER -> Unit
-                Yytoken.TYPE_RESPONSE_REFERENCE -> Unit
-                Yytoken.TYPE_COMMENT -> Unit
+                TokenType.TYPE_SEPARATOR -> Unit
+                TokenType.TYPE_BLANK -> Unit
+                TokenType.TYPE_RESPONSE_REFERENCE -> Unit
+                TokenType.TYPE_COMMENT -> Unit
+                TokenType.TYPE_HANDLER_FILE_SCRIPT -> builder.rawScriptHandler.add(token.value)
+                TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT -> builder.rawScriptHandler.add(token.value)
             }
         }
         return result

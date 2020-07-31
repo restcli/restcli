@@ -6,6 +6,7 @@ data class Request(
     val httpVersion: String,
     val headers: Map<String, String>,
     val body: String? = null,
+    val scriptHandler: String? = null,
     val fileLoad: String? = null,
     val parts: List<Part> = mutableListOf()
 ) {
@@ -31,6 +32,7 @@ data class Request(
         var httpVersion: String = DEFAULT_HTTP_VERSION,
         val headers: MutableMap<String, String> = mutableMapOf(),
         val rawBody: MutableList<String> = mutableListOf(),
+        val rawScriptHandler: MutableList<String> = mutableListOf(),
         val rawResponseHandler: MutableList<String> = mutableListOf(),
         var rawResponseReference: String? = null,
         val parts: MutableList<Part.Builder> = mutableListOf()
@@ -48,6 +50,7 @@ data class Request(
                 httpVersion = httpVersion,
                 headers = headers,
                 body = rawBody.joinToString("").trim().takeIf { it.isNotEmpty() },
+                scriptHandler = rawScriptHandler.joinToString("").trim().takeIf { it.isNotEmpty() },
                 parts = parts.map { it.build() }
             )
         }

@@ -34,7 +34,7 @@ class YylexTest {
         lexer.yyreset(input.toReader())
         lexer.yybegin(Yylex.S_BODY)
         val token = lexer.yylex()
-        assertThat(token.type).isEqualTo(Yytoken.TYPE_SEPARATOR)
+        assertThat(token.type).isEqualTo(TokenType.TYPE_SEPARATOR)
     }
 
     companion object {
@@ -44,7 +44,7 @@ class YylexTest {
             name: String,
             state: Int = Yylex.YYINITIAL,
             input: String,
-            expectedType: Int,
+            expectedType: TokenType,
             expectedValue: Any? = null
         ): Arguments = Arguments.of(name, state, input, expectedType, expectedValue)
 
@@ -53,25 +53,25 @@ class YylexTest {
             createArgument(
                 name = "Request separator token with text.",
                 input = "### The request separator.\n",
-                expectedType = Yytoken.TYPE_SEPARATOR,
+                expectedType = TokenType.TYPE_SEPARATOR,
                 expectedValue = "### The request separator."
             ),
             createArgument(
                 name = "Request separator token.",
                 input = "###\n",
-                expectedType = Yytoken.TYPE_SEPARATOR,
+                expectedType = TokenType.TYPE_SEPARATOR,
                 expectedValue = "###"
             ),
             createArgument(
                 name = "Request line method.",
                 input = "POST http://localhost.com",
-                expectedType = Yytoken.TYPE_REQUEST_METHOD,
+                expectedType = TokenType.TYPE_REQUEST_METHOD,
                 expectedValue = "POST"
             ),
             createArgument(
                 name = "Request line target.",
                 input = "http://localhost.com",
-                expectedType = Yytoken.TYPE_REQUEST_TARGET,
+                expectedType = TokenType.TYPE_REQUEST_TARGET,
                 expectedValue = "http://localhost.com"
             )
         )

@@ -78,6 +78,48 @@ class HttpRequestParserTest {
     }
 
     @Test
+    fun parse_request_with_tests() {
+        val reader = TestResourceLoader.testResourceReader(TEST_REQUESTS_WITH_TESTS_RESOURCE)
+        val result = parser.parse(reader)
+        assertThat(result.size).isEqualTo(4)
+
+        assertThat(result.first()).isEqualTo(
+            Request(
+                method = RequestMethod.GET,
+                requestTarget = "https://httpbin.org/status/200",
+                headers = emptyMap(),
+                httpVersion = Request.DEFAULT_HTTP_VERSION,
+                body = null,
+                scriptHandler = "> {%\n" +
+                        "client.test(\"Request executed successfully\", function() {\n" +
+                        "  client.assert(response.status === 200, \"Response status is not 200\");\n" +
+                        "});\n" +
+                        "%}"
+            )
+        )
+
+        assertThat(result[2]).isEqualTo(
+            Request(
+                method = RequestMethod.GET,
+                requestTarget = "https://httpbin.org/get",
+                headers = emptyMap(),
+                httpVersion = Request.DEFAULT_HTTP_VERSION,
+                body = null,
+                scriptHandler = "> {%\n" +
+                        "client.test(\"Request executed successfully\", function() {\n" +
+                        "  client.assert(response.status === 200, \"Response status is not 200\");\n" +
+                        "});\n" +
+                        "\n" +
+                        "client.test(\"Response content-type is json\", function() {\n" +
+                        "  var type = response.contentType.mimeType;\n" +
+                        "  client.assert(type === \"application/json\", \"Expected 'application/json' but received '\" + type + \"'\");\n" +
+                        "});\n" +
+                        "%}"
+            )
+        )
+    }
+
+    @Test
     fun debug() {
         val path = TestResourceLoader.testResourcePath(TEST_POST_REQUESTS_RESOURCE)
         Yylex.main(arrayOf(path))
@@ -86,5 +128,6 @@ class HttpRequestParserTest {
     companion object {
         private const val TEST_GET_REQUESTS_RESOURCE = "requests/get-requests.http"
         private const val TEST_POST_REQUESTS_RESOURCE = "requests/post-requests.http"
+        private const val TEST_REQUESTS_WITH_TESTS_RESOURCE = "requests/requests-with-tests.http"
     }
 }
