@@ -3,8 +3,8 @@ package uos.dev.restcli.parser
 data class Request(
     val method: RequestMethod = RequestMethod.GET,
     val requestTarget: String,
-    val httpVersion: String,
-    val headers: Map<String, String>,
+    val httpVersion: String = DEFAULT_HTTP_VERSION,
+    val headers: Map<String, String> = emptyMap(),
     val body: String? = null,
     val scriptHandler: String? = null,
     val responseReference: String? = null,

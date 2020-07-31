@@ -2,54 +2,26 @@ package uos.dev.restcli.parser
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import uos.dev.restcli.TestResourceLoader
+import java.util.stream.Stream
 
 class ParserTest {
     private val parser = Parser()
 
-    @Test
-    fun parse_get_with_env() {
-        val input = "### GET request with environment variables\n" +
-                "GET {{host}}/get?show_env={{show_env}}\n" +
-                "Accept: application/json\n" +
-                "\n"
+    @ParameterizedTest(name = "{index} {0}")
+    @MethodSource("parserTestCases")
+    fun parse(
+        name: String,
+        input: String,
+        environment: Map<String, String> = emptyMap(),
+        expected: Request
+    ) {
         val reader = input.reader()
-        val env = mapOf(
-            "host" to "https://httpbin.org",
-            "show_env" to "1"
-        )
-        val result = parser.parse(reader, env)
-        assertThat(result.first()).isEqualTo(
-            Request(
-                method = RequestMethod.GET,
-                requestTarget = "https://httpbin.org/get?show_env=1",
-                headers = mapOf("Accept" to "application/json"),
-                httpVersion = Request.DEFAULT_HTTP_VERSION
-            )
-        )
-    }
-
-    @Test
-    fun parse_get() {
-        val reader = TestResourceLoader.testResourceReader(TEST_GET_REQUESTS_RESOURCE)
-        val result = parser.parse(reader)
-        assertThat(result.first()).isEqualTo(
-            Request(
-                method = RequestMethod.GET,
-                requestTarget = "https://httpbin.org/ip",
-                headers = mapOf("Accept" to "application/json"),
-                httpVersion = Request.DEFAULT_HTTP_VERSION
-            )
-        )
-
-        assertThat(result.last()).isEqualTo(
-            Request(
-                method = RequestMethod.GET,
-                requestTarget = "http://httpbin.org/anything?id={{\$uuid}}&ts={{\$timestamp}}",
-                httpVersion = Request.DEFAULT_HTTP_VERSION,
-                headers = emptyMap()
-            )
-        )
+        val result = parser.parse(reader, environment)
+        assertThat(result.first()).isEqualTo(expected)
     }
 
     @Test
@@ -62,7 +34,6 @@ class ParserTest {
                 method = RequestMethod.POST,
                 requestTarget = "https://httpbin.org/post",
                 headers = mapOf("Content-Type" to "application/json"),
-                httpVersion = Request.DEFAULT_HTTP_VERSION,
                 body = "{\n" +
                         "  \"id\": 999,\n" +
                         "  \"value\": \"content\"\n" +
@@ -75,7 +46,6 @@ class ParserTest {
                 method = RequestMethod.POST,
                 requestTarget = "https://httpbin.org/post",
                 headers = mapOf("Content-Type" to "multipart/form-data; boundary=WebAppBoundary"),
-                httpVersion = Request.DEFAULT_HTTP_VERSION,
                 body = null,
                 parts = listOf(
                     Request.Part(
@@ -103,7 +73,6 @@ class ParserTest {
                 method = RequestMethod.POST,
                 requestTarget = "https://httpbin.org/post",
                 headers = mapOf("Content-Type" to "application/json"),
-                httpVersion = Request.DEFAULT_HTTP_VERSION,
                 body = "{\n" +
                         "  \"id\": {{\$uuid}},\n" +
                         "  \"price\": {{\$randomInt}},\n" +
@@ -125,8 +94,6 @@ class ParserTest {
             Request(
                 method = RequestMethod.GET,
                 requestTarget = "https://httpbin.org/status/200",
-                headers = emptyMap(),
-                httpVersion = Request.DEFAULT_HTTP_VERSION,
                 body = null,
                 scriptHandler = "> {%\n" +
                         "client.test(\"Request executed successfully\", function() {\n" +
@@ -140,8 +107,6 @@ class ParserTest {
             Request(
                 method = RequestMethod.GET,
                 requestTarget = "https://httpbin.org/get",
-                headers = emptyMap(),
-                httpVersion = Request.DEFAULT_HTTP_VERSION,
                 body = null,
                 scriptHandler = "> {%\n" +
                         "client.test(\"Request executed successfully\", function() {\n" +
@@ -167,5 +132,93 @@ class ParserTest {
         private const val TEST_GET_REQUESTS_RESOURCE = "requests/get-requests.http"
         private const val TEST_POST_REQUESTS_RESOURCE = "requests/post-requests.http"
         private const val TEST_REQUESTS_WITH_TESTS_RESOURCE = "requests/requests-with-tests.http"
+
+        @JvmStatic
+        private fun parserTestCases(): Stream<Arguments> = Stream.of(
+            createParserTestCase(
+                name = "GET request with a header",
+                input = "### GET request with a header\n" +
+                        "GET https://httpbin.org/ip\n" +
+                        "Accept: application/json\n",
+                environment = emptyMap(),
+                expected = Request(
+                    method = RequestMethod.GET,
+                    requestTarget = "https://httpbin.org/ip",
+                    headers = mapOf("Accept" to "application/json")
+                )
+            ),
+            createParserTestCase(
+                name = "GET request with parameter",
+                input = "### GET request with parameter\n" +
+                        "GET https://httpbin.org/get?show_env=1\n" +
+                        "Accept: application/json\n",
+                environment = emptyMap(),
+                expected = Request(
+                    method = RequestMethod.GET,
+                    requestTarget = "https://httpbin.org/get?show_env=1",
+                    headers = mapOf("Accept" to "application/json")
+                )
+            ),
+            createParserTestCase(
+                name = "GET request with environment variables",
+                input = "### GET request with environment variables\n" +
+                        "GET {{host}}/get?show_env={{show_env}}\n" +
+                        "Accept: application/json\n" +
+                        "\n",
+                environment = mapOf(
+                    "host" to "https://httpbin.org",
+                    "show_env" to "1"
+                ),
+                expected = Request(
+                    method = RequestMethod.GET,
+                    requestTarget = "https://httpbin.org/get?show_env=1",
+                    headers = mapOf("Accept" to "application/json")
+                )
+            ),
+            // TODO: Support GET request with disabled redirects
+            createParserTestCase(
+                name = "GET request with disabled redirects",
+                input = "### GET request with disabled redirects\n" +
+                        "# @no-redirect\n" +
+                        "GET http://httpbin.org/status/301\n",
+                environment = emptyMap(),
+                expected = Request(
+                    method = RequestMethod.GET,
+                    requestTarget = "http://httpbin.org/status/301"
+                )
+            ),
+            // TODO: Support dynamic variable
+            createParserTestCase(
+                name = "GET request with dynamic variables",
+                input = "### GET request with dynamic variables\n" +
+                        "GET http://httpbin.org/anything?id={{\$uuid}}&ts={{\$timestamp}}\n",
+                environment = emptyMap(),
+                expected = Request(
+                    method = RequestMethod.GET,
+                    requestTarget = "http://httpbin.org/anything?id={{\$uuid}}&ts={{\$timestamp}}"
+                )
+            )
+//            ,
+//            createParserTestCase(
+//                name = "",
+//                input = "",
+//                environment = emptyMap(),
+//                expected = Request()
+//            ),
+//            createParserTestCase(
+//                name = "",
+//                input = "",
+//                environment = emptyMap(),
+//                expected = Request()
+//            )
+        )
+
+        @Suppress("SameParameterValue")
+        private fun createParserTestCase(
+            name: String,
+            input: String,
+            environment: Map<String, String> = emptyMap(),
+            expected: Request
+        ): Arguments = Arguments.of(name, input, environment, expected)
     }
 }
