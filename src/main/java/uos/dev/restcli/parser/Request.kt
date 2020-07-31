@@ -20,7 +20,8 @@ data class Request(
             val headers: MutableMap<String, String> = mutableMapOf(),
             val rawBody: MutableList<String> = mutableListOf()
         ) {
-            fun build(): Part = Part(name, headers, rawBody.joinToString(""))
+            fun build(): Part =
+                Part(name, headers, rawBody.joinToString("").trim().takeIf { it.isNotEmpty() })
         }
     }
 

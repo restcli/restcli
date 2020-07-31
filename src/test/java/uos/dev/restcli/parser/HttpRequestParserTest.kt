@@ -34,6 +34,7 @@ class HttpRequestParserTest {
     fun parse_post() {
         val reader = TestResourceLoader.testResourceReader(TEST_POST_REQUESTS_RESOURCE)
         val result = parser.parse(reader)
+        assertThat(result.size).isEqualTo(4)
         assertThat(result.first()).isEqualTo(
             Request(
                 method = RequestMethod.POST,
@@ -44,6 +45,34 @@ class HttpRequestParserTest {
                         "  \"id\": 999,\n" +
                         "  \"value\": \"content\"\n" +
                         "}"
+            )
+        )
+
+        assertThat(result[2]).isEqualTo(
+            Request(
+                method = RequestMethod.POST,
+                requestTarget = "https://httpbin.org/post",
+                headers = mapOf("Content-Type" to "multipart/form-data; boundary=WebAppBoundary"),
+                httpVersion = Request.DEFAULT_HTTP_VERSION,
+                body = null,
+                parts = listOf(
+                    Request.Part(
+                        name = "element-name",
+                        headers = mapOf(
+                            "Content-Disposition" to "form-data; name=\"element-name\"",
+                            "Content-Type" to "text/plain"
+                        ),
+                        body = "Name"
+                    ),
+                    Request.Part(
+                        name = "data",
+                        headers = mapOf(
+                            "Content-Disposition" to "form-data; name=\"data\"; filename=\"data.json\"",
+                            "Content-Type" to "application/json"
+                        ),
+                        body = "< ./request-form-data.json"
+                    )
+                )
             )
         )
     }

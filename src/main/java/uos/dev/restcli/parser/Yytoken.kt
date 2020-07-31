@@ -15,9 +15,9 @@ data class Yytoken @JvmOverloads constructor(
             TYPE_BODY_MESSAGE -> "TYPE_BODY_MESSAGE"
             TYPE_SEPARATOR -> "TYPE_SEPARATOR"
             TYPE_BLANK -> "TYPE_BLANK"
-            TYPE_PART -> "TYPE_PART"
             TYPE_OPEN_SCRIPT_HANDLER -> "TYPE_OPEN_SCRIPT_HANDLER"
             TYPE_CLOSE_SCRIPT_HANDLER -> "TYPE_CLOSE_SCRIPT_HANDLER"
+            TYPE_HANDLER_SCRIPT -> "TYPE_HANDLER_SCRIPT"
             TYPE_RESPONSE_REFERENCE -> "TYPE_RESPONSE_REFERENCE"
             TYPE_COMMENT -> "TYPE_COMMENT"
             else -> "Unknown"
@@ -35,9 +35,9 @@ data class Yytoken @JvmOverloads constructor(
         const val TYPE_BODY_MESSAGE = 23
         const val TYPE_SEPARATOR = 30
         const val TYPE_BLANK: Int = 40
-        const val TYPE_PART: Int = 50
         const val TYPE_OPEN_SCRIPT_HANDLER: Int = 60
         const val TYPE_CLOSE_SCRIPT_HANDLER: Int = 70
+        const val TYPE_HANDLER_SCRIPT: Int = 71
         const val TYPE_RESPONSE_REFERENCE: Int = 80
         const val TYPE_COMMENT: Int = 90
     }

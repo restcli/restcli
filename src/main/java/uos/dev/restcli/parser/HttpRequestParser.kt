@@ -52,20 +52,34 @@ class HttpRequestParser {
                 Yytoken.TYPE_REQUEST_HTTP_VERSION -> builder.httpVersion = token.value
                 Yytoken.TYPE_FIELD_NAME -> {
                     if (headerName != null) {
-                        throw IllegalStateException("Header name already exist($headerName). Expect header value")
+                        throw IllegalStateException("Header name exist($headerName). Expect header value")
                     }
                     headerName = token.value
                 }
                 Yytoken.TYPE_FIELD_VALUE -> {
                     val nonNullHeaderName = headerName
                         ?: throw IllegalStateException("Header name is null, but got header value ${token.value}")
-                    builder.headers[nonNullHeaderName] = token.value
+
+                    createNewPartIfNeeded(builder)
+                    if (lexer.isMultiplePart && lexer.yystate() != Yylex.S_HEADER) {
+                        builder.parts.last().headers[nonNullHeaderName] = token.value
+                        if (nonNullHeaderName.contentEquals("Content-Disposition")) {
+                            builder.parts.last().name = extractPartName(token.value)
+                        }
+                    } else {
+                        builder.headers[nonNullHeaderName] = token.value
+                    }
                     headerName = null
                 }
-                Yytoken.TYPE_BODY_MESSAGE -> builder.rawBody.add(token.value)
+                Yytoken.TYPE_BODY_MESSAGE -> {
+                    if (lexer.isMultiplePart) {
+                        builder.parts.last().rawBody.add(token.value)
+                    } else {
+                        builder.rawBody.add(token.value)
+                    }
+                }
                 Yytoken.TYPE_SEPARATOR -> Unit
                 Yytoken.TYPE_BLANK -> Unit
-                Yytoken.TYPE_PART -> Unit
                 Yytoken.TYPE_OPEN_SCRIPT_HANDLER -> Unit
                 Yytoken.TYPE_CLOSE_SCRIPT_HANDLER -> Unit
                 Yytoken.TYPE_RESPONSE_REFERENCE -> Unit
@@ -73,5 +87,20 @@ class HttpRequestParser {
             }
         }
         return result
+    }
+
+    private fun createNewPartIfNeeded(builder: Request.Builder) {
+        if (lexer.isNewPartRequired) {
+            builder.parts.add(Request.Part.Builder())
+            lexer.resetNewPartRequired()
+        }
+    }
+
+    companion object {
+        private val PART_NAME_REGEX = ".* name=\"([^\"]+)\".*".toRegex(RegexOption.IGNORE_CASE)
+
+        private fun extractPartName(fieldValue: String): String {
+            return PART_NAME_REGEX.matchEntire(fieldValue)?.groups?.get(1)?.value.orEmpty()
+        }
     }
 }
