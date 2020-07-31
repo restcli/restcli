@@ -2,7 +2,7 @@ package uos.dev.restcli.parser
 
 import java.io.Reader
 
-class HttpRequestParser {
+class Parser {
     private val lexer: Yylex = Yylex(null)
 
     private fun nextToken(): Yytoken? = lexer.yylex()
@@ -11,6 +11,8 @@ class HttpRequestParser {
         lexer.yyreset(input)
     }
 
+    // TODO: parsing with environment config.
+    // TODO: parsing with load content from file referenced.
     fun parse(input: Reader): List<Request> {
         reset(input)
         val result = mutableListOf<Request>()

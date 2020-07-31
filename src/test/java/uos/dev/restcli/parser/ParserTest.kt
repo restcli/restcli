@@ -4,8 +4,8 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import uos.dev.restcli.TestResourceLoader
 
-class HttpRequestParserTest {
-    private val parser = HttpRequestParser()
+class ParserTest {
+    private val parser = Parser()
 
     @Test
     fun parse_get() {
