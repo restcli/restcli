@@ -23,7 +23,7 @@ public class Yylex {
   public static final int S_BODY = 8;
   public static final int S_MULTILE_PART = 10;
   public static final int S_SCRIPT_HANDLER = 12;
-  public static final int S_SCRIPT_REFERENCE = 14;
+  public static final int S_RESPONSE_REFERENCE = 14;
   public static final int S_MULTIPLE_PART_HEADER = 16;
   public static final int S_MULTIPLE_PART_BODY = 18;
 
@@ -907,7 +907,7 @@ private static final void T(String text) {
           case 40: break;
           case 10:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [175] { T(\"State S_BODY falback for: \" + yytext());"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(YYINITIAL); }");
+            System.out.println("action [178] { T(\"State S_BODY falback for: \" + yytext());"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(YYINITIAL); }");
             { T("State S_BODY falback for: " + yytext());
                                              yypushback(yylength());
                                              switchState(YYINITIAL);
@@ -916,35 +916,35 @@ private static final void T(String text) {
           case 41: break;
           case 11:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [174] { return createTokenNormal(TokenType.TYPE_BODY_MESSAGE); }");
+            System.out.println("action [177] { return createTokenNormal(TokenType.TYPE_BODY_MESSAGE); }");
             { return createTokenNormal(TokenType.TYPE_BODY_MESSAGE);
             }
             // fall through
           case 42: break;
           case 12:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [218] { yypushback(yylength()); switchState(S_SCRIPT_HANDLER); }");
+            System.out.println("action [228] { yypushback(yylength()); switchState(S_SCRIPT_HANDLER); }");
             { yypushback(yylength()); switchState(S_SCRIPT_HANDLER);
             }
             // fall through
           case 43: break;
           case 13:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [223] { T(\"In S_SCRIPT_REFERENCE but got \" + yytext() + \" -> switch to YYINITIAL\"); yypushback(yylength()); switchState(YYINITIAL); }");
-            { T("In S_SCRIPT_REFERENCE but got " + yytext() + " -> switch to YYINITIAL"); yypushback(yylength()); switchState(YYINITIAL);
+            System.out.println("action [233] { T(\"In S_RESPONSE_REFERENCE but got \" + yytext() + \" -> switch to YYINITIAL\"); yypushback(yylength()); switchState(YYINITIAL); }");
+            { T("In S_RESPONSE_REFERENCE but got " + yytext() + " -> switch to YYINITIAL"); yypushback(yylength()); switchState(YYINITIAL);
             }
             // fall through
           case 44: break;
           case 14:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [195] { throwError(); }");
+            System.out.println("action [201] { throwError(); }");
             { throwError();
             }
             // fall through
           case 45: break;
           case 15:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [194] { switchState(S_MULTIPLE_PART_BODY); }");
+            System.out.println("action [200] { switchState(S_MULTIPLE_PART_BODY); }");
             { switchState(S_MULTIPLE_PART_BODY);
             }
             // fall through
@@ -978,22 +978,24 @@ private static final void T(String text) {
             zzMarkedPos = Character.offsetByCodePoints
                 (zzBufferL, zzStartRead, zzEndRead - zzStartRead, zzMarkedPos, -1);
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [192] { return createTokenTrimmed(TokenType.TYPE_FIELD_NAME); }");
+            System.out.println("action [198] { return createTokenTrimmed(TokenType.TYPE_FIELD_NAME); }");
             { return createTokenTrimmed(TokenType.TYPE_FIELD_NAME);
             }
             // fall through
           case 50: break;
           case 20:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [173] { return createTokenNormal(TokenType.TYPE_VALUE_FILE_REF); }");
+            System.out.println("action [176] { return createTokenNormal(TokenType.TYPE_VALUE_FILE_REF); }");
             { return createTokenNormal(TokenType.TYPE_VALUE_FILE_REF);
             }
             // fall through
           case 51: break;
           case 21:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [171] { T(\"State S_BODY but got <>.* => fallback to response reference\"); }");
+            System.out.println("action [171] { T(\"State S_BODY but got <>.* => fallback to response reference\");"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(S_RESPONSE_REFERENCE); }");
             { T("State S_BODY but got <>.* => fallback to response reference");
+                                             yypushback(yylength());
+                                             switchState(S_RESPONSE_REFERENCE);
             }
             // fall through
           case 52: break;
@@ -1008,29 +1010,32 @@ private static final void T(String text) {
           case 53: break;
           case 23:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [184] { isNewPartRequired = true; switchState(S_MULTIPLE_PART_HEADER); }");
+            System.out.println("action [190] { isNewPartRequired = true; switchState(S_MULTIPLE_PART_HEADER); }");
             { isNewPartRequired = true; switchState(S_MULTIPLE_PART_HEADER);
             }
             // fall through
           case 54: break;
           case 24:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [182] { T(\"State S_BODY_MULTILE_PART but got <>.* => fallback to response reference\"); }");
+            System.out.println("action [185] { T(\"State S_BODY_MULTILE_PART but got <>.* => fallback to response reference\");"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(S_RESPONSE_REFERENCE); }");
             { T("State S_BODY_MULTILE_PART but got <>.* => fallback to response reference");
+                                             yypushback(yylength());
+                                             switchState(S_RESPONSE_REFERENCE);
             }
             // fall through
           case 55: break;
           case 25:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [212] { switchState(S_SCRIPT_REFERENCE);"+ZZ_NL+"                                             return createTokenNormal(TokenType.TYPE_HANDLER_FILE_SCRIPT); }");
-            { switchState(S_SCRIPT_REFERENCE);
+            System.out.println("action [221] { switchState(S_RESPONSE_REFERENCE);"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             return createTokenNormal(TokenType.TYPE_HANDLER_FILE_SCRIPT); }");
+            { switchState(S_RESPONSE_REFERENCE);
+                                             yypushback(yylength());
                                              return createTokenNormal(TokenType.TYPE_HANDLER_FILE_SCRIPT);
             }
             // fall through
           case 56: break;
           case 26:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [199] { T(\"State S_BODY but got response handler -> switch state to S_SCRIPT_HANDLER\");"+ZZ_NL+"                                               yypushback(yylength());"+ZZ_NL+"                                               switchState(S_SCRIPT_HANDLER); }");
+            System.out.println("action [205] { T(\"State S_BODY but got response handler -> switch state to S_SCRIPT_HANDLER\");"+ZZ_NL+"                                               yypushback(yylength());"+ZZ_NL+"                                               switchState(S_SCRIPT_HANDLER); }");
             { T("State S_BODY but got response handler -> switch state to S_SCRIPT_HANDLER");
                                                yypushback(yylength());
                                                switchState(S_SCRIPT_HANDLER);
@@ -1084,15 +1089,15 @@ private static final void T(String text) {
           case 59: break;
           case 29:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [222] { return createTokenNormal(TokenType.TYPE_RESPONSE_REFERENCE); }");
+            System.out.println("action [232] { return createTokenNormal(TokenType.TYPE_RESPONSE_REFERENCE); }");
             { return createTokenNormal(TokenType.TYPE_RESPONSE_REFERENCE);
             }
             // fall through
           case 60: break;
           case 30:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [215] { switchState(S_SCRIPT_REFERENCE);"+ZZ_NL+"                                             return createTokenNormal(TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT); }");
-            { switchState(S_SCRIPT_REFERENCE);
+            System.out.println("action [225] { switchState(S_RESPONSE_REFERENCE);"+ZZ_NL+"                                             return createTokenNormal(TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT); }");
+            { switchState(S_RESPONSE_REFERENCE);
                                              return createTokenNormal(TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT);
             }
             // fall through

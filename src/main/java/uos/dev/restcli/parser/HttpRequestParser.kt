@@ -40,7 +40,7 @@ class HttpRequestParser {
                 Yylex.S_HEADER -> Unit
                 Yylex.S_BODY -> Unit
                 Yylex.S_SCRIPT_HANDLER -> Unit
-                Yylex.S_SCRIPT_REFERENCE -> Unit
+                Yylex.S_RESPONSE_REFERENCE -> Unit
                 Yylex.S_MULTIPLE_PART_HEADER -> Unit
                 Yylex.S_MULTIPLE_PART_BODY -> Unit
             }
@@ -80,7 +80,7 @@ class HttpRequestParser {
                 }
                 TokenType.TYPE_SEPARATOR -> Unit
                 TokenType.TYPE_BLANK -> Unit
-                TokenType.TYPE_RESPONSE_REFERENCE -> Unit
+                TokenType.TYPE_RESPONSE_REFERENCE -> builder.rawResponseReference = token.value
                 TokenType.TYPE_COMMENT -> Unit
                 TokenType.TYPE_HANDLER_FILE_SCRIPT -> builder.rawScriptHandler.add(token.value)
                 TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT -> builder.rawScriptHandler.add(token.value)

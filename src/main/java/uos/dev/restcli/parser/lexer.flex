@@ -5,7 +5,7 @@ package uos.dev.restcli.parser;
 
 %debug
 %unicode
-%state S_REQUEST_SEPARATOR, S_REQUEST_LINE, S_HEADER, S_BODY, S_MULTILE_PART, S_SCRIPT_HANDLER, S_SCRIPT_REFERENCE
+%state S_REQUEST_SEPARATOR, S_REQUEST_LINE, S_HEADER, S_BODY, S_MULTILE_PART, S_SCRIPT_HANDLER, S_RESPONSE_REFERENCE
 %state S_MULTIPLE_PART_HEADER, S_MULTIPLE_PART_BODY
 
 %{
@@ -168,7 +168,10 @@ FallbackCharacter = [^]
                                              yypushback(yylength());
                                              switchState(S_SCRIPT_HANDLER);
                                            }
-  "<>"{LineTail}                           { T("State S_BODY but got <>.* => fallback to response reference"); }
+  "<>"{LineTail}                           { T("State S_BODY but got <>.* => fallback to response reference");
+                                             yypushback(yylength());
+                                             switchState(S_RESPONSE_REFERENCE);   
+                                           }
   {LineComment}                            { return createTokenNormal(TokenType.TYPE_COMMENT); }
   {MessageLineFile}                        { return createTokenNormal(TokenType.TYPE_VALUE_FILE_REF); }
   {MessageLineText}                        { return createTokenNormal(TokenType.TYPE_BODY_MESSAGE); }
@@ -179,7 +182,10 @@ FallbackCharacter = [^]
 }
 
 <S_MULTILE_PART> {
-  "<>"{LineTail}                           { T("State S_BODY_MULTILE_PART but got <>.* => fallback to response reference"); }
+  "<>"{LineTail}                           { T("State S_BODY_MULTILE_PART but got <>.* => fallback to response reference");
+                                             yypushback(yylength());
+                                             switchState(S_RESPONSE_REFERENCE);
+                                           }
   {LineComment}                            { return createTokenNormal(TokenType.TYPE_COMMENT); }
   {MultiplePartBoundary}                   { isNewPartRequired = true; switchState(S_MULTIPLE_PART_HEADER); }
   {FallbackCharacter}                      { T("State S_BODY falback for: " + yytext());
@@ -200,7 +206,10 @@ FallbackCharacter = [^]
                                                yypushback(yylength());
                                                switchState(S_SCRIPT_HANDLER);
                                            }
-  "<>"{LineTail}                           { T("State S_BODY but got <>.* => fallback to response reference"); }
+  "<>"{LineTail}                           { T("State S_BODY but got <>.* => fallback to response reference");
+                                             yypushback(yylength());
+                                             switchState(S_RESPONSE_REFERENCE);
+                                           }
   {MultiplePartBoundary}                   { isNewPartRequired = true; switchState(S_MULTIPLE_PART_HEADER); }
   {LineComment}                            { return createTokenNormal(TokenType.TYPE_COMMENT); }
   {MessageLineText}                        { return createTokenNormal(TokenType.TYPE_BODY_MESSAGE); }
@@ -209,16 +218,17 @@ FallbackCharacter = [^]
 }
 
 <S_SCRIPT_HANDLER> {
-  {ResponseHandlerFileScript}              { switchState(S_SCRIPT_REFERENCE);
+  {ResponseHandlerFileScript}              { switchState(S_RESPONSE_REFERENCE);
+                                             yypushback(yylength());
                                              return createTokenNormal(TokenType.TYPE_HANDLER_FILE_SCRIPT);
                                            }
-  {ResponseHandlerEmbeddedScript}          { switchState(S_SCRIPT_REFERENCE);
+  {ResponseHandlerEmbeddedScript}          { switchState(S_RESPONSE_REFERENCE);
                                              return createTokenNormal(TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT);
                                            }
   {FallbackCharacter}                      { yypushback(yylength()); switchState(S_SCRIPT_HANDLER); }
 }
 
-<S_SCRIPT_REFERENCE> {
+<S_RESPONSE_REFERENCE> {
   {ResponseReference}                      { return createTokenNormal(TokenType.TYPE_RESPONSE_REFERENCE); }
-  {FallbackCharacter}                      { T("In S_SCRIPT_REFERENCE but got " + yytext() + " -> switch to YYINITIAL"); yypushback(yylength()); switchState(YYINITIAL); }
+  {FallbackCharacter}                      { T("In S_RESPONSE_REFERENCE but got " + yytext() + " -> switch to YYINITIAL"); yypushback(yylength()); switchState(YYINITIAL); }
 }

@@ -7,6 +7,7 @@ data class Request(
     val headers: Map<String, String>,
     val body: String? = null,
     val scriptHandler: String? = null,
+    val responseReference: String? = null,
     val fileLoad: String? = null,
     val parts: List<Part> = mutableListOf()
 ) {
@@ -51,6 +52,7 @@ data class Request(
                 headers = headers,
                 body = rawBody.joinToString("").trim().takeIf { it.isNotEmpty() },
                 scriptHandler = rawScriptHandler.joinToString("").trim().takeIf { it.isNotEmpty() },
+                responseReference = rawResponseReference?.trim(),
                 parts = parts.map { it.build() }
             )
         }

@@ -75,6 +75,22 @@ class HttpRequestParserTest {
                 )
             )
         )
+
+        assertThat(result.last()).isEqualTo(
+            Request(
+                method = RequestMethod.POST,
+                requestTarget = "https://httpbin.org/post",
+                headers = mapOf("Content-Type" to "application/json"),
+                httpVersion = Request.DEFAULT_HTTP_VERSION,
+                body = "{\n" +
+                        "  \"id\": {{\$uuid}},\n" +
+                        "  \"price\": {{\$randomInt}},\n" +
+                        "  \"ts\": {{\$timestamp}},\n" +
+                        "  \"value\": \"content\"\n" +
+                        "}",
+                responseReference = "<> post-requests.http"
+            )
+        )
     }
 
     @Test
