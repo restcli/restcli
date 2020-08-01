@@ -2,7 +2,6 @@ package uos.dev.restcli.parser
 
 import java.io.File
 import java.io.Reader
-import java.util.UUID
 
 class Parser(
     private val environmentVariableInjector: EnvironmentVariableInjector =
@@ -36,14 +35,8 @@ class Parser(
 
         while (true) {
             val token = nextToken() ?: break
-            when (lexer.yystate()) {
-                Yylex.YYINITIAL -> buildRequestAndMakeBuilderNew()
-                Yylex.S_HEADER -> Unit
-                Yylex.S_BODY -> Unit
-                Yylex.S_SCRIPT_HANDLER -> Unit
-                Yylex.S_RESPONSE_REFERENCE -> Unit
-                Yylex.S_MULTIPLE_PART_HEADER -> Unit
-                Yylex.S_MULTIPLE_PART_BODY -> Unit
+            if (lexer.yystate() == Yylex.YYINITIAL) {
+                buildRequestAndMakeBuilderNew()
             }
 
             when (token.type) {
