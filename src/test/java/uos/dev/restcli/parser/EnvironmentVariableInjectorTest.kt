@@ -4,26 +4,37 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
 class EnvironmentVariableInjectorTest {
+    private val environmentVariableInjector: EnvironmentVariableInjector =
+        EnvironmentVariableInjectorImpl(FakeDynamicVariableProvider())
 
     @Test
     fun inject_normal_variable() {
         val input = "Authorization: Basic {{username}} {{password}}"
-        val result = EnvironmentVariableInjector.inject(input, NORMAL_ENVIRONMENT)
+        val result = environmentVariableInjector.inject(input, NORMAL_ENVIRONMENT)
         assertThat(result).isEqualTo("Authorization: Basic admin 123456")
     }
 
     @Test
     fun inject_specific_variable() {
         val input = "Authorization: Basic {{username}} {{password}}"
-        val result = EnvironmentVariableInjector.inject(input, SPECIFIC_ENVIRONMENT)
+        val result = environmentVariableInjector.inject(input, SPECIFIC_ENVIRONMENT)
         assertThat(result).isEqualTo("Authorization: Basic {{password}} 123456")
     }
 
     @Test
     fun inject_with_no_environment_define() {
         val input = "Authorization: Basic {{username}} {{password}}"
-        val result = EnvironmentVariableInjector.inject(input, emptyMap())
+        val result = environmentVariableInjector.inject(input, emptyMap())
         assertThat(result).isEqualTo("Authorization: Basic {{username}} {{password}}")
+    }
+
+    @Test
+    fun inject_dynamic_variables() {
+        val input = "http://httpbin.org/anything?id={{\$uuid}}&ts={{\$timestamp}}"
+        val result = environmentVariableInjector.inject(input, emptyMap())
+        val expect =
+            "http://httpbin.org/anything?id=${FakeDynamicVariableProvider.FAKE_UUID}&ts=${FakeDynamicVariableProvider.FAKE_TIMESTAMP}"
+        assertThat(result).isEqualTo(expect)
     }
 
     companion object {

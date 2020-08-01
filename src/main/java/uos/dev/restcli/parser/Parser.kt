@@ -2,7 +2,10 @@ package uos.dev.restcli.parser
 
 import java.io.Reader
 
-class Parser {
+class Parser(
+    private val environmentVariableInjector: EnvironmentVariableInjector =
+        EnvironmentVariableInjectorImpl()
+) {
     private val lexer: Yylex = Yylex(null)
 
     private fun nextToken(): Yytoken? = lexer.yylex()
@@ -18,7 +21,7 @@ class Parser {
         environment: Map<String, String> = emptyMap()
     ): List<Request> {
         fun injectEnv(input: String): String =
-            EnvironmentVariableInjector.inject(input, environment)
+            environmentVariableInjector.inject(input, environment)
 
         reset(input)
         val result = mutableListOf<Request>()

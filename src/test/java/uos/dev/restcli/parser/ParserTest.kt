@@ -9,7 +9,9 @@ import uos.dev.restcli.TestResourceLoader
 import java.util.stream.Stream
 
 class ParserTest {
-    private val parser = Parser()
+    private val environmentVariableInjector =
+        EnvironmentVariableInjectorImpl(FakeDynamicVariableProvider())
+    private val parser = Parser(environmentVariableInjector)
 
     @ParameterizedTest(name = "{index} {0}")
     @MethodSource("parserTestCases")
@@ -25,50 +27,12 @@ class ParserTest {
     }
 
     @Test
-    fun parse_request_with_tests() {
-        val reader = TestResourceLoader.testResourceReader(TEST_REQUESTS_WITH_TESTS_RESOURCE)
-        val result = parser.parse(reader)
-        assertThat(result.size).isEqualTo(4)
-
-        assertThat(result.first()).isEqualTo(
-            Request(
-                method = RequestMethod.GET,
-                requestTarget = "https://httpbin.org/status/200",
-                scriptHandler = "> {%\n" +
-                        "client.test(\"Request executed successfully\", function() {\n" +
-                        "  client.assert(response.status === 200, \"Response status is not 200\");\n" +
-                        "});\n" +
-                        "%}"
-            )
-        )
-
-        assertThat(result[2]).isEqualTo(
-            Request(
-                method = RequestMethod.GET,
-                requestTarget = "https://httpbin.org/get",
-                scriptHandler = "> {%\n" +
-                        "client.test(\"Request executed successfully\", function() {\n" +
-                        "  client.assert(response.status === 200, \"Response status is not 200\");\n" +
-                        "});\n" +
-                        "\n" +
-                        "client.test(\"Response content-type is json\", function() {\n" +
-                        "  var type = response.contentType.mimeType;\n" +
-                        "  client.assert(type === \"application/json\", \"Expected 'application/json' but received '\" + type + \"'\");\n" +
-                        "});\n" +
-                        "%}"
-            )
-        )
-    }
-
-    @Test
     fun debug() {
         val path = TestResourceLoader.testResourcePath("requests/post-requests.http")
         Yylex.main(arrayOf(path))
     }
 
     companion object {
-        private const val TEST_REQUESTS_WITH_TESTS_RESOURCE = "requests/requests-with-tests.http"
-
         @Suppress("unused")
         @JvmStatic
         private fun parserTestCases(): Stream<Arguments> = Stream.of(
@@ -121,14 +85,15 @@ class ParserTest {
                     requestTarget = "http://httpbin.org/status/301"
                 )
             ),
-            // TODO: Support dynamic variable
             createParserTestCase(
                 name = "GET request with dynamic variables",
                 input = "### GET request with dynamic variables\n" +
                         "GET http://httpbin.org/anything?id={{\$uuid}}&ts={{\$timestamp}}\n",
                 expected = Request(
                     method = RequestMethod.GET,
-                    requestTarget = "http://httpbin.org/anything?id={{\$uuid}}&ts={{\$timestamp}}"
+                    requestTarget = "http://httpbin.org/anything?id=" +
+                            "${FakeDynamicVariableProvider.FAKE_UUID}&ts=" +
+                            "${FakeDynamicVariableProvider.FAKE_TIMESTAMP}"
                 )
             ),
             createParserTestCase(
@@ -212,7 +177,6 @@ class ParserTest {
                     )
                 )
             ),
-            // TODO: Support inject dynamic variables in body.
             createParserTestCase(
                 name = "Send request with dynamic variables in request's body",
                 input = "### Send request with dynamic variables in request's body\n" +
@@ -233,9 +197,9 @@ class ParserTest {
                         "Content-Type" to "application/json"
                     ),
                     body = "{\n" +
-                            "  \"id\": {{\$uuid}},\n" +
-                            "  \"price\": {{\$randomInt}},\n" +
-                            "  \"ts\": {{\$timestamp}},\n" +
+                            "  \"id\": ${FakeDynamicVariableProvider.FAKE_UUID},\n" +
+                            "  \"price\": ${FakeDynamicVariableProvider.FAKE_RANDOM_INT},\n" +
+                            "  \"ts\": ${FakeDynamicVariableProvider.FAKE_TIMESTAMP},\n" +
                             "  \"value\": \"content\"\n" +
                             "}"
                 )
