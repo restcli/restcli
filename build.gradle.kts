@@ -2,6 +2,7 @@ plugins {
     java
     kotlin("jvm") version "1.3.72"
     kotlin("kapt") version "1.3.72"
+    application
 }
 
 group = "uos.dev"
@@ -9,6 +10,10 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+}
+
+application {
+    mainClassName = "uos.dev.restcli.AppKt"
 }
 
 dependencies {
@@ -29,6 +34,7 @@ dependencies {
 
 tasks.named<Test>("test") {
     useJUnitPlatform()
+    workingDir = File(rootDir, "src/test/resources/requests")
 }
 
 configure<JavaPluginConvention> {
