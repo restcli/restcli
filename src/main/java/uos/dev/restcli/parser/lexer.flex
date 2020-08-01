@@ -173,7 +173,7 @@ FallbackCharacter = [^]
                                              switchState(S_RESPONSE_REFERENCE);   
                                            }
   {LineComment}                            { return createTokenNormal(TokenType.TYPE_COMMENT); }
-  {MessageLineFile}                        { return createTokenNormal(TokenType.TYPE_VALUE_FILE_REF); }
+  {MessageLineFile}                        { return createTokenNormal(TokenType.TYPE_BODY_FILE_REF); }
   {MessageLineText}                        { return createTokenNormal(TokenType.TYPE_BODY_MESSAGE); }
   {FallbackCharacter}                      { T("State S_BODY falback for: " + yytext());
                                              yypushback(yylength());
@@ -213,7 +213,7 @@ FallbackCharacter = [^]
   {MultiplePartBoundary}                   { isNewPartRequired = true; switchState(S_MULTIPLE_PART_HEADER); }
   {LineComment}                            { return createTokenNormal(TokenType.TYPE_COMMENT); }
   {MessageLineText}                        { return createTokenNormal(TokenType.TYPE_BODY_MESSAGE); }
-  {MessageLineFile}                        { return createTokenNormal(TokenType.TYPE_VALUE_FILE_REF); }
+  {MessageLineFile}                        { return createTokenNormal(TokenType.TYPE_BODY_FILE_REF); }
   {FallbackCharacter}                      { yypushback(yylength()); switchState(S_SCRIPT_HANDLER); }
 }
 

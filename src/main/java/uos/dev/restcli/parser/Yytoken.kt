@@ -8,7 +8,7 @@ data class Yytoken @JvmOverloads constructor(
 }
 
 enum class TokenType {
-    TYPE_VALUE_FILE_REF,
+    TYPE_BODY_FILE_REF,
     TYPE_REQUEST_METHOD,
     TYPE_REQUEST_TARGET,
     TYPE_REQUEST_HTTP_VERSION,

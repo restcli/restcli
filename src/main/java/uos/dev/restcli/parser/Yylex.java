@@ -986,7 +986,7 @@ private static final void T(String text) {
           case 20:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
             System.out.println("action [176] { return createTokenNormal(TokenType.TYPE_VALUE_FILE_REF); }");
-            { return createTokenNormal(TokenType.TYPE_VALUE_FILE_REF);
+            { return createTokenNormal(TokenType.TYPE_BODY_FILE_REF);
             }
             // fall through
           case 51: break;

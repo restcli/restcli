@@ -57,7 +57,7 @@ class Parser(
             }
 
             when (token.type) {
-                TokenType.TYPE_VALUE_FILE_REF -> Unit
+                TokenType.TYPE_BODY_FILE_REF -> Unit
                 TokenType.TYPE_REQUEST_METHOD -> builder.method = RequestMethod.from(token.value)
                 TokenType.TYPE_REQUEST_TARGET -> builder.requestTarget = injectEnv(token.value)
                 TokenType.TYPE_REQUEST_HTTP_VERSION -> builder.httpVersion = token.value
