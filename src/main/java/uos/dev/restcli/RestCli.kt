@@ -1,5 +1,6 @@
 package uos.dev.restcli
 
+import okhttp3.logging.HttpLoggingInterceptor
 import picocli.CommandLine
 import uos.dev.restcli.executor.OkhttpRequestExecutor
 import uos.dev.restcli.jsbridge.JsClient
@@ -10,9 +11,12 @@ import java.util.concurrent.Callable
 class RestCli : Callable<Unit> {
     @CommandLine.Option(
         names = ["-e", "--env"],
-        description = ["Path to the environment config file."]
+        description = [
+            "Name of the environment in config file ",
+            "(http-client.env.json/http-client.private.env.json)."
+        ]
     )
-    var environmentFilePath: String? = null
+    var environmentName: String? = null
 
     @CommandLine.Option(
         names = ["-s", "--script"],
@@ -21,16 +25,25 @@ class RestCli : Callable<Unit> {
     )
     lateinit var httpFilePath: String
 
+    @CommandLine.Option(
+        names = ["-l", "--log-level"],
+        description = [
+            "Config log level while the executor running. ",
+            "Valid values: \${COMPLETION-CANDIDATES}"
+        ]
+    )
+    var logLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.BASIC
+
     override fun call() {
-        println("Environment: $environmentFilePath; Script: $httpFilePath")
+        println("Environment name: $environmentName; Script: $httpFilePath")
         val parser = Parser()
         val jsClient = JsClient()
 
-        val environment = (environmentFilePath?.let { EnvironmentLoader().load(it) } ?: emptyMap())
+        val environment = (environmentName?.let { EnvironmentLoader().load(it) } ?: emptyMap())
             .toMutableMap()
         val requests = parser.parse(FileReader(httpFilePath), environment)
 
-        val executor = OkhttpRequestExecutor()
+        val executor = OkhttpRequestExecutor(logLevel)
         requests.forEach { request ->
             runSafe {
                 log("////////////////////////////////////////")
