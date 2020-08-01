@@ -56,8 +56,19 @@ private Yytoken createTokenTrimmed(TokenType type) {
 }
 
 private Yytoken createTokenMessageLineFile() {
+  if (yytext().charAt(0) != '<') {
+    throwError();
+  }
   String filePath = yytext().trim().substring(1).trim();
   return new Yytoken(TokenType.TYPE_BODY_FILE_REF, filePath);
+}
+
+private Yytoken createTokenHandlerFileScript() {
+  if (yytext().charAt(0) != '>') {
+    throwError();
+  }
+  String filePath = yytext().trim().substring(1).trim();
+  return new Yytoken(TokenType.TYPE_HANDLER_FILE_SCRIPT, filePath);
 }
 
 private Yytoken createAndSaveFieldNameToken(TokenType type) {
@@ -224,8 +235,7 @@ FallbackCharacter = [^]
 
 <S_SCRIPT_HANDLER> {
   {ResponseHandlerFileScript}              { switchState(S_RESPONSE_REFERENCE);
-                                             yypushback(yylength());
-                                             return createTokenNormal(TokenType.TYPE_HANDLER_FILE_SCRIPT);
+                                             return createTokenHandlerFileScript();
                                            }
   {ResponseHandlerEmbeddedScript}          { switchState(S_RESPONSE_REFERENCE);
                                              return createTokenNormal(TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT);

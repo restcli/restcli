@@ -265,6 +265,20 @@ class ParserTest {
                     requestTarget = "https://httpbin.org/ip",
                     responseReference = "<> ip_response.json"
                 )
+            ),
+            createParserTestCase(
+                name = "Test from referenced file script",
+                input = "### Test from referenced file script\n" +
+                        "GET https://httpbin.org/status/404\n" +
+                        "\n" +
+                        "> test_script.js\n",
+                expected = Request(
+                    method = RequestMethod.GET,
+                    requestTarget = "https://httpbin.org/status/404",
+                    scriptHandler = "client.test(\"Request executed successfully\", function() {\n" +
+                            "    client.assert(response.status === 200, \"Response status is not 200\");\n" +
+                            "});\n"
+                )
             )
         )
 

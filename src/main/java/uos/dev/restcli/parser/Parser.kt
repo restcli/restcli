@@ -99,10 +99,18 @@ class Parser(
                 }
                 TokenType.TYPE_SEPARATOR -> Unit
                 TokenType.TYPE_BLANK -> Unit
+                // TODO: Figure out what should we do with response reference.
                 TokenType.TYPE_RESPONSE_REFERENCE -> builder.rawResponseReference = token.value
                 TokenType.TYPE_COMMENT -> Unit
-                TokenType.TYPE_HANDLER_FILE_SCRIPT -> builder.rawScriptHandler.add(token.value)
-                TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT -> builder.rawScriptHandler.add(token.value)
+                TokenType.TYPE_HANDLER_FILE_SCRIPT,
+                TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT -> {
+                    val script = if (token.type == TokenType.TYPE_HANDLER_FILE_SCRIPT) {
+                        Request.wrapContentWithBarrier(File(token.value).readText())
+                    } else {
+                        token.value
+                    }
+                    builder.rawScriptHandler.add(script)
+                }
             }
         }
         // Build the latest request if exist.
