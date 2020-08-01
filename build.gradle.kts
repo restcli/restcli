@@ -23,6 +23,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.7.2")
     implementation("com.google.code.gson:gson:2.8.6")
     implementation("org.apache.commons:commons-text:1.9")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.8.0")
 }
 
 tasks.named<Test>("test") {

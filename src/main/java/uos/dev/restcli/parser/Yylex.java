@@ -13,7 +13,6 @@ public class Yylex {
 
   /** Initial size of the lookahead buffer. */
   private static final int ZZ_BUFFERSIZE = 16384;
-  private static final String ZZ_NL = System.getProperty("line.separator");
 
   // Lexical states.
   public static final int YYINITIAL = 0;
@@ -576,23 +575,6 @@ private static final void T(String text) {
     this.zzReader = in;
   }
 
-
-  private static String zzToPrintable(String str) {
-    StringBuilder builder = new StringBuilder();
-    for (int n = 0 ; n < str.length() ; ) {
-      int ch = str.codePointAt(n);
-      int charCount = Character.charCount(ch);
-      n += charCount;
-      if (ch > 31 && ch < 127) {
-        builder.append((char)ch);
-      } else if (charCount == 1) {
-        builder.append(String.format("\\u%04X", ch));
-      } else {
-        builder.append(String.format("\\U%06X", ch));
-      }
-    }
-    return builder.toString();
-  }
   /**
    * Translates raw input code points to DFA table row
    */
@@ -920,8 +902,6 @@ private static final void T(String text) {
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [174] { T(\"In YYINITIAL but got \" + yytext() + \" switch to S_REQUEST_LINE\");"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(S_REQUEST_LINE); }");
             { T("In YYINITIAL but got " + yytext() + " switch to S_REQUEST_LINE");
                                              yypushback(yylength());
                                              switchState(S_REQUEST_LINE);
@@ -929,50 +909,36 @@ private static final void T(String text) {
             // fall through
           case 36: break;
           case 2:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [173] { T(\"Ignore any space in YYINITIAL\"); }");
             { T("Ignore any space in YYINITIAL");
             }
             // fall through
           case 37: break;
           case 3:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [187] { yypushback(yylength()); switchState(S_REQUEST_LINE); }");
             { yypushback(yylength()); switchState(S_REQUEST_LINE);
             }
             // fall through
           case 38: break;
           case 4:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [186] { T(\"Ignore any space in S_REQUEST_SEPARATOR\"); }");
             { T("Ignore any space in S_REQUEST_SEPARATOR");
             }
             // fall through
           case 39: break;
           case 5:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [193] { hasRequestTarget = true; return createTokenTrimmed(TokenType.TYPE_REQUEST_TARGET); }");
             { hasRequestTarget = true; return createTokenTrimmed(TokenType.TYPE_REQUEST_TARGET);
             }
             // fall through
           case 40: break;
           case 6:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [191] { T(\"Ignore {WhiteSpace}+ in S_REQUEST_LINE\"); }");
             { T("Ignore {WhiteSpace}+ in S_REQUEST_LINE");
             }
             // fall through
           case 41: break;
           case 7:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [195] { if (!hasRequestTarget) throwError(); switchState(S_HEADER); }");
             { if (!hasRequestTarget) throwError(); switchState(S_HEADER);
             }
             // fall through
           case 42: break;
           case 8:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [204] { T(\"State S_HEADER fallback for: \" + yytext());"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(YYINITIAL); }");
             { T("State S_HEADER fallback for: " + yytext());
                                              yypushback(yylength());
                                              switchState(YYINITIAL);
@@ -980,15 +946,11 @@ private static final void T(String text) {
             // fall through
           case 43: break;
           case 9:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [203] { if (isMultiplePart) switchState(S_MULTILE_PART); else switchState(S_BODY); }");
             { if (isMultiplePart) switchState(S_MULTILE_PART); else switchState(S_BODY);
             }
             // fall through
           case 44: break;
           case 10:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [221] { T(\"State S_BODY falback for: \" + yytext());"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(YYINITIAL); }");
             { T("State S_BODY falback for: " + yytext());
                                              yypushback(yylength());
                                              switchState(YYINITIAL);
@@ -996,43 +958,31 @@ private static final void T(String text) {
             // fall through
           case 45: break;
           case 11:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [220] { return createTokenNormal(TokenType.TYPE_BODY_MESSAGE); }");
             { return createTokenNormal(TokenType.TYPE_BODY_MESSAGE);
             }
             // fall through
           case 46: break;
           case 12:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [270] { yypushback(yylength()); switchState(S_SCRIPT_HANDLER); }");
             { yypushback(yylength()); switchState(S_SCRIPT_HANDLER);
             }
             // fall through
           case 47: break;
           case 13:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [275] { T(\"In S_RESPONSE_REFERENCE but got \" + yytext() + \" -> switch to YYINITIAL\"); yypushback(yylength()); switchState(YYINITIAL); }");
             { T("In S_RESPONSE_REFERENCE but got " + yytext() + " -> switch to YYINITIAL"); yypushback(yylength()); switchState(YYINITIAL);
             }
             // fall through
           case 48: break;
           case 14:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [244] { throwError(); }");
             { throwError();
             }
             // fall through
           case 49: break;
           case 15:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [243] { switchState(S_MULTIPLE_PART_BODY); }");
             { switchState(S_MULTIPLE_PART_BODY);
             }
             // fall through
           case 50: break;
           case 16:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [185] { return createTokenNormal(TokenType.TYPE_COMMENT); }");
             { return createTokenNormal(TokenType.TYPE_COMMENT);
             }
             // fall through
@@ -1041,15 +991,11 @@ private static final void T(String text) {
             // lookahead expression with fixed lookahead length
             zzMarkedPos = Character.offsetByCodePoints
                 (zzBufferL, zzStartRead, zzEndRead - zzStartRead, zzMarkedPos, -1);
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [200] { return createAndSaveFieldNameToken(TokenType.TYPE_FIELD_NAME); }");
             { return createAndSaveFieldNameToken(TokenType.TYPE_FIELD_NAME);
             }
             // fall through
           case 52: break;
           case 18:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [201] { return createFieldValueToken(); }");
             { return createFieldValueToken();
             }
             // fall through
@@ -1058,22 +1004,16 @@ private static final void T(String text) {
             // lookahead expression with fixed lookahead length
             zzMarkedPos = Character.offsetByCodePoints
                 (zzBufferL, zzStartRead, zzEndRead - zzStartRead, zzMarkedPos, -1);
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [241] { return createTokenTrimmed(TokenType.TYPE_FIELD_NAME); }");
             { return createTokenTrimmed(TokenType.TYPE_FIELD_NAME);
             }
             // fall through
           case 54: break;
           case 20:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [219] { return createTokenMessageLineFile(); }");
             { return createTokenMessageLineFile();
             }
             // fall through
           case 55: break;
           case 21:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [214] { T(\"State S_BODY but got <>.* => fallback to response reference\");"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(S_RESPONSE_REFERENCE); }");
             { T("State S_BODY but got <>.* => fallback to response reference");
                                              yypushback(yylength());
                                              switchState(S_RESPONSE_REFERENCE);
@@ -1081,8 +1021,6 @@ private static final void T(String text) {
             // fall through
           case 56: break;
           case 22:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [210] { T(\"State S_BODY but got response handler -> switch state to S_SCRIPT_HANDLER\");"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(S_SCRIPT_HANDLER); }");
             { T("State S_BODY but got response handler -> switch state to S_SCRIPT_HANDLER");
                                              yypushback(yylength());
                                              switchState(S_SCRIPT_HANDLER);
@@ -1090,15 +1028,11 @@ private static final void T(String text) {
             // fall through
           case 57: break;
           case 23:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [233] { isNewPartRequired = true; switchState(S_MULTIPLE_PART_HEADER); }");
             { isNewPartRequired = true; switchState(S_MULTIPLE_PART_HEADER);
             }
             // fall through
           case 58: break;
           case 24:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [228] { T(\"State S_BODY_MULTILE_PART but got <>.* => fallback to response reference\");"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(S_RESPONSE_REFERENCE); }");
             { T("State S_BODY_MULTILE_PART but got <>.* => fallback to response reference");
                                              yypushback(yylength());
                                              switchState(S_RESPONSE_REFERENCE);
@@ -1106,16 +1040,12 @@ private static final void T(String text) {
             // fall through
           case 59: break;
           case 25:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [264] { switchState(S_RESPONSE_REFERENCE);"+ZZ_NL+"                                             return createTokenHandlerFileScript(); }");
             { switchState(S_RESPONSE_REFERENCE);
                                              return createTokenHandlerFileScript();
             }
             // fall through
           case 60: break;
           case 26:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [248] { T(\"State S_BODY but got response handler -> switch state to S_SCRIPT_HANDLER\");"+ZZ_NL+"                                               yypushback(yylength());"+ZZ_NL+"                                               switchState(S_SCRIPT_HANDLER); }");
             { T("State S_BODY but got response handler -> switch state to S_SCRIPT_HANDLER");
                                                yypushback(yylength());
                                                switchState(S_SCRIPT_HANDLER);
@@ -1123,8 +1053,6 @@ private static final void T(String text) {
             // fall through
           case 61: break;
           case 27:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [167] { reset();"+ZZ_NL+"                                             switchState(S_REQUEST_SEPARATOR);"+ZZ_NL+"                                             return createTokenTrimmed(TokenType.TYPE_SEPARATOR); }");
             { reset();
                                              switchState(S_REQUEST_SEPARATOR);
                                              return createTokenTrimmed(TokenType.TYPE_SEPARATOR);
@@ -1161,118 +1089,48 @@ private static final void T(String text) {
               };
               zzMarkedPos = zzFPos;
             }
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [192] { return createTokenTrimmed(TokenType.TYPE_REQUEST_METHOD); }");
             { return createTokenTrimmed(TokenType.TYPE_REQUEST_METHOD);
             }
             // fall through
           case 63: break;
           case 29:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [274] { return createTokenNormal(TokenType.TYPE_RESPONSE_REFERENCE); }");
             { return createTokenNormal(TokenType.TYPE_RESPONSE_REFERENCE);
             }
             // fall through
           case 64: break;
           case 30:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [267] { switchState(S_RESPONSE_REFERENCE);"+ZZ_NL+"                                             return createTokenEmbeddedScriptHandler(); }");
             { switchState(S_RESPONSE_REFERENCE);
                                              return createTokenEmbeddedScriptHandler();
             }
             // fall through
           case 65: break;
           case 31:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [194] { return createTokenTrimmed(TokenType.TYPE_REQUEST_HTTP_VERSION); }");
             { return createTokenTrimmed(TokenType.TYPE_REQUEST_HTTP_VERSION);
             }
             // fall through
           case 66: break;
           case 32:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [183] { return createTokenWithoutValue(TokenType.TYPE_NO_LOG); }");
             { return createTokenWithoutValue(TokenType.TYPE_NO_LOG);
             }
             // fall through
           case 67: break;
           case 33:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [181] { return createTokenWithoutValue(TokenType.TYPE_NO_REDIRECT); }");
             { return createTokenWithoutValue(TokenType.TYPE_NO_REDIRECT);
             }
             // fall through
           case 68: break;
           case 34:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [182] { return createTokenWithoutValue(TokenType.TYPE_NO_COOKIE_JAR); }");
             { return createTokenWithoutValue(TokenType.TYPE_NO_COOKIE_JAR);
             }
             // fall through
           case 69: break;
           case 35:
-            System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [184] { return createTokenWithoutValue(TokenType.TYPE_USE_OS_CREDENTIALS); }");
             { return createTokenWithoutValue(TokenType.TYPE_USE_OS_CREDENTIALS);
             }
             // fall through
           case 70: break;
           default:
             zzScanError(ZZ_NO_MATCH);
-        }
-      }
-    }
-  }
-
-  /**
-   * Runs the scanner on input files.
-   *
-   * This main method is the debugging routine for the scanner.
-   * It prints debugging information about each returned token to
-   * System.out until the end of file is reached, or an error occured.
-   *
-   * @param argv   the command line, contains the filenames to run
-   *               the scanner on.
-   */
-  public static void main(String[] argv) {
-    if (argv.length == 0) {
-      System.out.println("Usage : java Yylex [ --encoding <name> ] <inputfile(s)>");
-    }
-    else {
-      int firstFilePos = 0;
-      String encodingName = "UTF-8";
-      if (argv[0].equals("--encoding")) {
-        firstFilePos = 2;
-        encodingName = argv[1];
-        try {
-          // Side-effect: is encodingName valid?
-          java.nio.charset.Charset.forName(encodingName);
-        } catch (Exception e) {
-          System.out.println("Invalid encoding '" + encodingName + "'");
-          return;
-        }
-      }
-      for (int i = firstFilePos; i < argv.length; i++) {
-        Yylex scanner = null;
-        try {
-          java.io.FileInputStream stream = new java.io.FileInputStream(argv[i]);
-          java.io.Reader reader = new java.io.InputStreamReader(stream, encodingName);
-          scanner = new Yylex(reader);
-          do {
-            System.out.println(scanner.yylex());
-          } while (!scanner.zzAtEOF);
-
-        }
-        catch (java.io.FileNotFoundException e) {
-          System.out.println("File not found : \""+argv[i]+"\"");
-        }
-        catch (java.io.IOException e) {
-          System.out.println("IO error scanning file \""+argv[i]+"\"");
-          System.out.println(e);
-        }
-        catch (Exception e) {
-          System.out.println("Unexpected exception:");
-          e.printStackTrace();
         }
       }
     }

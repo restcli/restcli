@@ -35,10 +35,6 @@ class RestCli : Callable<Unit> {
             log("////////////////////////////////////////")
             log("##### Execute request ${request.requestTarget} #####")
             val response = executor.execute(request)
-            log(">>> Response >>>")
-            val rawBody = response.body?.source()?.buffer?.clone()?.readUtf8()
-            log(rawBody.orEmpty())
-            log("<<< Response <<<")
             jsClient.updateResponse(response)
             request.scriptHandler?.let { script ->
                 log(">>> Test script >>>")
