@@ -34,21 +34,10 @@ class Parser(
             builder = Request.Builder()
         }
 
-        var isFirstTimeInRequestLine = true
         while (true) {
             val token = nextToken() ?: break
             when (lexer.yystate()) {
                 Yylex.YYINITIAL -> buildRequestAndMakeBuilderNew()
-                Yylex.S_REQUEST_SEPARATOR -> {
-                    isFirstTimeInRequestLine = true
-                    buildRequestAndMakeBuilderNew()
-                }
-                Yylex.S_REQUEST_LINE -> {
-                    if (isFirstTimeInRequestLine) {
-                        buildRequestAndMakeBuilderNew()
-                        isFirstTimeInRequestLine = false
-                    }
-                }
                 Yylex.S_HEADER -> Unit
                 Yylex.S_BODY -> Unit
                 Yylex.S_SCRIPT_HANDLER -> Unit
@@ -58,6 +47,7 @@ class Parser(
             }
 
             when (token.type) {
+                TokenType.TYPE_SEPARATOR -> buildRequestAndMakeBuilderNew()
                 TokenType.TYPE_REQUEST_METHOD -> builder.method = RequestMethod.from(token.value)
                 TokenType.TYPE_REQUEST_TARGET -> builder.requestTarget = injectEnv(token.value)
                 TokenType.TYPE_REQUEST_HTTP_VERSION -> builder.httpVersion = token.value
@@ -96,7 +86,6 @@ class Parser(
                         builder.rawBody.add(bodyMessage)
                     }
                 }
-                TokenType.TYPE_SEPARATOR -> Unit
                 TokenType.TYPE_BLANK -> Unit
                 // TODO: Figure out what should we do with response reference.
                 TokenType.TYPE_RESPONSE_REFERENCE -> builder.rawResponseReference = token.value
@@ -110,6 +99,10 @@ class Parser(
                     }
                     builder.rawScriptHandler.add(script)
                 }
+                TokenType.TYPE_NO_REDIRECT -> builder.isFollowRedirects = true
+                TokenType.TYPE_NO_COOKIE_JAR -> builder.isNoCookieJar = true
+                TokenType.TYPE_NO_LOG -> builder.isNoLog = true
+                TokenType.TYPE_USE_OS_CREDENTIALS -> builder.isUseOsCredentials = true
             }
         }
         // Build the latest request if exist.

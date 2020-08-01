@@ -9,7 +9,11 @@ data class Request(
     val scriptHandler: String? = null,
     val responseReference: String? = null,
     val fileLoad: String? = null,
-    val parts: List<Part> = mutableListOf()
+    val parts: List<Part> = mutableListOf(),
+    val isFollowRedirects: Boolean = false,
+    val isNoCookieJar: Boolean = false,
+    val isNoLog: Boolean = false,
+    val isUseOsCredentials: Boolean = false
 ) {
     data class Part(
         val name: String,
@@ -35,7 +39,11 @@ data class Request(
         val rawScriptHandler: MutableList<String> = mutableListOf(),
         val rawResponseHandler: MutableList<String> = mutableListOf(),
         var rawResponseReference: String? = null,
-        val parts: MutableList<Part.Builder> = mutableListOf()
+        val parts: MutableList<Part.Builder> = mutableListOf(),
+        var isFollowRedirects: Boolean = false,
+        var isNoCookieJar: Boolean = false,
+        var isNoLog: Boolean = false,
+        var isUseOsCredentials: Boolean = false
     ) {
         private val isValid: Boolean
             get() = requestTarget?.isNotBlank() ?: false
@@ -52,7 +60,11 @@ data class Request(
                 body = rawBody.joinToStringAndRemoveBarrier(),
                 scriptHandler = rawScriptHandler.joinToStringAndRemoveBarrier(),
                 responseReference = rawResponseReference?.trim(),
-                parts = parts.map { it.build() }
+                parts = parts.map { it.build() },
+                isFollowRedirects = isFollowRedirects,
+                isNoCookieJar = isNoCookieJar,
+                isNoLog = isNoLog,
+                isUseOsCredentials = isUseOsCredentials
             )
         }
     }

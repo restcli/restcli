@@ -48,6 +48,10 @@ private void throwError() throws ParserException {
     throw new ParserException("Error while parsing: " + yytext());
 }
 
+private Yytoken createTokenWithoutValue(TokenType type) {
+  return new Yytoken(type);
+}
+
 private Yytoken createTokenNormal(TokenType type) {
   return new Yytoken(type, yytext());
 }
@@ -124,6 +128,12 @@ RequiredWhiteSpace = {WhiteSpace}+
 // Comments.
 LineComment = {OptionalWhiteSpace}(#|\/\/){LineTail}
 
+// Request configs.
+ConfigNoRedirect = "#"{RequiredWhiteSpace}"@no-redirect"{OptionalWhiteSpace}{LineTerminator}
+ConfigNoCookieJar = "#"{RequiredWhiteSpace}"@no-cookie-jar"{OptionalWhiteSpace}{LineTerminator}
+ConfigNoLog = "#"{RequiredWhiteSpace}"@no-log"{OptionalWhiteSpace}{LineTerminator}
+ConfigUseOsCredentials = "#"{RequiredWhiteSpace}"@use-os-credentials"{OptionalWhiteSpace}{LineTerminator}
+
 // Request separator.
 RequestSeparator = ###{LineTail}
 
@@ -168,6 +178,10 @@ FallbackCharacter = [^]
 }
 
 <S_REQUEST_SEPARATOR>{
+  {ConfigNoRedirect}                       { return createTokenWithoutValue(TokenType.TYPE_NO_REDIRECT); }
+  {ConfigNoCookieJar}                      { return createTokenWithoutValue(TokenType.TYPE_NO_COOKIE_JAR); }
+  {ConfigNoLog}                            { return createTokenWithoutValue(TokenType.TYPE_NO_LOG); }
+  {ConfigUseOsCredentials}                 { return createTokenWithoutValue(TokenType.TYPE_USE_OS_CREDENTIALS); }
   {LineComment}                            { return createTokenNormal(TokenType.TYPE_COMMENT); }
   {AnySpace}+                              { T("Ignore any space in S_REQUEST_SEPARATOR"); }
   {FallbackCharacter}                      { yypushback(yylength()); switchState(S_REQUEST_LINE);}

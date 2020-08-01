@@ -76,10 +76,17 @@ class ParserTest {
                 name = "GET request with disabled redirects",
                 input = "### GET request with disabled redirects\n" +
                         "# @no-redirect\n" +
+                        "# @no-cookie-jar\n" +
+                        "# @no-log\n" +
+                        "# @use-os-credentials\n" +
                         "GET http://httpbin.org/status/301\n",
                 expected = Request(
                     method = RequestMethod.GET,
-                    requestTarget = "http://httpbin.org/status/301"
+                    requestTarget = "http://httpbin.org/status/301",
+                    isFollowRedirects = true,
+                    isNoCookieJar = true,
+                    isNoLog = true,
+                    isUseOsCredentials = true
                 )
             ),
             createParserTestCase(
