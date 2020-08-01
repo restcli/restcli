@@ -22,6 +22,7 @@ dependencies {
     testImplementation("com.google.truth:truth:1.0.1")
     implementation("com.squareup.okhttp3:okhttp:4.7.2")
     implementation("com.google.code.gson:gson:2.8.6")
+    implementation("org.apache.commons:commons-text:1.9")
 }
 
 tasks.named<Test>("test") {

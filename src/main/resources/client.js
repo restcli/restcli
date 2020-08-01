@@ -68,21 +68,34 @@ HttpResponse.prototype.set = function (varName, varValue) {
 
 ///////////// ResponseHeaders /////////////
 function ResponseHeaders() {
-
+    this.headers = [];
 }
 
 /**
  * Retrieves the first value of 'headerName' response header or null otherwise.
  */
 ResponseHeaders.prototype.valueOf = function (headerName) {
-
+    for (var i = 0; i < this.headers.length; i++) {
+        var header = this.headers[i];
+        if (header.hasOwnProperty(headerName)) {
+            return header;
+        }
+    }
+    return null;
 }
 
 /**
  * Retrieves all values of 'headerName' response header. Returns empty list if header with 'headerName' doesn't exist.
  */
 ResponseHeaders.prototype.valuesOf = function (headerName) {
-
+    var result = [];
+    for (var i = 0; i < this.headers.length; i++) {
+        var header = this.headers[i];
+        if (header.hasOwnProperty(headerName)) {
+            result.push(header);
+        }
+    }
+    return result;
 }
 
 ///////////// ContentType /////////////
@@ -91,7 +104,7 @@ function ContentType() {
      * MIME type of the response,
      * e.g. 'text/plain', 'text/xml', 'application/json'.
      */
-    this.mineType = "";
+    this.mimeType = "";
 
     /**
      * String representation of the response charset,

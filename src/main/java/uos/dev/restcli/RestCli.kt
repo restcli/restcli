@@ -1,14 +1,11 @@
 package uos.dev.restcli
 
-import netscape.javascript.JSObject
 import picocli.CommandLine
 import uos.dev.restcli.executor.OkhttpRequestExecutor
 import uos.dev.restcli.jsbridge.JsClient
 import uos.dev.restcli.parser.Parser
 import java.io.FileReader
 import java.util.concurrent.Callable
-import javax.script.Invocable
-import javax.script.ScriptEngineManager
 
 class RestCli : Callable<Unit> {
     @CommandLine.Option(
@@ -35,11 +32,14 @@ class RestCli : Callable<Unit> {
 
         val executor = OkhttpRequestExecutor()
         requests.forEach { request ->
+            log("////////////////////////////////////////")
             log("##### Execute request ${request.requestTarget} #####")
             val response = executor.execute(request)
             log(">>> Response >>>")
-            log(response.body?.string().orEmpty())
+            val rawBody = response.body?.source()?.buffer?.clone()?.readUtf8()
+            log(rawBody.orEmpty())
             log("<<< Response <<<")
+            jsClient.updateResponse(response)
             request.scriptHandler?.let { script ->
                 log(">>> Test script >>>")
                 jsClient.execute(script)
