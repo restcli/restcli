@@ -5,6 +5,7 @@ import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
+import org.apache.commons.validator.routines.UrlValidator
 import uos.dev.restcli.parser.Request
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -13,6 +14,7 @@ import okhttp3.Request as OkhttpRequest
 class OkhttpRequestExecutor(
     private val logLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.BODY
 ) : RequestExecutor {
+    private val urlValidator: UrlValidator = UrlValidator()
     private val loggingInterceptor: Interceptor = HttpLoggingInterceptor(CustomLogger())
         .apply { setLevel(logLevel) }
 
@@ -25,13 +27,52 @@ class OkhttpRequestExecutor(
             .followRedirects(request.isFollowRedirects)
             .build()
         val builder = OkhttpRequest.Builder()
-        builder.url(request.requestTarget)
+        val requestTarget = obtainRequestTarget(request)
+            ?: throw UnsupportedOperationException("Can't execute request target: ${request.requestTarget}")
+        builder.url(requestTarget)
         val body = request.body?.toRequestBody()
         builder.method(request.method.name, body)
         request.headers.forEach { (name, value) ->
             builder.addHeader(name, value)
         }
         return client.newCall(builder.build()).execute()
+    }
+
+    private fun obtainRequestTarget(request: Request): String? {
+        val path = request.requestTarget
+        if (urlValidator.isValid(path)) {
+            // 1. If the path is url valid -> used it.
+            return path
+        }
+
+        // 2. Find the `Host` value from header.
+        val hostKey = request.headers.keys.firstOrNull { it.equals("host", ignoreCase = true) }
+        if (hostKey == null) {
+            // 2.1. Host doesn't exist -> try to add `http://` prefix to the path then checking the
+            // url valid status. If not valid, returns null.
+            val pathWithHttpPrefix = "http://$path"
+            return if (urlValidator.isValid(pathWithHttpPrefix)) pathWithHttpPrefix else null
+        }
+        val host = request.headers[hostKey] ?: return null
+
+        // 3. Now, the host exist. We will ensure that the host starts with http/https prefix.
+        val isStartWithHttp = host.startsWith("http://") ||
+                host.startsWith("https://")
+        val hostWithHttpPrefix = if (isStartWithHttp) host else "http://$host"
+
+        return when {
+            // Host not valid -> return null.
+            !urlValidator.isValid(hostWithHttpPrefix) -> null
+
+            // the path is asterisk -> return host.
+            path == "*" -> hostWithHttpPrefix
+
+            // If the path valid by checking start with `/` then combine host with path to get
+            // request target.
+            path.startsWith("/") -> "$hostWithHttpPrefix$path"
+
+            else -> null
+        }
     }
 
     private class CustomLogger : HttpLoggingInterceptor.Logger {

@@ -2,6 +2,21 @@
 GET https://httpbin.org/ip
 Accept: application/json
 
+### GET request with relative path
+GET /ip
+Accept: application/json
+Host: https://httpbin.org
+
+### GET request without http prefix in Host header
+GET /ip
+Accept: application/json
+Host: httpbin.org
+
+### GET request without specifit request target in request line
+GET *
+Accept: application/json
+Host: https://httpbin.org/ip
+
 ### GET request with parameter
 GET https://httpbin.org/get?show_env=1
 Accept: application/json

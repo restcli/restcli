@@ -71,7 +71,6 @@ class ParserTest {
                     headers = mapOf("Accept" to "application/json")
                 )
             ),
-            // TODO: Support GET request with disabled redirects
             createParserTestCase(
                 name = "GET request with disabled redirects",
                 input = "### GET request with disabled redirects\n" +
@@ -230,7 +229,6 @@ class ParserTest {
                             "});"
                 )
             ),
-            // TODO: Add test case for inject variable in test-script.
             createParserTestCase(
                 name = "Failed test: check response status is 200",
                 input = "### Failed test: check response status is 200\n" +

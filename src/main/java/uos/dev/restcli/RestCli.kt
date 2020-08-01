@@ -32,15 +32,25 @@ class RestCli : Callable<Unit> {
 
         val executor = OkhttpRequestExecutor()
         requests.forEach { request ->
-            log("////////////////////////////////////////")
-            log("##### Execute request ${request.requestTarget} #####")
-            val response = executor.execute(request)
-            jsClient.updateResponse(response)
-            request.scriptHandler?.let { script ->
-                log(">>> Test script >>>")
-                jsClient.execute(script)
-                log("<<< Test script <<<")
+            runSafe {
+                log("////////////////////////////////////////")
+                log("##### Execute request ${request.requestTarget} #####")
+                val response = executor.execute(request)
+                jsClient.updateResponse(response)
+                request.scriptHandler?.let { script ->
+                    log(">>> Test script >>>")
+                    jsClient.execute(script)
+                    log("<<< Test script <<<")
+                }
             }
+        }
+    }
+
+    private fun runSafe(action: () -> Unit) {
+        try {
+            action()
+        } catch (e: Exception) {
+            log(e.message.orEmpty())
         }
     }
 
