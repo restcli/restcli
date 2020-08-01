@@ -21,6 +21,7 @@ dependencies {
     kapt("info.picocli:picocli-codegen:4.3.2")
     testImplementation("com.google.truth:truth:1.0.1")
     implementation("com.squareup.okhttp3:okhttp:4.7.2")
+    implementation("com.google.code.gson:gson:2.8.6")
 }
 
 tasks.named<Test>("test") {
