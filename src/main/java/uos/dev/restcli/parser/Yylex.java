@@ -150,24 +150,24 @@ public class Yylex {
     "\0\u0174\0\u020f\0\u049a\0\u04b9\0\u04d8\0\u045c\0\u0174\0\u04f7"+
     "\0\u0516\0\u022e\0\u0535\0\u0174\0\u01b2\0\u0554\0\u0174\0\u01b2"+
     "\0\u0573\0\u0592\0\u05b1\0\u05d0\0\u05ef\0\u043d\0\u045c\0\u047b"+
-    "\0\u020f\0\u060e\0\u049a\0\u062d\0\u064c\0\u066b\0\u068a\0\u06a9"+
-    "\0\u06c8\0\u06e7\0\u0706\0\u0725\0\u0155\0\u0744\0\u0763\0\u022e"+
-    "\0\u0174\0\u0782\0\u0763\0\u07a1\0\u07c0\0\u07df\0\u07fe\0\u081d"+
-    "\0\u083c\0\u085b\0\u087a\0\u0899\0\u08b8\0\u0383\0\u0174\0\u08d7"+
-    "\0\u041e\0\u08f6\0\u0763\0\u08d7\0\u043d\0\u0174\0\u043d\0\u045c"+
-    "\0\u047b\0\u049a\0\u0915\0\u0934\0\u0953\0\u04f7\0\u0972\0\u0991"+
-    "\0\u09b0\0\u09cf\0\u0592\0\u0174\0\u09ee\0\u0a0d\0\u0a2c\0\u0a4b"+
-    "\0\u0a6a\0\u0a89\0\u0aa8\0\u0ac7\0\u0ae6\0\u0b05\0\u0b24\0\u0b43"+
-    "\0\u0b62\0\u0b81\0\u0ba0\0\u0bbf\0\u0bde\0\u0bfd\0\u0c1c\0\u0c3b"+
-    "\0\u0c5a\0\u0174\0\u0915\0\u0174\0\u0934\0\u0c79\0\u0174\0\u0c98"+
-    "\0\u0c79\0\u0174\0\u0972\0\u0174\0\u0991\0\u0cb7\0\u0174\0\u0cd6"+
-    "\0\u0cb7\0\u0cf5\0\u0d14\0\u0d33\0\u0174\0\u0d52\0\u0d33\0\u0d71"+
-    "\0\u0d90\0\u0174\0\u0daf\0\u0dce\0\u0ded\0\u0e0c\0\u0174\0\u0b24"+
-    "\0\u0e2b\0\u0b62\0\u0e4a\0\u0e69\0\u0e88\0\u0ea7\0\u0ec6\0\u0ee5"+
-    "\0\u0b24\0\u0c5a\0\u0f04\0\u0174\0\u0cf5\0\u0b24\0\u0d14\0\u0f23"+
-    "\0\u0f42\0\u0f61\0\u0f80\0\u0f9f\0\u0fbe\0\u0fdd\0\u0ffc\0\u101b"+
-    "\0\u103a\0\u0f04\0\u1059\0\u1078\0\u1097\0\u10b6\0\u101b\0\u10d5"+
-    "\0\u0cb7\0\u10f4\0\u1113\0\u0174\0\u1132\0\u1132";
+    "\0\u020f\0\u060e\0\u049a\0\u04b9\0\u062d\0\u064c\0\u066b\0\u068a"+
+    "\0\u06a9\0\u06c8\0\u06e7\0\u0706\0\u0155\0\u0725\0\u0744\0\u022e"+
+    "\0\u0174\0\u0763\0\u0744\0\u0782\0\u07a1\0\u07c0\0\u07df\0\u07fe"+
+    "\0\u081d\0\u083c\0\u085b\0\u087a\0\u0899\0\u0383\0\u0174\0\u08b8"+
+    "\0\u041e\0\u08d7\0\u0744\0\u08b8\0\u043d\0\u0174\0\u043d\0\u045c"+
+    "\0\u047b\0\u049a\0\u08f6\0\u0915\0\u0934\0\u04f7\0\u0953\0\u0972"+
+    "\0\u0991\0\u09b0\0\u0592\0\u0174\0\u09cf\0\u09ee\0\u0a0d\0\u0a2c"+
+    "\0\u0a4b\0\u0a6a\0\u0a89\0\u0aa8\0\u0ac7\0\u0ae6\0\u0b05\0\u0b24"+
+    "\0\u0b43\0\u0b62\0\u0b81\0\u0ba0\0\u0bbf\0\u0bde\0\u0bfd\0\u0c1c"+
+    "\0\u0c3b\0\u0174\0\u08f6\0\u0174\0\u0915\0\u0c5a\0\u0174\0\u0c79"+
+    "\0\u0c5a\0\u0174\0\u0953\0\u0174\0\u0972\0\u0c98\0\u0174\0\u0cb7"+
+    "\0\u0c98\0\u0cd6\0\u0cf5\0\u0d14\0\u0174\0\u0d33\0\u0d14\0\u0d52"+
+    "\0\u0d71\0\u0174\0\u0d90\0\u0daf\0\u0dce\0\u0ded\0\u0174\0\u0b05"+
+    "\0\u0e0c\0\u0b43\0\u0e2b\0\u0e4a\0\u0e69\0\u0e88\0\u0ea7\0\u0ec6"+
+    "\0\u0b05\0\u0c3b\0\u0ee5\0\u0174\0\u0cd6\0\u0b05\0\u0cf5\0\u0f04"+
+    "\0\u0f23\0\u0f42\0\u0f61\0\u0f80\0\u0f9f\0\u0fbe\0\u0fdd\0\u0ffc"+
+    "\0\u101b\0\u0ee5\0\u103a\0\u1059\0\u1078\0\u1097\0\u0ffc\0\u10b6"+
+    "\0\u0c98\0\u10d5\0\u10f4\0\u0174\0\u1113\0\u1113";
 
   private static int [] zzUnpackRowMap() {
     int [] result = new int[206];
@@ -232,56 +232,55 @@ public class Yylex {
     "\2\163\1\0\7\163\1\164\25\163\1\73\1\74\1\73"+
     "\6\163\1\164\22\163\1\73\1\163\1\0\3\74\31\0"+
     "\1\74\1\0\2\163\1\0\1\163\1\165\5\163\1\164"+
-    "\24\163\2\150\1\51\3\150\1\157\26\150\1\56\3\150"+
-    "\1\51\11\150\1\154\20\150\1\56\2\150\1\166\1\51"+
-    "\32\150\1\56\1\150\26\0\1\167\30\0\1\170\36\0"+
-    "\1\171\36\0\1\172\45\0\1\173\24\0\1\174\10\0"+
-    "\1\175\4\0\1\171\33\0\1\176\12\0\1\177\32\0"+
-    "\2\117\1\121\32\117\1\123\3\117\1\121\1\117\1\177"+
-    "\30\117\1\123\1\117\32\0\1\200\4\0\1\25\2\0"+
-    "\1\25\1\201\33\25\2\0\22\25\1\202\12\25\2\0"+
-    "\21\25\1\203\13\25\2\0\27\25\1\204\5\25\2\0"+
-    "\12\25\1\205\22\25\2\0\27\25\1\206\5\25\2\0"+
-    "\27\25\1\207\5\25\2\0\26\25\1\130\6\25\2\0"+
-    "\12\25\1\210\21\25\2\140\1\121\7\140\1\143\22\140"+
-    "\1\144\3\140\1\121\1\140\1\211\5\140\1\143\22\140"+
-    "\1\144\1\140\2\153\1\212\32\153\1\213\1\153\2\154"+
-    "\1\214\32\154\1\215\1\154\1\216\1\155\1\217\31\216"+
-    "\1\220\1\221\1\216\2\157\1\222\32\157\1\223\1\157"+
-    "\2\160\1\224\32\160\1\225\1\160\1\226\1\161\1\227"+
-    "\31\226\1\230\1\231\1\226\1\0\1\232\35\0\2\163"+
-    "\1\0\1\163\1\233\5\163\1\164\24\163\1\234\1\166"+
-    "\1\235\31\234\1\236\1\237\1\234\25\0\1\240\35\0"+
-    "\1\241\44\0\1\242\21\0\1\243\53\0\1\244\36\0"+
-    "\1\245\35\0\1\171\22\0\1\246\21\0\2\177\1\247"+
-    "\32\177\1\250\1\177\32\0\1\251\4\0\1\201\1\177"+
-    "\1\247\32\201\1\252\1\201\1\25\2\0\22\25\1\253"+
-    "\12\25\2\0\15\25\1\254\17\25\1\255\1\0\35\25"+
-    "\2\0\14\25\1\204\20\25\2\0\20\25\1\256\14\25"+
-    "\2\0\13\25\1\257\21\25\2\0\13\25\1\260\20\25"+
-    "\2\211\1\247\7\211\1\261\22\211\1\262\1\211\2\216"+
-    "\1\217\32\216\1\221\3\216\1\217\2\216\1\221\27\216"+
-    "\1\221\1\216\2\226\1\227\32\226\1\231\3\226\1\227"+
-    "\2\226\1\263\27\226\1\231\1\226\2\232\1\264\32\232"+
-    "\1\265\1\232\2\233\1\247\7\233\1\266\22\233\1\267"+
-    "\1\233\2\234\1\235\32\234\1\237\3\234\1\235\2\234"+
-    "\1\237\27\234\1\237\1\234\25\0\1\270\31\0\1\271"+
-    "\35\0\1\242\42\0\1\272\31\0\1\273\36\0\1\274"+
-    "\47\0\1\275\7\0\1\25\2\0\15\25\1\276\17\25"+
-    "\2\0\27\25\1\260\4\25\1\0\1\255\35\0\1\25"+
-    "\2\0\23\25\1\277\11\25\2\0\17\25\1\204\15\25"+
-    "\2\0\15\25\1\204\16\25\2\263\1\300\2\263\1\301"+
-    "\27\263\1\302\1\263\20\0\1\303\50\0\1\274\32\0"+
-    "\1\304\32\0\1\242\34\0\1\242\26\0\1\305\26\0"+
-    "\1\25\2\0\13\25\1\130\21\25\2\0\22\25\1\306"+
-    "\11\25\5\307\1\310\31\307\2\263\1\300\2\263\1\301"+
-    "\27\263\1\302\1\311\16\0\1\171\45\0\1\312\22\0"+
-    "\1\313\25\0\1\25\2\0\26\25\1\204\5\25\5\307"+
-    "\1\310\30\307\1\314\31\0\1\242\14\0\1\315\1\0"+
-    "\1\313\36\0\1\316\25\0";
+    "\24\163\2\150\1\51\3\150\1\157\26\150\1\56\2\150"+
+    "\1\166\1\51\32\150\1\56\1\150\26\0\1\167\30\0"+
+    "\1\170\36\0\1\171\36\0\1\172\45\0\1\173\24\0"+
+    "\1\174\10\0\1\175\4\0\1\171\33\0\1\176\12\0"+
+    "\1\177\32\0\2\117\1\121\32\117\1\123\3\117\1\121"+
+    "\1\117\1\177\30\117\1\123\1\117\32\0\1\200\4\0"+
+    "\1\25\2\0\1\25\1\201\33\25\2\0\22\25\1\202"+
+    "\12\25\2\0\21\25\1\203\13\25\2\0\27\25\1\204"+
+    "\5\25\2\0\12\25\1\205\22\25\2\0\27\25\1\206"+
+    "\5\25\2\0\27\25\1\207\5\25\2\0\26\25\1\130"+
+    "\6\25\2\0\12\25\1\210\21\25\2\140\1\121\7\140"+
+    "\1\143\22\140\1\144\3\140\1\121\1\140\1\211\5\140"+
+    "\1\143\22\140\1\144\1\140\2\153\1\212\32\153\1\213"+
+    "\1\153\2\154\1\214\32\154\1\215\1\154\1\216\1\155"+
+    "\1\217\31\216\1\220\1\221\1\216\2\157\1\222\32\157"+
+    "\1\223\1\157\2\160\1\224\32\160\1\225\1\160\1\226"+
+    "\1\161\1\227\31\226\1\230\1\231\1\226\1\0\1\232"+
+    "\35\0\2\163\1\0\1\163\1\233\5\163\1\164\24\163"+
+    "\1\234\1\166\1\235\31\234\1\236\1\237\1\234\25\0"+
+    "\1\240\35\0\1\241\44\0\1\242\21\0\1\243\53\0"+
+    "\1\244\36\0\1\245\35\0\1\171\22\0\1\246\21\0"+
+    "\2\177\1\247\32\177\1\250\1\177\32\0\1\251\4\0"+
+    "\1\201\1\177\1\247\32\201\1\252\1\201\1\25\2\0"+
+    "\22\25\1\253\12\25\2\0\15\25\1\254\17\25\1\255"+
+    "\1\0\35\25\2\0\14\25\1\204\20\25\2\0\20\25"+
+    "\1\256\14\25\2\0\13\25\1\257\21\25\2\0\13\25"+
+    "\1\260\20\25\2\211\1\247\7\211\1\261\22\211\1\262"+
+    "\1\211\2\216\1\217\32\216\1\221\3\216\1\217\2\216"+
+    "\1\221\27\216\1\221\1\216\2\226\1\227\32\226\1\231"+
+    "\3\226\1\227\2\226\1\263\27\226\1\231\1\226\2\232"+
+    "\1\264\32\232\1\265\1\232\2\233\1\247\7\233\1\266"+
+    "\22\233\1\267\1\233\2\234\1\235\32\234\1\237\3\234"+
+    "\1\235\2\234\1\237\27\234\1\237\1\234\25\0\1\270"+
+    "\31\0\1\271\35\0\1\242\42\0\1\272\31\0\1\273"+
+    "\36\0\1\274\47\0\1\275\7\0\1\25\2\0\15\25"+
+    "\1\276\17\25\2\0\27\25\1\260\4\25\1\0\1\255"+
+    "\35\0\1\25\2\0\23\25\1\277\11\25\2\0\17\25"+
+    "\1\204\15\25\2\0\15\25\1\204\16\25\2\263\1\300"+
+    "\2\263\1\301\27\263\1\302\1\263\20\0\1\303\50\0"+
+    "\1\274\32\0\1\304\32\0\1\242\34\0\1\242\26\0"+
+    "\1\305\26\0\1\25\2\0\13\25\1\130\21\25\2\0"+
+    "\22\25\1\306\11\25\5\307\1\310\31\307\2\263\1\300"+
+    "\2\263\1\301\27\263\1\302\1\311\16\0\1\171\45\0"+
+    "\1\312\22\0\1\313\25\0\1\25\2\0\26\25\1\204"+
+    "\5\25\5\307\1\310\30\307\1\314\31\0\1\242\14\0"+
+    "\1\315\1\0\1\313\36\0\1\316\25\0";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[4433];
+    int [] result = new int[4402];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -463,6 +462,11 @@ private Yytoken createTokenNormal(TokenType type) {
 
 private Yytoken createTokenTrimmed(TokenType type) {
   return new Yytoken(type, yytext().trim());
+}
+
+private Yytoken createTokenMessageLineFile() {
+  String filePath = yytext().trim().substring(1).trim();
+  return new Yytoken(TokenType.TYPE_BODY_FILE_REF, filePath);
 }
 
 private Yytoken createAndSaveFieldNameToken(TokenType type) {
@@ -840,7 +844,7 @@ private static final void T(String text) {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [135] { T(\"In YYINITIAL but got \" + yytext() + \" switch to S_REQUEST_LINE\");"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(S_REQUEST_LINE); }");
+            System.out.println("action [140] { T(\"In YYINITIAL but got \" + yytext() + \" switch to S_REQUEST_LINE\");"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(S_REQUEST_LINE); }");
             { T("In YYINITIAL but got " + yytext() + " switch to S_REQUEST_LINE");
                                              yypushback(yylength());
                                              switchState(S_REQUEST_LINE);
@@ -849,49 +853,49 @@ private static final void T(String text) {
           case 32: break;
           case 2:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [134] { T(\"Ignore any space in YYINITIAL\"); }");
+            System.out.println("action [139] { T(\"Ignore any space in YYINITIAL\"); }");
             { T("Ignore any space in YYINITIAL");
             }
             // fall through
           case 33: break;
           case 3:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [144] { yypushback(yylength()); switchState(S_REQUEST_LINE); }");
+            System.out.println("action [149] { yypushback(yylength()); switchState(S_REQUEST_LINE); }");
             { yypushback(yylength()); switchState(S_REQUEST_LINE);
             }
             // fall through
           case 34: break;
           case 4:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [143] { T(\"Ignore any space in S_REQUEST_SEPARATOR\"); }");
+            System.out.println("action [148] { T(\"Ignore any space in S_REQUEST_SEPARATOR\"); }");
             { T("Ignore any space in S_REQUEST_SEPARATOR");
             }
             // fall through
           case 35: break;
           case 5:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [150] { hasRequestTarget = true; return createTokenTrimmed(TokenType.TYPE_REQUEST_TARGET); }");
+            System.out.println("action [155] { hasRequestTarget = true; return createTokenTrimmed(TokenType.TYPE_REQUEST_TARGET); }");
             { hasRequestTarget = true; return createTokenTrimmed(TokenType.TYPE_REQUEST_TARGET);
             }
             // fall through
           case 36: break;
           case 6:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [148] { T(\"Ignore {WhiteSpace}+ in S_REQUEST_LINE\"); }");
+            System.out.println("action [153] { T(\"Ignore {WhiteSpace}+ in S_REQUEST_LINE\"); }");
             { T("Ignore {WhiteSpace}+ in S_REQUEST_LINE");
             }
             // fall through
           case 37: break;
           case 7:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [152] { if (!hasRequestTarget) throwError(); switchState(S_HEADER); }");
+            System.out.println("action [157] { if (!hasRequestTarget) throwError(); switchState(S_HEADER); }");
             { if (!hasRequestTarget) throwError(); switchState(S_HEADER);
             }
             // fall through
           case 38: break;
           case 8:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [161] { T(\"State S_HEADER fallback for: \" + yytext());"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(YYINITIAL); }");
+            System.out.println("action [166] { T(\"State S_HEADER fallback for: \" + yytext());"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(YYINITIAL); }");
             { T("State S_HEADER fallback for: " + yytext());
                                              yypushback(yylength());
                                              switchState(YYINITIAL);
@@ -900,14 +904,14 @@ private static final void T(String text) {
           case 39: break;
           case 9:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [160] { if (isMultiplePart) switchState(S_MULTILE_PART); else switchState(S_BODY); }");
+            System.out.println("action [165] { if (isMultiplePart) switchState(S_MULTILE_PART); else switchState(S_BODY); }");
             { if (isMultiplePart) switchState(S_MULTILE_PART); else switchState(S_BODY);
             }
             // fall through
           case 40: break;
           case 10:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [178] { T(\"State S_BODY falback for: \" + yytext());"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(YYINITIAL); }");
+            System.out.println("action [183] { T(\"State S_BODY falback for: \" + yytext());"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(YYINITIAL); }");
             { T("State S_BODY falback for: " + yytext());
                                              yypushback(yylength());
                                              switchState(YYINITIAL);
@@ -916,42 +920,42 @@ private static final void T(String text) {
           case 41: break;
           case 11:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [177] { return createTokenNormal(TokenType.TYPE_BODY_MESSAGE); }");
+            System.out.println("action [182] { return createTokenNormal(TokenType.TYPE_BODY_MESSAGE); }");
             { return createTokenNormal(TokenType.TYPE_BODY_MESSAGE);
             }
             // fall through
           case 42: break;
           case 12:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [228] { yypushback(yylength()); switchState(S_SCRIPT_HANDLER); }");
+            System.out.println("action [233] { yypushback(yylength()); switchState(S_SCRIPT_HANDLER); }");
             { yypushback(yylength()); switchState(S_SCRIPT_HANDLER);
             }
             // fall through
           case 43: break;
           case 13:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [233] { T(\"In S_RESPONSE_REFERENCE but got \" + yytext() + \" -> switch to YYINITIAL\"); yypushback(yylength()); switchState(YYINITIAL); }");
+            System.out.println("action [238] { T(\"In S_RESPONSE_REFERENCE but got \" + yytext() + \" -> switch to YYINITIAL\"); yypushback(yylength()); switchState(YYINITIAL); }");
             { T("In S_RESPONSE_REFERENCE but got " + yytext() + " -> switch to YYINITIAL"); yypushback(yylength()); switchState(YYINITIAL);
             }
             // fall through
           case 44: break;
           case 14:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [201] { throwError(); }");
+            System.out.println("action [206] { throwError(); }");
             { throwError();
             }
             // fall through
           case 45: break;
           case 15:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [200] { switchState(S_MULTIPLE_PART_BODY); }");
+            System.out.println("action [205] { switchState(S_MULTIPLE_PART_BODY); }");
             { switchState(S_MULTIPLE_PART_BODY);
             }
             // fall through
           case 46: break;
           case 16:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [142] { return createTokenNormal(TokenType.TYPE_COMMENT); }");
+            System.out.println("action [147] { return createTokenNormal(TokenType.TYPE_COMMENT); }");
             { return createTokenNormal(TokenType.TYPE_COMMENT);
             }
             // fall through
@@ -961,14 +965,14 @@ private static final void T(String text) {
             zzMarkedPos = Character.offsetByCodePoints
                 (zzBufferL, zzStartRead, zzEndRead - zzStartRead, zzMarkedPos, -1);
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [157] { return createAndSaveFieldNameToken(TokenType.TYPE_FIELD_NAME); }");
+            System.out.println("action [162] { return createAndSaveFieldNameToken(TokenType.TYPE_FIELD_NAME); }");
             { return createAndSaveFieldNameToken(TokenType.TYPE_FIELD_NAME);
             }
             // fall through
           case 48: break;
           case 18:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [158] { return createFieldValueToken(); }");
+            System.out.println("action [163] { return createFieldValueToken(); }");
             { return createFieldValueToken();
             }
             // fall through
@@ -978,21 +982,21 @@ private static final void T(String text) {
             zzMarkedPos = Character.offsetByCodePoints
                 (zzBufferL, zzStartRead, zzEndRead - zzStartRead, zzMarkedPos, -1);
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [198] { return createTokenTrimmed(TokenType.TYPE_FIELD_NAME); }");
+            System.out.println("action [203] { return createTokenTrimmed(TokenType.TYPE_FIELD_NAME); }");
             { return createTokenTrimmed(TokenType.TYPE_FIELD_NAME);
             }
             // fall through
           case 50: break;
           case 20:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [176] { return createTokenNormal(TokenType.TYPE_VALUE_FILE_REF); }");
-            { return createTokenNormal(TokenType.TYPE_BODY_FILE_REF);
+            System.out.println("action [181] { return createTokenMessageLineFile(); }");
+            { return createTokenMessageLineFile();
             }
             // fall through
           case 51: break;
           case 21:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [171] { T(\"State S_BODY but got <>.* => fallback to response reference\");"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(S_RESPONSE_REFERENCE); }");
+            System.out.println("action [176] { T(\"State S_BODY but got <>.* => fallback to response reference\");"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(S_RESPONSE_REFERENCE); }");
             { T("State S_BODY but got <>.* => fallback to response reference");
                                              yypushback(yylength());
                                              switchState(S_RESPONSE_REFERENCE);
@@ -1001,7 +1005,7 @@ private static final void T(String text) {
           case 52: break;
           case 22:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [167] { T(\"State S_BODY but got response handler -> switch state to S_SCRIPT_HANDLER\");"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(S_SCRIPT_HANDLER); }");
+            System.out.println("action [172] { T(\"State S_BODY but got response handler -> switch state to S_SCRIPT_HANDLER\");"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(S_SCRIPT_HANDLER); }");
             { T("State S_BODY but got response handler -> switch state to S_SCRIPT_HANDLER");
                                              yypushback(yylength());
                                              switchState(S_SCRIPT_HANDLER);
@@ -1010,14 +1014,14 @@ private static final void T(String text) {
           case 53: break;
           case 23:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [190] { isNewPartRequired = true; switchState(S_MULTIPLE_PART_HEADER); }");
+            System.out.println("action [195] { isNewPartRequired = true; switchState(S_MULTIPLE_PART_HEADER); }");
             { isNewPartRequired = true; switchState(S_MULTIPLE_PART_HEADER);
             }
             // fall through
           case 54: break;
           case 24:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [185] { T(\"State S_BODY_MULTILE_PART but got <>.* => fallback to response reference\");"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(S_RESPONSE_REFERENCE); }");
+            System.out.println("action [190] { T(\"State S_BODY_MULTILE_PART but got <>.* => fallback to response reference\");"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             switchState(S_RESPONSE_REFERENCE); }");
             { T("State S_BODY_MULTILE_PART but got <>.* => fallback to response reference");
                                              yypushback(yylength());
                                              switchState(S_RESPONSE_REFERENCE);
@@ -1026,7 +1030,7 @@ private static final void T(String text) {
           case 55: break;
           case 25:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [221] { switchState(S_RESPONSE_REFERENCE);"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             return createTokenNormal(TokenType.TYPE_HANDLER_FILE_SCRIPT); }");
+            System.out.println("action [226] { switchState(S_RESPONSE_REFERENCE);"+ZZ_NL+"                                             yypushback(yylength());"+ZZ_NL+"                                             return createTokenNormal(TokenType.TYPE_HANDLER_FILE_SCRIPT); }");
             { switchState(S_RESPONSE_REFERENCE);
                                              yypushback(yylength());
                                              return createTokenNormal(TokenType.TYPE_HANDLER_FILE_SCRIPT);
@@ -1035,7 +1039,7 @@ private static final void T(String text) {
           case 56: break;
           case 26:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [205] { T(\"State S_BODY but got response handler -> switch state to S_SCRIPT_HANDLER\");"+ZZ_NL+"                                               yypushback(yylength());"+ZZ_NL+"                                               switchState(S_SCRIPT_HANDLER); }");
+            System.out.println("action [210] { T(\"State S_BODY but got response handler -> switch state to S_SCRIPT_HANDLER\");"+ZZ_NL+"                                               yypushback(yylength());"+ZZ_NL+"                                               switchState(S_SCRIPT_HANDLER); }");
             { T("State S_BODY but got response handler -> switch state to S_SCRIPT_HANDLER");
                                                yypushback(yylength());
                                                switchState(S_SCRIPT_HANDLER);
@@ -1044,7 +1048,7 @@ private static final void T(String text) {
           case 57: break;
           case 27:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [128] { reset();"+ZZ_NL+"                                             switchState(S_REQUEST_SEPARATOR);"+ZZ_NL+"                                             return createTokenTrimmed(TokenType.TYPE_SEPARATOR); }");
+            System.out.println("action [133] { reset();"+ZZ_NL+"                                             switchState(S_REQUEST_SEPARATOR);"+ZZ_NL+"                                             return createTokenTrimmed(TokenType.TYPE_SEPARATOR); }");
             { reset();
                                              switchState(S_REQUEST_SEPARATOR);
                                              return createTokenTrimmed(TokenType.TYPE_SEPARATOR);
@@ -1082,21 +1086,21 @@ private static final void T(String text) {
               zzMarkedPos = zzFPos;
             }
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [149] { return createTokenTrimmed(TokenType.TYPE_REQUEST_METHOD); }");
+            System.out.println("action [154] { return createTokenTrimmed(TokenType.TYPE_REQUEST_METHOD); }");
             { return createTokenTrimmed(TokenType.TYPE_REQUEST_METHOD);
             }
             // fall through
           case 59: break;
           case 29:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [232] { return createTokenNormal(TokenType.TYPE_RESPONSE_REFERENCE); }");
+            System.out.println("action [237] { return createTokenNormal(TokenType.TYPE_RESPONSE_REFERENCE); }");
             { return createTokenNormal(TokenType.TYPE_RESPONSE_REFERENCE);
             }
             // fall through
           case 60: break;
           case 30:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [225] { switchState(S_RESPONSE_REFERENCE);"+ZZ_NL+"                                             return createTokenNormal(TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT); }");
+            System.out.println("action [230] { switchState(S_RESPONSE_REFERENCE);"+ZZ_NL+"                                             return createTokenNormal(TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT); }");
             { switchState(S_RESPONSE_REFERENCE);
                                              return createTokenNormal(TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT);
             }
@@ -1104,7 +1108,7 @@ private static final void T(String text) {
           case 61: break;
           case 31:
             System.out.println("match: --"+zzToPrintable(yytext())+"--");
-            System.out.println("action [151] { return createTokenTrimmed(TokenType.TYPE_REQUEST_HTTP_VERSION); }");
+            System.out.println("action [156] { return createTokenTrimmed(TokenType.TYPE_REQUEST_HTTP_VERSION); }");
             { return createTokenTrimmed(TokenType.TYPE_REQUEST_HTTP_VERSION);
             }
             // fall through

@@ -22,8 +22,7 @@ data class Request(
             val headers: MutableMap<String, String> = mutableMapOf(),
             val rawBody: MutableList<String> = mutableListOf()
         ) {
-            fun build(): Part =
-                Part(name, headers, rawBody.joinToString("").trim().takeIf { it.isNotEmpty() })
+            fun build(): Part = Part(name, headers, rawBody.joinToStringAndRemoveBarrier())
         }
     }
 
@@ -50,8 +49,8 @@ data class Request(
                 requestTarget = requestTarget.orEmpty(),
                 httpVersion = httpVersion,
                 headers = headers,
-                body = rawBody.joinToString("").trim().takeIf { it.isNotEmpty() },
-                scriptHandler = rawScriptHandler.joinToString("").trim().takeIf { it.isNotEmpty() },
+                body = rawBody.joinToStringAndRemoveBarrier(),
+                scriptHandler = rawScriptHandler.joinToStringAndRemoveBarrier(),
                 responseReference = rawResponseReference?.trim(),
                 parts = parts.map { it.build() }
             )
@@ -60,5 +59,24 @@ data class Request(
 
     companion object {
         const val DEFAULT_HTTP_VERSION: String = "HTTP/1.1"
+
+        /**
+         * A barrier string which used to wrap the content in the referenced file to ensure those
+         * content will not be trimmed.
+         * Notes that the barrier content will be removed when request is built.
+         * For simple solution, we used a random uuid as barrier, so no-one can know that string
+         * => the content will be keep safer.
+         */
+        private val BARRIER: String = java.util.UUID.randomUUID().toString()
+
+        fun wrapContentWithBarrier(content: String): String = "$BARRIER$content$BARRIER"
+
+        private fun removeBarrierFromContent(content: String): String = content.replace(BARRIER, "")
+
+        private fun List<String>.joinToStringAndRemoveBarrier(): String? =
+            joinToString("")
+                .trim()
+                .takeIf { it.isNotEmpty() }
+                ?.let(::removeBarrierFromContent)
     }
 }

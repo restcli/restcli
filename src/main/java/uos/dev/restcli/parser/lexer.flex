@@ -55,6 +55,11 @@ private Yytoken createTokenTrimmed(TokenType type) {
   return new Yytoken(type, yytext().trim());
 }
 
+private Yytoken createTokenMessageLineFile() {
+  String filePath = yytext().trim().substring(1).trim();
+  return new Yytoken(TokenType.TYPE_BODY_FILE_REF, filePath);
+}
+
 private Yytoken createAndSaveFieldNameToken(TokenType type) {
   String fieldName = yytext().trim();
   currentFieldName = fieldName;
@@ -173,7 +178,7 @@ FallbackCharacter = [^]
                                              switchState(S_RESPONSE_REFERENCE);   
                                            }
   {LineComment}                            { return createTokenNormal(TokenType.TYPE_COMMENT); }
-  {MessageLineFile}                        { return createTokenNormal(TokenType.TYPE_BODY_FILE_REF); }
+  {MessageLineFile}                        { return createTokenMessageLineFile(); }
   {MessageLineText}                        { return createTokenNormal(TokenType.TYPE_BODY_MESSAGE); }
   {FallbackCharacter}                      { T("State S_BODY falback for: " + yytext());
                                              yypushback(yylength());
@@ -212,8 +217,8 @@ FallbackCharacter = [^]
                                            }
   {MultiplePartBoundary}                   { isNewPartRequired = true; switchState(S_MULTIPLE_PART_HEADER); }
   {LineComment}                            { return createTokenNormal(TokenType.TYPE_COMMENT); }
+  {MessageLineFile}                        { return createTokenMessageLineFile(); }
   {MessageLineText}                        { return createTokenNormal(TokenType.TYPE_BODY_MESSAGE); }
-  {MessageLineFile}                        { return createTokenNormal(TokenType.TYPE_BODY_FILE_REF); }
   {FallbackCharacter}                      { yypushback(yylength()); switchState(S_SCRIPT_HANDLER); }
 }
 

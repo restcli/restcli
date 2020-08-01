@@ -1,6 +1,8 @@
 package uos.dev.restcli.parser
 
+import java.io.File
 import java.io.Reader
+import java.util.UUID
 
 class Parser(
     private val environmentVariableInjector: EnvironmentVariableInjector =
@@ -57,7 +59,6 @@ class Parser(
             }
 
             when (token.type) {
-                TokenType.TYPE_BODY_FILE_REF -> Unit
                 TokenType.TYPE_REQUEST_METHOD -> builder.method = RequestMethod.from(token.value)
                 TokenType.TYPE_REQUEST_TARGET -> builder.requestTarget = injectEnv(token.value)
                 TokenType.TYPE_REQUEST_HTTP_VERSION -> builder.httpVersion = token.value
@@ -82,8 +83,14 @@ class Parser(
                     }
                     headerName = null
                 }
+                TokenType.TYPE_BODY_FILE_REF,
                 TokenType.TYPE_BODY_MESSAGE -> {
-                    val bodyMessage = injectEnv(token.value);
+                    val bodyMessage = if (token.type == TokenType.TYPE_BODY_FILE_REF) {
+                        val fileContent = File(token.value).readText()
+                        Request.wrapContentWithBarrier(fileContent)
+                    } else {
+                        injectEnv(token.value)
+                    }
                     if (lexer.isMultiplePart) {
                         builder.parts.last().rawBody.add(bodyMessage)
                     } else {

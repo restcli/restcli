@@ -8,6 +8,11 @@ import org.junit.jupiter.params.provider.MethodSource
 import uos.dev.restcli.TestResourceLoader
 import java.util.stream.Stream
 
+/**
+ * IMPORTANT: When run this test, the working directory must be set to:
+ *  $ProjectFileDir$/src/test/resources/requests
+ * That is needed for resolve referenced files such as message body referenced file.
+ */
 class ParserTest {
     private val environmentVariableInjector =
         EnvironmentVariableInjectorImpl(FakeDynamicVariableProvider())
@@ -172,7 +177,10 @@ class ParserTest {
                                 "Content-Disposition" to "form-data; name=\"data\"; filename=\"data.json\"",
                                 "Content-Type" to "application/json"
                             ),
-                            body = "< ./request-form-data.json"
+                            body = "{\n" +
+                                    "  \"name\": \"my-name\",\n" +
+                                    "  \"params\": [1, 2, 3]\n" +
+                                    "}"
                         )
                     )
                 )
