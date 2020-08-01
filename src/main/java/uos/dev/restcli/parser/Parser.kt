@@ -16,7 +16,6 @@ class Parser(
         lexer.yyreset(input)
     }
 
-    // TODO: parsing with load content from file referenced.
     // TODO: Parsing request target with HOST in header.
     fun parse(
         input: Reader,

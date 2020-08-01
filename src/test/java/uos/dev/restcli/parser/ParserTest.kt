@@ -138,7 +138,6 @@ class ParserTest {
                     body = "id=999&value=content"
                 )
             ),
-            // TODO: Handle loading content from referenced file.
             createParserTestCase(
                 name = "Send a form with the text and file fields",
                 input = "### Send a form with the text and file fields\n" +
