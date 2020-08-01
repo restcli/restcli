@@ -3,7 +3,7 @@ package uos.dev.restcli.parser;
 
 %public
 
-%debug
+//%debug
 %unicode
 %state S_REQUEST_SEPARATOR, S_REQUEST_LINE, S_HEADER, S_BODY, S_MULTILE_PART, S_SCRIPT_HANDLER, S_RESPONSE_REFERENCE
 %state S_MULTIPLE_PART_HEADER, S_MULTIPLE_PART_BODY

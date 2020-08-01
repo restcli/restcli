@@ -1,11 +1,9 @@
 package uos.dev.restcli.parser
 
 import com.google.common.truth.Truth.assertThat
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import uos.dev.restcli.TestResourceLoader
 import java.util.stream.Stream
 
 /**
@@ -29,12 +27,6 @@ class ParserTest {
         val reader = input.reader()
         val result = parser.parse(reader, environment)
         assertThat(result.first()).isEqualTo(expected)
-    }
-
-    @Test
-    fun debug() {
-        val path = TestResourceLoader.testResourcePath("requests/post-requests.http")
-        Yylex.main(arrayOf(path))
     }
 
     companion object {
