@@ -34,7 +34,6 @@ class ParserTest {
             Request(
                 method = RequestMethod.GET,
                 requestTarget = "https://httpbin.org/status/200",
-                body = null,
                 scriptHandler = "> {%\n" +
                         "client.test(\"Request executed successfully\", function() {\n" +
                         "  client.assert(response.status === 200, \"Response status is not 200\");\n" +
@@ -47,7 +46,6 @@ class ParserTest {
             Request(
                 method = RequestMethod.GET,
                 requestTarget = "https://httpbin.org/get",
-                body = null,
                 scriptHandler = "> {%\n" +
                         "client.test(\"Request executed successfully\", function() {\n" +
                         "  client.assert(response.status === 200, \"Response status is not 200\");\n" +
@@ -64,14 +62,14 @@ class ParserTest {
 
     @Test
     fun debug() {
-        val path = TestResourceLoader.testResourcePath(TEST_POST_REQUESTS_RESOURCE)
+        val path = TestResourceLoader.testResourcePath("requests/post-requests.http")
         Yylex.main(arrayOf(path))
     }
 
     companion object {
-        private const val TEST_POST_REQUESTS_RESOURCE = "requests/post-requests.http"
         private const val TEST_REQUESTS_WITH_TESTS_RESOURCE = "requests/requests-with-tests.http"
 
+        @Suppress("unused")
         @JvmStatic
         private fun parserTestCases(): Stream<Arguments> = Stream.of(
             createParserTestCase(
@@ -241,16 +239,55 @@ class ParserTest {
                             "  \"value\": \"content\"\n" +
                             "}"
                 )
+            ),
+            createParserTestCase(
+                name = "Successful test: check response status is 200",
+                input = "### Successful test: check response status is 200\n" +
+                        "GET https://httpbin.org/status/200\n" +
+                        "\n" +
+                        "> {%\n" +
+                        "client.test(\"Request executed successfully\", function() {\n" +
+                        "  client.assert(response.status === 200, \"Response status is not 200\");\n" +
+                        "});\n" +
+                        "%}\n" +
+                        "\n",
+                expected = Request(
+                    method = RequestMethod.GET,
+                    requestTarget = "https://httpbin.org/status/200",
+                    scriptHandler = "> {%\n" +
+                            "client.test(\"Request executed successfully\", function() {\n" +
+                            "  client.assert(response.status === 200, \"Response status is not 200\");\n" +
+                            "});\n" +
+                            "%}"
+                )
+            ),
+            // TODO: Add test case for inject variable in test-script.
+            createParserTestCase(
+                name = "Failed test: check response status is 200",
+                input = "### Failed test: check response status is 200\n" +
+                        "GET https://httpbin.org/status/404\n" +
+                        "\n" +
+                        "> {%\n" +
+                        "client.test(\"Request executed successfully\", function() {\n" +
+                        "  client.assert(response.status === 200, \"Response status is not 200\");\n" +
+                        "});\n" +
+                        "%}\n" ,
+                expected = Request(
+                    method = RequestMethod.GET,
+                    requestTarget = "https://httpbin.org/status/404",
+                    scriptHandler = "> {%\n" +
+                            "client.test(\"Request executed successfully\", function() {\n" +
+                            "  client.assert(response.status === 200, \"Response status is not 200\");\n" +
+                            "});\n" +
+                            "%}"
+                )
             )
 
-
-//            ,
-//            createParserTestCase(
+//            ,createParserTestCase(
 //                name = "",
 //                input = "",
-//                environment = emptyMap(),
 //                expected = Request()
-//            ),
+//            )
         )
 
         @Suppress("SameParameterValue")
