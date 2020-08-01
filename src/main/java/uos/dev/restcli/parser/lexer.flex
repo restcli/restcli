@@ -9,6 +9,7 @@ package uos.dev.restcli.parser;
 %state S_MULTIPLE_PART_HEADER, S_MULTIPLE_PART_BODY
 
 %{
+private static final boolean DEBUG = false;
 private boolean hasRequestTarget = false;
 private boolean isMultiplePart = false;
 private int previousState = -1;
@@ -77,6 +78,16 @@ private Yytoken createAndSaveFieldNameToken(TokenType type) {
   return new Yytoken(type, fieldName);
 }
 
+private Yytoken createTokenEmbeddedScriptHandler() {
+  String text = yytext();
+  String openScript = "{%";
+  String closeScript = "%" + "}";
+  int start = text.indexOf(openScript) + openScript.length();
+  int end = text.lastIndexOf(closeScript);
+  String script = text.substring(start, end).trim();
+  return new Yytoken(TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT, script);
+}
+
 private Yytoken createFieldValueToken() {
   String fieldValueWithColonPrefix = yytext().trim();
   String fieldValue = fieldValueWithColonPrefix.replaceFirst(": *", "");
@@ -88,7 +99,9 @@ private Yytoken createFieldValueToken() {
 }
 
 private static final void T(String text) {
-  System.out.println(text);
+  if (DEBUG) {
+    System.out.println(text);
+  }
 }
 %}
 
@@ -238,7 +251,7 @@ FallbackCharacter = [^]
                                              return createTokenHandlerFileScript();
                                            }
   {ResponseHandlerEmbeddedScript}          { switchState(S_RESPONSE_REFERENCE);
-                                             return createTokenNormal(TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT);
+                                             return createTokenEmbeddedScriptHandler();
                                            }
   {FallbackCharacter}                      { yypushback(yylength()); switchState(S_SCRIPT_HANDLER); }
 }

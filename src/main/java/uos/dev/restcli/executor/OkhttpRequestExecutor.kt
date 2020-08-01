@@ -2,6 +2,7 @@ package uos.dev.restcli.executor
 
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 import uos.dev.restcli.parser.Request
 import okhttp3.Request as OkhttpRequest
 
@@ -9,8 +10,7 @@ class OkhttpRequestExecutor : RequestExecutor {
     private val okHttpClient: OkHttpClient = OkHttpClient.Builder()
         .build()
 
-    override fun execute(request: Request) {
-        println("Execute: ${request.requestTarget}")
+    override fun execute(request: Request): Response {
         val builder = OkhttpRequest.Builder()
         builder.url(request.requestTarget)
         val body = request.body?.toRequestBody()
@@ -18,7 +18,6 @@ class OkhttpRequestExecutor : RequestExecutor {
         request.headers.forEach { (name, value) ->
             builder.addHeader(name, value)
         }
-        val response = okHttpClient.newCall(builder.build()).execute()
-        println(response.body?.string())
+        return okHttpClient.newCall(builder.build()).execute()
     }
 }

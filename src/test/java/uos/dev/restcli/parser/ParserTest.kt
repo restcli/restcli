@@ -90,7 +90,7 @@ class ParserTest {
                     method = RequestMethod.GET,
                     requestTarget = "http://httpbin.org/anything?id=" +
                             "${FakeDynamicVariableProvider.FAKE_UUID}&ts=" +
-                            "${FakeDynamicVariableProvider.FAKE_TIMESTAMP}"
+                            FakeDynamicVariableProvider.FAKE_TIMESTAMP
                 )
             ),
             createParserTestCase(
@@ -217,11 +217,10 @@ class ParserTest {
                 expected = Request(
                     method = RequestMethod.GET,
                     requestTarget = "https://httpbin.org/status/200",
-                    scriptHandler = "> {%\n" +
-                            "client.test(\"Request executed successfully\", function() {\n" +
+                    scriptHandler =
+                    "client.test(\"Request executed successfully\", function() {\n" +
                             "  client.assert(response.status === 200, \"Response status is not 200\");\n" +
-                            "});\n" +
-                            "%}"
+                            "});"
                 )
             ),
             // TODO: Add test case for inject variable in test-script.
@@ -238,11 +237,10 @@ class ParserTest {
                 expected = Request(
                     method = RequestMethod.GET,
                     requestTarget = "https://httpbin.org/status/404",
-                    scriptHandler = "> {%\n" +
-                            "client.test(\"Request executed successfully\", function() {\n" +
+                    scriptHandler =
+                    "client.test(\"Request executed successfully\", function() {\n" +
                             "  client.assert(response.status === 200, \"Response status is not 200\");\n" +
-                            "});\n" +
-                            "%}"
+                            "});"
                 )
             ),
             createParserTestCase(
