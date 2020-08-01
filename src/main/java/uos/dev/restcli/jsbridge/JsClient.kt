@@ -66,9 +66,9 @@ class JsClient {
             $updateContentTypeScript;
             response.status = ${response.code};
         """.trimIndent()
-        println("===== UPDATE RESPONSE SCRIPT ====")
-        println(script)
-        println("=================================")
+        log("===== UPDATE RESPONSE SCRIPT ====")
+        log(script)
+        log("=================================")
         engine.eval(script)
         engine.eval("response.contentType")
     }
@@ -80,7 +80,15 @@ class JsClient {
                     && contentType.subtype == JSON_MEDIA_TYPE.subtype
         }
 
+    private fun log(message: String) {
+        @Suppress("ConstantConditionIf")
+        if (DEBUG) {
+            println(message)
+        }
+    }
+
     companion object {
         private val JSON_MEDIA_TYPE = "application/json; charset=utf-8".toMediaType()
+        private const val DEBUG = false
     }
 }
