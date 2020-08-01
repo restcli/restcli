@@ -25,66 +25,6 @@ class ParserTest {
     }
 
     @Test
-    fun parse_post() {
-        val reader = TestResourceLoader.testResourceReader(TEST_POST_REQUESTS_RESOURCE)
-        val result = parser.parse(reader)
-        assertThat(result.size).isEqualTo(4)
-        assertThat(result.first()).isEqualTo(
-            Request(
-                method = RequestMethod.POST,
-                requestTarget = "https://httpbin.org/post",
-                headers = mapOf("Content-Type" to "application/json"),
-                body = "{\n" +
-                        "  \"id\": 999,\n" +
-                        "  \"value\": \"content\"\n" +
-                        "}"
-            )
-        )
-
-        assertThat(result[2]).isEqualTo(
-            Request(
-                method = RequestMethod.POST,
-                requestTarget = "https://httpbin.org/post",
-                headers = mapOf("Content-Type" to "multipart/form-data; boundary=WebAppBoundary"),
-                body = null,
-                parts = listOf(
-                    Request.Part(
-                        name = "element-name",
-                        headers = mapOf(
-                            "Content-Disposition" to "form-data; name=\"element-name\"",
-                            "Content-Type" to "text/plain"
-                        ),
-                        body = "Name"
-                    ),
-                    Request.Part(
-                        name = "data",
-                        headers = mapOf(
-                            "Content-Disposition" to "form-data; name=\"data\"; filename=\"data.json\"",
-                            "Content-Type" to "application/json"
-                        ),
-                        body = "< ./request-form-data.json"
-                    )
-                )
-            )
-        )
-
-        assertThat(result.last()).isEqualTo(
-            Request(
-                method = RequestMethod.POST,
-                requestTarget = "https://httpbin.org/post",
-                headers = mapOf("Content-Type" to "application/json"),
-                body = "{\n" +
-                        "  \"id\": {{\$uuid}},\n" +
-                        "  \"price\": {{\$randomInt}},\n" +
-                        "  \"ts\": {{\$timestamp}},\n" +
-                        "  \"value\": \"content\"\n" +
-                        "}",
-                responseReference = "<> post-requests.http"
-            )
-        )
-    }
-
-    @Test
     fun parse_request_with_tests() {
         val reader = TestResourceLoader.testResourceReader(TEST_REQUESTS_WITH_TESTS_RESOURCE)
         val result = parser.parse(reader)
@@ -129,7 +69,6 @@ class ParserTest {
     }
 
     companion object {
-        private const val TEST_GET_REQUESTS_RESOURCE = "requests/get-requests.http"
         private const val TEST_POST_REQUESTS_RESOURCE = "requests/post-requests.http"
         private const val TEST_REQUESTS_WITH_TESTS_RESOURCE = "requests/requests-with-tests.http"
 
@@ -140,7 +79,6 @@ class ParserTest {
                 input = "### GET request with a header\n" +
                         "GET https://httpbin.org/ip\n" +
                         "Accept: application/json\n",
-                environment = emptyMap(),
                 expected = Request(
                     method = RequestMethod.GET,
                     requestTarget = "https://httpbin.org/ip",
@@ -152,7 +90,6 @@ class ParserTest {
                 input = "### GET request with parameter\n" +
                         "GET https://httpbin.org/get?show_env=1\n" +
                         "Accept: application/json\n",
-                environment = emptyMap(),
                 expected = Request(
                     method = RequestMethod.GET,
                     requestTarget = "https://httpbin.org/get?show_env=1",
@@ -181,7 +118,6 @@ class ParserTest {
                 input = "### GET request with disabled redirects\n" +
                         "# @no-redirect\n" +
                         "GET http://httpbin.org/status/301\n",
-                environment = emptyMap(),
                 expected = Request(
                     method = RequestMethod.GET,
                     requestTarget = "http://httpbin.org/status/301"
@@ -192,12 +128,122 @@ class ParserTest {
                 name = "GET request with dynamic variables",
                 input = "### GET request with dynamic variables\n" +
                         "GET http://httpbin.org/anything?id={{\$uuid}}&ts={{\$timestamp}}\n",
-                environment = emptyMap(),
                 expected = Request(
                     method = RequestMethod.GET,
                     requestTarget = "http://httpbin.org/anything?id={{\$uuid}}&ts={{\$timestamp}}"
                 )
+            ),
+            createParserTestCase(
+                name = "Send POST request with json body",
+                input = "### Send POST request with json body\n" +
+                        "POST https://httpbin.org/post\n" +
+                        "Content-Type: application/json\n" +
+                        "\n" +
+                        "{\n" +
+                        "  \"id\": 999,\n" +
+                        "  \"value\": \"content\"\n" +
+                        "}\n",
+                expected = Request(
+                    method = RequestMethod.POST,
+                    requestTarget = "https://httpbin.org/post",
+                    headers = mapOf("Content-Type" to "application/json"),
+                    body = "{\n" +
+                            "  \"id\": 999,\n" +
+                            "  \"value\": \"content\"\n" +
+                            "}"
+                )
+            ),
+            createParserTestCase(
+                name = "Send POST request with body as parameters",
+                input = "\n" +
+                        "### Send POST request with body as parameters\n" +
+                        "POST https://httpbin.org/post\n" +
+                        "Content-Type: application/x-www-form-urlencoded\n" +
+                        "\n" +
+                        "id=999&value=content\n",
+                expected = Request(
+                    method = RequestMethod.POST,
+                    requestTarget = "https://httpbin.org/post",
+                    headers = mapOf(
+                        "Content-Type" to "application/x-www-form-urlencoded"
+                    ),
+                    body = "id=999&value=content"
+                )
+            ),
+            // TODO: Handle loading content from referenced file.
+            createParserTestCase(
+                name = "Send a form with the text and file fields",
+                input = "### Send a form with the text and file fields\n" +
+                        "POST https://httpbin.org/post\n" +
+                        "Content-Type: multipart/form-data; boundary=WebAppBoundary\n" +
+                        "\n" +
+                        "--WebAppBoundary\n" +
+                        "Content-Disposition: form-data; name=\"element-name\"\n" +
+                        "Content-Type: text/plain\n" +
+                        "\n" +
+                        "Name\n" +
+                        "--WebAppBoundary\n" +
+                        "Content-Disposition: form-data; name=\"data\"; filename=\"data.json\"\n" +
+                        "Content-Type: application/json\n" +
+                        "\n" +
+                        "< ./request-form-data.json\n" +
+                        "--WebAppBoundary--\n",
+                expected = Request(
+                    method = RequestMethod.POST,
+                    requestTarget = "https://httpbin.org/post",
+                    headers = mapOf(
+                        "Content-Type" to "multipart/form-data; boundary=WebAppBoundary"
+                    ),
+                    parts = listOf(
+                        Request.Part(
+                            name = "element-name",
+                            headers = mapOf(
+                                "Content-Disposition" to "form-data; name=\"element-name\"",
+                                "Content-Type" to "text/plain"
+                            ),
+                            body = "Name"
+                        ),
+                        Request.Part(
+                            name = "data",
+                            headers = mapOf(
+                                "Content-Disposition" to "form-data; name=\"data\"; filename=\"data.json\"",
+                                "Content-Type" to "application/json"
+                            ),
+                            body = "< ./request-form-data.json"
+                        )
+                    )
+                )
+            ),
+            // TODO: Support inject dynamic variables in body.
+            createParserTestCase(
+                name = "Send request with dynamic variables in request's body",
+                input = "### Send request with dynamic variables in request's body\n" +
+                        "POST https://httpbin.org/post\n" +
+                        "Content-Type: application/json\n" +
+                        "\n" +
+                        "{\n" +
+                        "  \"id\": {{\$uuid}},\n" +
+                        "  \"price\": {{\$randomInt}},\n" +
+                        "  \"ts\": {{\$timestamp}},\n" +
+                        "  \"value\": \"content\"\n" +
+                        "}\n",
+                environment = emptyMap(),
+                expected = Request(
+                    method = RequestMethod.POST,
+                    requestTarget = "https://httpbin.org/post",
+                    headers = mapOf(
+                        "Content-Type" to "application/json"
+                    ),
+                    body = "{\n" +
+                            "  \"id\": {{\$uuid}},\n" +
+                            "  \"price\": {{\$randomInt}},\n" +
+                            "  \"ts\": {{\$timestamp}},\n" +
+                            "  \"value\": \"content\"\n" +
+                            "}"
+                )
             )
+
+
 //            ,
 //            createParserTestCase(
 //                name = "",
@@ -205,12 +251,6 @@ class ParserTest {
 //                environment = emptyMap(),
 //                expected = Request()
 //            ),
-//            createParserTestCase(
-//                name = "",
-//                input = "",
-//                environment = emptyMap(),
-//                expected = Request()
-//            )
         )
 
         @Suppress("SameParameterValue")
