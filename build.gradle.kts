@@ -2,18 +2,13 @@ plugins {
     java
     kotlin("jvm") version "1.3.72"
     kotlin("kapt") version "1.3.72"
-    application
 }
 
 group = "uos.dev"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 repositories {
     mavenCentral()
-}
-
-application {
-    mainClassName = "uos.dev.restcli.AppKt"
 }
 
 dependencies {
@@ -35,6 +30,16 @@ dependencies {
 tasks.named<Test>("test") {
     useJUnitPlatform()
     workingDir = File(rootDir, "src/test/resources/requests")
+}
+
+tasks.withType<Jar> {
+    manifest {
+        attributes["Main-Class"] = "uos.dev.restcli.AppKt"
+    }
+    archiveBaseName.set("restcli")
+    from(configurations.runtimeClasspath.get().map {
+        if (it.isDirectory) it else zipTree(it)
+    })
 }
 
 configure<JavaPluginConvention> {

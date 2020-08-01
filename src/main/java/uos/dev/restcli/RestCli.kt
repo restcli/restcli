@@ -8,6 +8,11 @@ import uos.dev.restcli.parser.Parser
 import java.io.FileReader
 import java.util.concurrent.Callable
 
+@CommandLine.Command(
+    name = "restcli", version = ["Intellij RestCli v1.0"],
+    mixinStandardHelpOptions = true,
+    description = ["@|bold Intellij Restcli|@"]
+)
 class RestCli : Callable<Unit> {
     @CommandLine.Option(
         names = ["-e", "--env"],
