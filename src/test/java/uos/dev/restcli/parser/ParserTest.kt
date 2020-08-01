@@ -271,7 +271,7 @@ class ParserTest {
                         "client.test(\"Request executed successfully\", function() {\n" +
                         "  client.assert(response.status === 200, \"Response status is not 200\");\n" +
                         "});\n" +
-                        "%}\n" ,
+                        "%}\n",
                 expected = Request(
                     method = RequestMethod.GET,
                     requestTarget = "https://httpbin.org/status/404",
@@ -281,13 +281,19 @@ class ParserTest {
                             "});\n" +
                             "%}"
                 )
+            ),
+            createParserTestCase(
+                name = "GET request with a response reference",
+                input = "### GET request with a response reference\n" +
+                        "GET https://httpbin.org/ip\n" +
+                        "\n" +
+                        "<> ip_response.json\n",
+                expected = Request(
+                    method = RequestMethod.GET,
+                    requestTarget = "https://httpbin.org/ip",
+                    responseReference = "<> ip_response.json"
+                )
             )
-
-//            ,createParserTestCase(
-//                name = "",
-//                input = "",
-//                expected = Request()
-//            )
         )
 
         @Suppress("SameParameterValue")
