@@ -1,5 +1,6 @@
 var client = new HttpClient();
 var response = new HttpResponse();
+var logger = new Logger();
 
 ///////////// HttpClient /////////////
 function HttpClient() {
@@ -13,9 +14,9 @@ function HttpClient() {
 HttpClient.prototype.test = function (testName, func) {
     try {
         func();
-        print("✓ " + testName);
+        logger.green("✓ " + testName);
     } catch (e) {
-        print("✗ " + testName + "\n" + e.message);
+        logger.error("✗ " + testName + "\n" + e.message);
     }
 }
 
@@ -36,7 +37,7 @@ HttpClient.prototype.assert = function (condition, message) {
  * Prints text to the response handler or test stdout and then terminates the line.
  */
 HttpClient.prototype.log = function (text) {
-    print(text);
+    logger.info(text);
 }
 
 ///////////// HttpResponse /////////////
@@ -122,7 +123,7 @@ function Variables() {
  * Saves variable with name 'varName' and sets its value to 'varValue'.
  */
 Variables.prototype.set = function (varName, varValue) {
-    this.store[varName] =  varValue;
+    this.store[varName] = varValue;
 }
 
 /**
@@ -152,4 +153,34 @@ Variables.prototype.clear = function (varName) {
  */
 Variables.prototype.clearAll = function (varName) {
     this.store = {};
+}
+
+///////////// Logging /////////////
+var ANSI_RESET = "\u001B[0m";
+var ANSI_BLACK = "\u001B[30m";
+var ANSI_RED = "\u001B[31m";
+var ANSI_GREEN = "\u001B[32m";
+var ANSI_YELLOW = "\u001B[33m";
+var ANSI_BLUE = "\u001B[34m";
+var ANSI_PURPLE = "\u001B[35m";
+var ANSI_CYAN = "\u001B[36m";
+var ANSI_WHITE = "\u001B[37m";
+
+function Logger() {
+}
+
+Logger.prototype.info = function (message) {
+    print(message);
+}
+
+Logger.prototype.error = function (message) {
+    print(ANSI_RED + message + ANSI_RESET);
+}
+
+Logger.prototype.warning = function (message) {
+    print(ANSI_YELLOW + message + ANSI_RESET);
+}
+
+Logger.prototype.green = function (message) {
+    print(ANSI_GREEN + message + ANSI_RESET);
 }

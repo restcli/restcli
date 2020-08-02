@@ -43,7 +43,6 @@ class RestCli : Callable<Unit> {
         println("Environment name: $environmentName; Script: $httpFilePath")
         val parser = Parser()
         val jsClient = JsClient()
-
         val environment = (environmentName?.let { EnvironmentLoader().load(it) } ?: emptyMap())
             .toMutableMap()
         val requests = parser.parse(FileReader(httpFilePath), environment)
@@ -51,7 +50,7 @@ class RestCli : Callable<Unit> {
         val executor = OkhttpRequestExecutor(logLevel)
         requests.forEach { request ->
             runSafe {
-                log("////////////////////////////////////////")
+                log("\n__________________________________________________\n")
                 log("##### Execute request ${request.requestTarget} #####")
                 val response = executor.execute(request)
                 jsClient.updateResponse(response)
