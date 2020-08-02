@@ -57,7 +57,10 @@ class Parser(
                     if (lexer.isMultiplePart && lexer.yystate() != Yylex.S_HEADER) {
                         builder.parts.last().headers[nonNullHeaderName] = headerValue
                         if (nonNullHeaderName.contentEquals("Content-Disposition")) {
-                            builder.parts.last().name = extractPartName(headerValue)
+                            with(builder.parts.last()) {
+                                name = extractPartName(headerValue)
+                                fileName = extractPartFileName(headerValue)
+                            }
                         }
                     } else {
                         builder.headers[nonNullHeaderName] = headerValue
@@ -73,6 +76,9 @@ class Parser(
                         injectEnv(token.value)
                     }
                     if (lexer.isMultiplePart) {
+                        if (token.type == TokenType.TYPE_BODY_FILE_REF) {
+
+                        }
                         builder.parts.last().rawBody.add(bodyMessage)
                     } else {
                         builder.rawBody.add(bodyMessage)
@@ -111,9 +117,14 @@ class Parser(
 
     companion object {
         private val PART_NAME_REGEX = ".* name=\"([^\"]+)\".*".toRegex(RegexOption.IGNORE_CASE)
+        private val PART_FILE_NAME_REGEX =
+            ".* filename=\"([^\"]+)\".*".toRegex(RegexOption.IGNORE_CASE)
 
-        private fun extractPartName(fieldValue: String): String {
-            return PART_NAME_REGEX.matchEntire(fieldValue)?.groups?.get(1)?.value.orEmpty()
-        }
+        private fun extractPartName(fieldValue: String): String =
+            PART_NAME_REGEX.matchEntire(fieldValue)?.groups?.get(1)?.value.orEmpty()
+
+        private fun extractPartFileName(fieldValue: String): String? =
+            PART_FILE_NAME_REGEX.matchEntire(fieldValue)?.groups?.get(1)?.value
+                ?.takeIf { it.isNotBlank() }
     }
 }

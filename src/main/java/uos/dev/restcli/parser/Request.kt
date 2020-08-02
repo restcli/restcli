@@ -8,7 +8,6 @@ data class Request(
     val body: String? = null,
     val scriptHandler: String? = null,
     val responseReference: String? = null,
-    val fileLoad: String? = null,
     val parts: List<Part> = mutableListOf(),
     val isFollowRedirects: Boolean = false,
     val isNoCookieJar: Boolean = false,
@@ -19,14 +18,20 @@ data class Request(
         val name: String,
         val headers: Map<String, String>,
         val body: String? = null,
-        val fileLoad: String? = null
+        val fileName: String? = null
     ) {
         data class Builder @JvmOverloads constructor(
             var name: String = "",
+            var fileName: String? = null,
             val headers: MutableMap<String, String> = mutableMapOf(),
             val rawBody: MutableList<String> = mutableListOf()
         ) {
-            fun build(): Part = Part(name, headers, rawBody.joinToStringAndRemoveBarrier())
+            fun build(): Part = Part(
+                name = name,
+                fileName = fileName,
+                headers = headers,
+                body = rawBody.joinToStringAndRemoveBarrier()
+            )
         }
     }
 

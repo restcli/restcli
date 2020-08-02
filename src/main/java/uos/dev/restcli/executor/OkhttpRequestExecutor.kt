@@ -1,7 +1,12 @@
 package uos.dev.restcli.executor
 
+import okhttp3.Headers
 import okhttp3.Interceptor
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
@@ -30,12 +35,35 @@ class OkhttpRequestExecutor(
         val requestTarget = obtainRequestTarget(request)
             ?: throw UnsupportedOperationException("Can't execute request target: ${request.requestTarget}")
         builder.url(requestTarget)
-        val body = request.body?.toRequestBody()
+        val body = request.body?.toRequestBody() ?: request.createMultipartRequestBody()
         builder.method(request.method.name, body)
         request.headers.forEach { (name, value) ->
             builder.addHeader(name, value)
         }
         return client.newCall(builder.build()).execute()
+    }
+
+    private fun Request.createMultipartRequestBody(): RequestBody? {
+        if (parts.isEmpty()) {
+            return null
+        }
+        val builder = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+        parts.forEach { part ->
+            val namesAndValues = part.headers.entries.map { listOf(it.key, it.value) }
+                .toList()
+                .flatten()
+                .toTypedArray()
+            val headers =
+                if (namesAndValues.isNotEmpty()) Headers.headersOf(*namesAndValues) else null
+
+            if (part.fileName != null) {
+                builder.addFormDataPart(part.name, part.fileName, part.createRequestBody())
+            } else {
+                builder.addFormDataPart(part.name, part.body.orEmpty())
+            }
+        }
+        return builder.build()
     }
 
     private fun obtainRequestTarget(request: Request): String? {
@@ -74,6 +102,17 @@ class OkhttpRequestExecutor(
             else -> null
         }
     }
+
+    private fun Request.Part.createRequestBody(): RequestBody =
+        body.orEmpty().toRequestBody(contentType)
+
+    private val Request.Part.contentType: MediaType?
+        get() {
+            val headerContentType = headers.entries.firstOrNull {
+                it.key.equals("Content-Type", ignoreCase = true)
+            } ?: return null
+            return headerContentType.value.toMediaTypeOrNull()
+        }
 
     private class CustomLogger : HttpLoggingInterceptor.Logger {
         private val logger: Logger = Logger.getLogger("RestCli")

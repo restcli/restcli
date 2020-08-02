@@ -37,7 +37,7 @@ class RestCli : Callable<Unit> {
             "Valid values: \${COMPLETION-CANDIDATES}"
         ]
     )
-    var logLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.BASIC
+    var logLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.BODY
 
     override fun call() {
         println("Environment name: $environmentName; Script: $httpFilePath")
@@ -68,6 +68,7 @@ class RestCli : Callable<Unit> {
         try {
             action()
         } catch (e: Exception) {
+            e.printStackTrace()
             log(e.message.orEmpty())
         }
     }
