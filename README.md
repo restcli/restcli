@@ -117,6 +117,7 @@ If this project help you, you can give me a cup of coffee :)
 <a href="https://www.patreon.com/quangson91">
 	<img src="https://c5.patreon.com/external/logo/become_a_patron_button@2x.png" width="160">
 </a>
+<a href="https://www.producthunt.com/posts/intellij-rest-cli?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-intellij-rest-cli" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=226394&theme=light" alt="IntelliJ Rest CLI - A missing command line application for execute for IntelliJ | Product Hunt Embed" style="width: 250px; height: 54px;" width="250px" height="54px" /></a>
 
 ## Contributing
 I appreciate your support and feedbacks!
