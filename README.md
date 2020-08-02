@@ -107,11 +107,12 @@ If you need help, please don't hesitate to [file an issue](https://github.com/qu
 
 This application is free and can be used for free, open source and commercial applications. `restcli` is under the MIT License (MIT). So hit the magic ⭐ button, I appreciate it!!! 🙏
 
+If this project help you, you can give me a cup of coffee :)
+<a href="https://paypal.me/quangson8128">
+    <img src="https://img.shields.io/badge/$-donate-ff69b4.svg?maxAge=2592000&amp;style=flat">
+</a>
 
 <a href="https://www.buymeacoffee.com/quangson91" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
-
-<p>Or</p> 
-
 <a href="https://www.patreon.com/quangson91">
 	<img src="https://c5.patreon.com/external/logo/become_a_patron_button@2x.png" width="160">
 </a>
@@ -156,6 +157,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 ---
+
+<h2 class="text-white mb-4">Made with <span class="heart">❤</span> by quangson91</h2>
 
 > [quangson91.gitbook.io](https://quangson91.gitbook.io/uos/) &nbsp;&middot;&nbsp;
 > GitHub [@quangson91](https://github.com/quangson91) &nbsp;&middot;&nbsp;
