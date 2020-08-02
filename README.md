@@ -28,7 +28,8 @@
   <a href="#how-to-use">How To Use</a> •
   <a href="#download">Download</a> •
   <a href="#credits">Credits</a> •
-  <a href="#license">License</a>
+  <a href="#license">License</a> •
+  <a href="https://www.producthunt.com/posts/intellij-rest-cli">Producthunt</a>
 </p>
 
 ![screenshot](images/restcli_screenshots.png)
