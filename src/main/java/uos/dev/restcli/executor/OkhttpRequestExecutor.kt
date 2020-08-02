@@ -54,8 +54,6 @@ class OkhttpRequestExecutor(
                 .toList()
                 .flatten()
                 .toTypedArray()
-            val headers =
-                if (namesAndValues.isNotEmpty()) Headers.headersOf(*namesAndValues) else null
 
             if (part.fileName != null) {
                 builder.addFormDataPart(part.name, part.fileName, part.createRequestBody())
