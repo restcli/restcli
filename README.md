@@ -28,7 +28,6 @@
   <a href="#how-to-use">How To Use</a> •
   <a href="#download">Download</a> •
   <a href="#credits">Credits</a> •
-  <a href="#related">Related</a> •
   <a href="#license">License</a>
 </p>
 
@@ -85,8 +84,7 @@ $ tree
 $ java -jar /path/to/restcli-1.0.jar -e "test" -s get-requests.http
 ```
 
-Note: If you're using Linux Bash for Windows, [see this guide](https://www.howtogeek.com/261575/how-to-run-graphical-linux-desktop-applications-from-windows-10s-bash-shell/) or use `node` from the command prompt.
-
+Note: This application required you install `java` on your machine.
 
 ## Download
 
@@ -124,6 +122,14 @@ I appreciate your support and feedbacks!
 Please file issues if you find bugs and have feature requests. If you are able to send small PRs to improve or fix bugs, that would be awesome too.
 
 For larger PRs, please ping [@quangson91](https://twitter.com/quangson91) to discuss first.
+
+## TODO
+There are still many things will be bring in the next versions such as:
+
+- [ ] Build native application by using graalvm.
+- [ ] Remove usage of nashorn engine.
+- [ ] Support call other requests by name.
+- [ ] Or [File an issue](https://github.com/quangson91/intellij_rest_cli/issues/new).
 
 ## License
 
