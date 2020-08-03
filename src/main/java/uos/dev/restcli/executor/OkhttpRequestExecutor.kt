@@ -49,11 +49,6 @@ class OkhttpRequestExecutor(
         val builder = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
         parts.forEach { part ->
-            val namesAndValues = part.headers.entries.map { listOf(it.key, it.value) }
-                .toList()
-                .flatten()
-                .toTypedArray()
-
             if (part.fileName != null) {
                 builder.addFormDataPart(part.name, part.fileName, part.createRequestBody())
             } else {
