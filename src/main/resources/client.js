@@ -1,6 +1,8 @@
 var client = new HttpClient();
 var response = new HttpResponse();
 var logger = new Logger();
+var logTestingCapture = null;
+var testReportStore = new TestReportStore();
 
 ///////////// HttpClient /////////////
 function HttpClient() {
@@ -12,12 +14,16 @@ function HttpClient() {
  * All tests will be executed right after response handler script.
  */
 HttpClient.prototype.test = function (testName, func) {
+    logTestingCapture = new LogTestingCapture();
     try {
         func();
         logger.green("✓ " + testName);
+        testReportStore.add(testName, true, null);
     } catch (e) {
         logger.error("✗ " + testName + "\n" + e.message);
+        testReportStore.add(testName, false, logTestingCapture.details.join("\n"));
     }
+    logTestingCapture = null;
 }
 
 /**
@@ -37,6 +43,9 @@ HttpClient.prototype.assert = function (condition, message) {
  * Prints text to the response handler or test stdout and then terminates the line.
  */
 HttpClient.prototype.log = function (text) {
+    if (logTestingCapture) {
+        logTestingCapture.add(text);
+    }
     logger.info(text);
 }
 
@@ -161,6 +170,31 @@ Variables.prototype.clear = function (varName) {
  */
 Variables.prototype.clearAll = function (varName) {
     this.store = {};
+}
+
+///////////// LogTestingCapture /////////////
+function LogTestingCapture() {
+    this.details = [];
+}
+
+LogTestingCapture.prototype.add = function (detail) {
+    this.details.push(detail);
+}
+
+///////////// TestReportStore /////////////
+// Lazy variable to referenced to uos.dev.restcli.report.TestReportStore
+var store = null;
+
+function TestReportStore() {
+}
+
+TestReportStore.prototype.add = function (name, isPassed, details) {
+    try {
+        store = store || Java.type("uos.dev.restcli.report.TestReportStore");
+        store.add(name, isPassed, details);
+    } catch (e) {
+        print(e.message);
+    }
 }
 
 ///////////// Logging /////////////

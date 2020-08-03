@@ -5,7 +5,14 @@ import picocli.CommandLine
 import uos.dev.restcli.executor.OkhttpRequestExecutor
 import uos.dev.restcli.jsbridge.JsClient
 import uos.dev.restcli.parser.Parser
+import uos.dev.restcli.report.JunitTestReportGenerator
+import uos.dev.restcli.report.TestReportGenerator
+import uos.dev.restcli.report.TestReportStore
+import java.io.File
 import java.io.FileReader
+import java.io.FileWriter
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.concurrent.Callable
 
 @CommandLine.Command(
@@ -39,6 +46,14 @@ class RestCli : Callable<Unit> {
     )
     var logLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.BODY
 
+    @CommandLine.Option(
+        names = ["-r", "--report"],
+        description = ["The name of the test report such as \"test_report\"."]
+    )
+    var testReportName: String? = null
+
+    private val testReportGenerator: TestReportGenerator = JunitTestReportGenerator()
+
     override fun call() {
         println("Environment name: $environmentName; Script: $httpFilePath")
         val parser = Parser()
@@ -48,6 +63,7 @@ class RestCli : Callable<Unit> {
         val requests = parser.parse(FileReader(httpFilePath), environment)
 
         val executor = OkhttpRequestExecutor(logLevel)
+        TestReportStore.clear()
         requests.forEach { request ->
             runSafe {
                 log("\n__________________________________________________\n")
@@ -61,14 +77,25 @@ class RestCli : Callable<Unit> {
                 }
             }
         }
+
+        generateTestReport()
+    }
+
+    private fun generateTestReport() {
+        val reportName = testReportName ?: return
+        val format = SimpleDateFormat("yyyyMMddhhmm")
+        val prefix = format.format(Date())
+        val reportFile = File(".", "${prefix}_$reportName.xml")
+        val writer = FileWriter(reportFile)
+        writer.use { testReportGenerator.generate(TestReportStore.testReports, it) }
     }
 
     private fun runSafe(action: () -> Unit) {
         try {
             action()
         } catch (e: Exception) {
-            e.printStackTrace()
             log(e.message.orEmpty())
+            e.printStackTrace()
         }
     }
 
