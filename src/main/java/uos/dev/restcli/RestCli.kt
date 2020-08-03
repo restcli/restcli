@@ -9,7 +9,7 @@ import java.io.FileReader
 import java.util.concurrent.Callable
 
 @CommandLine.Command(
-    name = "restcli", version = ["Intellij RestCli v1.0"],
+    name = "restcli", version = ["Intellij RestCli v1.1"],
     mixinStandardHelpOptions = true,
     description = ["@|bold Intellij Restcli|@"]
 )
