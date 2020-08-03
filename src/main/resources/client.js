@@ -18,10 +18,10 @@ HttpClient.prototype.test = function (testName, func) {
     try {
         func();
         logger.green("✓ " + testName);
-        testReportStore.add(testName, true, null);
+        testReportStore.add(response.url + "-" + testName, true, null);
     } catch (e) {
         logger.error("✗ " + testName + "\n" + e.message);
-        testReportStore.add(testName, false, logTestingCapture.details.join("\n"));
+        testReportStore.add(response.url + "-" + testName, false, e.message + logTestingCapture.details.join("\n"));
     }
     logTestingCapture = null;
 }
@@ -70,6 +70,12 @@ function HttpResponse() {
      * Value of 'Content-Type' response header.
      */
     this.contentType = new ContentType();
+
+    /**
+     * The current request url.
+     * @type {string}
+     */
+    this.url = "";
 }
 
 HttpResponse.prototype.set = function (varName, varValue) {

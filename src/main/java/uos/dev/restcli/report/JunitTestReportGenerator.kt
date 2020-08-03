@@ -20,10 +20,10 @@ class JunitTestReportGenerator : TestReportGenerator {
         val nameEscape = StringEscapeUtils.escapeXml11("[$id] $name")
         val detailsEscape = StringEscapeUtils.escapeXml11(details)
         return if (isPassed) {
-            """<testcase classname="HttpRequestTest" name="$nameEscape"/>"""
+            """<testcase classname="IntelliJRestCliTest" name="$nameEscape"/>"""
         } else {
             """
-                <testcase classname="HttpRequestTest" name="$nameEscape">
+                <testcase classname="IntelliJRestCliTest" name="$nameEscape">
                     <failure type="TestScriptFailed">$detailsEscape</failure>
                 </testcase>
             """.trimIndent()
