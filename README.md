@@ -47,13 +47,15 @@
 * Easy to custom via commandline arguments
   - Custom logging request
   - Inject environment name
+* [Generate test report - junit format.](https://github.com/quangson91/demo_intellij_rest_cli) 🥰🥰🥰
 
 ## How To Use
 
 The fastest way to get rest cli is download jar from [releases tab](https://github.com/quangson91/intellij_rest_cli/releases)
 
 ```
-Usage: restcli [-hV] [-e=<environmentName>] [-l=<logLevel>] -s=<httpFilePath>
+Usage: restcli [-hV] [-e=<environmentName>] [-l=<logLevel>]
+               [-r=<testReportName>] -s=<httpFilePath>
 Intellij Restcli
   -e, --env=<environmentName>
                   Name of the environment in config file
@@ -62,6 +64,8 @@ Intellij Restcli
   -l, --log-level=<logLevel>
                   Config log level while the executor running.
                   Valid values: NONE, BASIC, HEADERS, BODY
+  -r, --report=<testReportName>
+                  The name of the test report such as "test_report".
   -s, --script=<httpFilePath>
                   Path to the http script file.
   -V, --version   Print version information and exit.
