@@ -25,10 +25,10 @@ class JsClient {
         val updateHeaderScriptBuilder = StringBuilder()
         updateHeaderScriptBuilder.append("response.headers = new ResponseHeaders();")
         response.headers.forEach {
+            val headerName = StringEscapeUtils.escapeEcmaScript(it.first)
+            val headerValue = StringEscapeUtils.escapeEcmaScript(it.second)
             @Language("JavaScript")
-            val script = """
-                response.headers.headers.push({"${it.first}" : "${it.second}"});
-            """.trimIndent()
+            val script = """response.headers.add("$headerName", "$headerValue");"""
             updateHeaderScriptBuilder.append(script)
         }
         val updateHeaderScript = updateHeaderScriptBuilder.toString()

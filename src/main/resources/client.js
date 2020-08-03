@@ -76,10 +76,11 @@ function ResponseHeaders() {
  * Retrieves the first value of 'headerName' response header or null otherwise.
  */
 ResponseHeaders.prototype.valueOf = function (headerName) {
+    var headerNameLowerCase = headerName.toLowerCase()
     for (var i = 0; i < this.headers.length; i++) {
         var header = this.headers[i];
-        if (header.hasOwnProperty(headerName)) {
-            return header;
+        if (header.hasOwnProperty(headerNameLowerCase)) {
+            return header[headerNameLowerCase];
         }
     }
     return null;
@@ -89,14 +90,21 @@ ResponseHeaders.prototype.valueOf = function (headerName) {
  * Retrieves all values of 'headerName' response header. Returns empty list if header with 'headerName' doesn't exist.
  */
 ResponseHeaders.prototype.valuesOf = function (headerName) {
+    var headerNameLowerCase = headerName.toLowerCase()
     var result = [];
     for (var i = 0; i < this.headers.length; i++) {
         var header = this.headers[i];
-        if (header.hasOwnProperty(headerName)) {
-            result.push(header);
+        if (header.hasOwnProperty(headerNameLowerCase)) {
+            result.push(header[headerNameLowerCase]);
         }
     }
     return result;
+}
+
+ResponseHeaders.prototype.add = function (headerName, headerValue) {
+    var header = {};
+    header[headerName.toLowerCase()] = headerValue;
+    this.headers.push(header);
 }
 
 ///////////// ContentType /////////////
