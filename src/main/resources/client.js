@@ -21,7 +21,7 @@ HttpClient.prototype.test = function (testName, func) {
         testReportStore.add(response.url + "-" + testName, true, null);
     } catch (e) {
         logger.error("✗ " + testName + "\n" + e.message);
-        testReportStore.add(response.url + "-" + testName, false, e.message + logTestingCapture.details.join("\n"));
+        testReportStore.add(response.url + "-" + testName, false, e.message + "\n" + logTestingCapture.details.join("\n"));
     }
     logTestingCapture = null;
 }
