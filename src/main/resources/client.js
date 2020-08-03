@@ -1,6 +1,8 @@
 var client = new HttpClient();
 var response = new HttpResponse();
 var logger = new Logger();
+var logTestingCapture = null;
+var testReportStore = new TestReportStore();
 
 ///////////// HttpClient /////////////
 function HttpClient() {
@@ -12,12 +14,16 @@ function HttpClient() {
  * All tests will be executed right after response handler script.
  */
 HttpClient.prototype.test = function (testName, func) {
+    logTestingCapture = new LogTestingCapture();
     try {
         func();
         logger.green("✓ " + testName);
+        testReportStore.add(response.url + "-" + testName, true, null);
     } catch (e) {
         logger.error("✗ " + testName + "\n" + e.message);
+        testReportStore.add(response.url + "-" + testName, false, e.message + "\n" + logTestingCapture.details.join("\n"));
     }
+    logTestingCapture = null;
 }
 
 /**
@@ -37,6 +43,9 @@ HttpClient.prototype.assert = function (condition, message) {
  * Prints text to the response handler or test stdout and then terminates the line.
  */
 HttpClient.prototype.log = function (text) {
+    if (logTestingCapture) {
+        logTestingCapture.add(text);
+    }
     logger.info(text);
 }
 
@@ -61,6 +70,12 @@ function HttpResponse() {
      * Value of 'Content-Type' response header.
      */
     this.contentType = new ContentType();
+
+    /**
+     * The current request url.
+     * @type {string}
+     */
+    this.url = "";
 }
 
 HttpResponse.prototype.set = function (varName, varValue) {
@@ -76,10 +91,11 @@ function ResponseHeaders() {
  * Retrieves the first value of 'headerName' response header or null otherwise.
  */
 ResponseHeaders.prototype.valueOf = function (headerName) {
+    var headerNameLowerCase = headerName.toLowerCase()
     for (var i = 0; i < this.headers.length; i++) {
         var header = this.headers[i];
-        if (header.hasOwnProperty(headerName)) {
-            return header;
+        if (header.hasOwnProperty(headerNameLowerCase)) {
+            return header[headerNameLowerCase];
         }
     }
     return null;
@@ -89,14 +105,21 @@ ResponseHeaders.prototype.valueOf = function (headerName) {
  * Retrieves all values of 'headerName' response header. Returns empty list if header with 'headerName' doesn't exist.
  */
 ResponseHeaders.prototype.valuesOf = function (headerName) {
+    var headerNameLowerCase = headerName.toLowerCase()
     var result = [];
     for (var i = 0; i < this.headers.length; i++) {
         var header = this.headers[i];
-        if (header.hasOwnProperty(headerName)) {
-            result.push(header);
+        if (header.hasOwnProperty(headerNameLowerCase)) {
+            result.push(header[headerNameLowerCase]);
         }
     }
     return result;
+}
+
+ResponseHeaders.prototype.add = function (headerName, headerValue) {
+    var header = {};
+    header[headerName.toLowerCase()] = headerValue;
+    this.headers.push(header);
 }
 
 ///////////// ContentType /////////////
@@ -153,6 +176,31 @@ Variables.prototype.clear = function (varName) {
  */
 Variables.prototype.clearAll = function (varName) {
     this.store = {};
+}
+
+///////////// LogTestingCapture /////////////
+function LogTestingCapture() {
+    this.details = [];
+}
+
+LogTestingCapture.prototype.add = function (detail) {
+    this.details.push(detail);
+}
+
+///////////// TestReportStore /////////////
+// Lazy variable to referenced to uos.dev.restcli.report.TestReportStore
+var store = null;
+
+function TestReportStore() {
+}
+
+TestReportStore.prototype.add = function (name, isPassed, details) {
+    try {
+        store = store || Java.type("uos.dev.restcli.report.TestReportStore");
+        store.add(name, isPassed, details);
+    } catch (e) {
+        print(e.message);
+    }
 }
 
 ///////////// Logging /////////////

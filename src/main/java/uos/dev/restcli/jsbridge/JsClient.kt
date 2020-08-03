@@ -22,13 +22,15 @@ class JsClient {
 
     // TODO: Make abstract from okhttp response.
     fun updateResponse(response: Response) {
+        val url = StringEscapeUtils.escapeEcmaScript(response.request.url.toString())
+        val updateRequestUrlScript = """response.url = "$url";"""
         val updateHeaderScriptBuilder = StringBuilder()
         updateHeaderScriptBuilder.append("response.headers = new ResponseHeaders();")
         response.headers.forEach {
+            val headerName = StringEscapeUtils.escapeEcmaScript(it.first)
+            val headerValue = StringEscapeUtils.escapeEcmaScript(it.second)
             @Language("JavaScript")
-            val script = """
-                response.headers.headers.push({"${it.first}" : "${it.second}"});
-            """.trimIndent()
+            val script = """response.headers.add("$headerName", "$headerValue");"""
             updateHeaderScriptBuilder.append(script)
         }
         val updateHeaderScript = updateHeaderScriptBuilder.toString()
@@ -61,6 +63,7 @@ class JsClient {
 
         @Language("JavaScript")
         val script = """
+            $updateRequestUrlScript;
             $updateBodyScript;
             $updateHeaderScript;
             $updateContentTypeScript;
