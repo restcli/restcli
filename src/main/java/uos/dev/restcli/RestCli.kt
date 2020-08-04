@@ -4,7 +4,10 @@ import okhttp3.logging.HttpLoggingInterceptor
 import picocli.CommandLine
 import uos.dev.restcli.executor.OkhttpRequestExecutor
 import uos.dev.restcli.jsbridge.JsClient
+import uos.dev.restcli.parser.EnvironmentVariableInjector
+import uos.dev.restcli.parser.EnvironmentVariableInjectorImpl
 import uos.dev.restcli.parser.Parser
+import uos.dev.restcli.parser.Request
 import uos.dev.restcli.report.JunitTestReportGenerator
 import uos.dev.restcli.report.TestReportGenerator
 import uos.dev.restcli.report.TestReportStore
@@ -53,6 +56,8 @@ class RestCli : Callable<Unit> {
     var testReportName: String? = null
 
     private val testReportGenerator: TestReportGenerator = JunitTestReportGenerator()
+    private val environmentVariableInjector: EnvironmentVariableInjector =
+        EnvironmentVariableInjectorImpl()
 
     override fun call() {
         println("Environment name: $environmentName; Script: $httpFilePath")
@@ -60,12 +65,15 @@ class RestCli : Callable<Unit> {
         val jsClient = JsClient()
         val environment = (environmentName?.let { EnvironmentLoader().load(it) } ?: emptyMap())
             .toMutableMap()
-        val requests = parser.parse(FileReader(httpFilePath), environment)
+
+        val requests = parser.parse(FileReader(httpFilePath))
 
         val executor = OkhttpRequestExecutor(logLevel)
         TestReportStore.clear()
-        requests.forEach { request ->
+        requests.forEach { rawRequest ->
             runSafe {
+                val jsGlobalEnv = jsClient.globalEnvironment()
+                val request = injectEnv(rawRequest, environment, jsGlobalEnv)
                 log("\n__________________________________________________\n")
                 log("##### Execute request ${request.requestTarget} #####")
                 val response = executor.execute(request)
@@ -79,6 +87,33 @@ class RestCli : Callable<Unit> {
         }
 
         generateTestReport()
+    }
+
+    private fun injectEnv(
+        request: Request,
+        environment: Map<String, String>,
+        jsGlobalEnv: Map<String, String>
+    ): Request {
+        fun inject(source: String): String =
+            environmentVariableInjector.inject(source, jsGlobalEnv, environment)
+
+        fun inject(headers: Map<String, String>): Map<String, String> {
+            val result = mutableMapOf<String, String>()
+            headers.forEach { (key, value) -> result[inject(key)] = inject(value) }
+            return result
+        }
+
+        fun inject(part: Request.Part): Request.Part = part.copy(
+            headers = inject(part.headers),
+            body = part.body?.let(::inject)
+        )
+
+        return request.copy(
+            requestTarget = inject(request.requestTarget),
+            headers = inject(request.headers),
+            body = request.body?.let(::inject),
+            parts = request.parts.map(::inject)
+        )
     }
 
     private fun generateTestReport() {

@@ -12,9 +12,7 @@ import java.util.stream.Stream
  * That is needed for resolve referenced files such as message body referenced file.
  */
 class ParserTest {
-    private val environmentVariableInjector =
-        EnvironmentVariableInjectorImpl(FakeDynamicVariableProvider())
-    private val parser = Parser(environmentVariableInjector)
+    private val parser = Parser()
 
     @ParameterizedTest(name = "{index} {0}")
     @MethodSource("parserTestCases")
@@ -25,7 +23,7 @@ class ParserTest {
         expected: Request
     ) {
         val reader = input.reader()
-        val result = parser.parse(reader, environment)
+        val result = parser.parse(reader)
         assertThat(result.first()).isEqualTo(expected)
     }
 
@@ -67,7 +65,7 @@ class ParserTest {
                 ),
                 expected = Request(
                     method = RequestMethod.GET,
-                    requestTarget = "https://httpbin.org/get?show_env=1",
+                    requestTarget = "{{host}}/get?show_env={{show_env}}",
                     headers = mapOf("Accept" to "application/json")
                 )
             ),
@@ -94,9 +92,7 @@ class ParserTest {
                         "GET http://httpbin.org/anything?id={{\$uuid}}&ts={{\$timestamp}}\n",
                 expected = Request(
                     method = RequestMethod.GET,
-                    requestTarget = "http://httpbin.org/anything?id=" +
-                            "${FakeDynamicVariableProvider.FAKE_UUID}&ts=" +
-                            FakeDynamicVariableProvider.FAKE_TIMESTAMP
+                    requestTarget = "http://httpbin.org/anything?id={{\$uuid}}&ts={{\$timestamp}}"
                 )
             ),
             createParserTestCase(
@@ -177,7 +173,8 @@ class ParserTest {
                             body = "{\n" +
                                     "  \"name\": \"my-name\",\n" +
                                     "  \"params\": [1, 2, 3]\n" +
-                                    "}"
+                                    "}",
+                            fileName = "data.json"
                         )
                     )
                 )
@@ -202,9 +199,9 @@ class ParserTest {
                         "Content-Type" to "application/json"
                     ),
                     body = "{\n" +
-                            "  \"id\": ${FakeDynamicVariableProvider.FAKE_UUID},\n" +
-                            "  \"price\": ${FakeDynamicVariableProvider.FAKE_RANDOM_INT},\n" +
-                            "  \"ts\": ${FakeDynamicVariableProvider.FAKE_TIMESTAMP},\n" +
+                            "  \"id\": {{\$uuid}},\n" +
+                            "  \"price\": {{\$randomInt}},\n" +
+                            "  \"ts\": {{\$timestamp}},\n" +
                             "  \"value\": \"content\"\n" +
                             "}"
                 )
