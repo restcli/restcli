@@ -1,4 +1,7 @@
 
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 <h1 align="center">
   <br>
   <a href="https://github.com/quangson91/intellij_rest_cli"><img src="images/logo.png" alt="restcli" width="200"></a>
@@ -169,3 +172,22 @@ SOFTWARE.
 > [quangson91.gitbook.io](https://quangson91.gitbook.io/uos/) &nbsp;&middot;&nbsp;
 > GitHub [@quangson91](https://github.com/quangson91) &nbsp;&middot;&nbsp;
 > Twitter [@quangson91](https://twitter.com/quangson91)
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/martinqvistgard"><img src="https://avatars2.githubusercontent.com/u/703595?v=4" width="100px;" alt=""/><br /><sub><b>Martin Qvistgård</b></sub></a><br /><a href="#userTesting-martinqvistgard" title="User Testing">📓</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
