@@ -19,7 +19,7 @@ import java.util.Date
 import java.util.concurrent.Callable
 
 @CommandLine.Command(
-    name = "restcli", version = ["Intellij RestCli v1.1"],
+    name = "restcli", version = ["Intellij RestCli v1.2"],
     mixinStandardHelpOptions = true,
     description = ["@|bold Intellij Restcli|@"]
 )
