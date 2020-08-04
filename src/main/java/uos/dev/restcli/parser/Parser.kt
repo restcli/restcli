@@ -3,10 +3,7 @@ package uos.dev.restcli.parser
 import java.io.File
 import java.io.Reader
 
-class Parser(
-    private val environmentVariableInjector: EnvironmentVariableInjector =
-        EnvironmentVariableInjectorImpl()
-) {
+class Parser {
     private val lexer: Yylex = Yylex(null)
 
     private fun nextToken(): Yytoken? = lexer.yylex()
@@ -15,13 +12,7 @@ class Parser(
         lexer.yyreset(input)
     }
 
-    fun parse(
-        input: Reader,
-        environment: Map<String, String> = emptyMap()
-    ): List<Request> {
-        fun injectEnv(input: String): String =
-            environmentVariableInjector.inject(input, environment)
-
+    fun parse(input: Reader): List<Request> {
         reset(input)
         val result = mutableListOf<Request>()
         var builder = Request.Builder()
@@ -41,18 +32,18 @@ class Parser(
             when (token.type) {
                 TokenType.TYPE_SEPARATOR -> buildRequestAndMakeBuilderNew()
                 TokenType.TYPE_REQUEST_METHOD -> builder.method = RequestMethod.from(token.value)
-                TokenType.TYPE_REQUEST_TARGET -> builder.requestTarget = injectEnv(token.value)
+                TokenType.TYPE_REQUEST_TARGET -> builder.requestTarget = token.value
                 TokenType.TYPE_REQUEST_HTTP_VERSION -> builder.httpVersion = token.value
                 TokenType.TYPE_FIELD_NAME -> {
                     if (headerName != null) {
                         throw IllegalStateException("Header name exist($headerName). Expect header value")
                     }
-                    headerName = injectEnv(token.value)
+                    headerName = token.value
                 }
                 TokenType.TYPE_FIELD_VALUE -> {
                     val nonNullHeaderName = headerName
                         ?: throw IllegalStateException("Header name is null, but got header value ${token.value}")
-                    val headerValue = injectEnv(token.value)
+                    val headerValue = token.value
                     createNewPartIfNeeded(builder)
                     if (lexer.isMultiplePart && lexer.yystate() != Yylex.S_HEADER) {
                         builder.parts.last().headers[nonNullHeaderName] = headerValue
@@ -73,12 +64,9 @@ class Parser(
                         val fileContent = File(token.value).readText()
                         Request.wrapContentWithBarrier(fileContent)
                     } else {
-                        injectEnv(token.value)
+                        token.value
                     }
                     if (lexer.isMultiplePart) {
-                        if (token.type == TokenType.TYPE_BODY_FILE_REF) {
-
-                        }
                         builder.parts.last().rawBody.add(bodyMessage)
                     } else {
                         builder.rawBody.add(bodyMessage)

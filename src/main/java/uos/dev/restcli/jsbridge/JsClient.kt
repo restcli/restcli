@@ -1,5 +1,8 @@
+@file:Suppress("DEPRECATION")
+
 package uos.dev.restcli.jsbridge
 
+import jdk.nashorn.api.scripting.ScriptObjectMirror
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Response
 import okhttp3.ResponseBody
@@ -29,6 +32,7 @@ class JsClient {
         response.headers.forEach {
             val headerName = StringEscapeUtils.escapeEcmaScript(it.first)
             val headerValue = StringEscapeUtils.escapeEcmaScript(it.second)
+
             @Language("JavaScript")
             val script = """response.headers.add("$headerName", "$headerValue");"""
             updateHeaderScriptBuilder.append(script)
@@ -88,6 +92,17 @@ class JsClient {
         if (DEBUG) {
             println(message)
         }
+    }
+
+    fun globalEnvironment(): Map<String, String> {
+        @Suppress("DEPRECATION") // TODO: Using graalvmjs.
+        val store = engine.eval("client.global.store") as? ScriptObjectMirror
+            ?: return emptyMap()
+        val result = mutableMapOf<String, String>()
+        store.keys.forEach { key ->
+            result[key] = store[key].toString()
+        }
+        return result
     }
 
     companion object {

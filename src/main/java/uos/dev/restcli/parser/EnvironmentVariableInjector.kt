@@ -1,19 +1,26 @@
 package uos.dev.restcli.parser
 
 interface EnvironmentVariableInjector {
-    fun inject(source: String, environment: Map<String, String>): String
+    /**
+     * Injects the variables in the [source] by checking the variables in [environments].
+     * The strategy is taken the first environment that has the variable define.
+     */
+    fun inject(source: String, vararg environments: Map<String, String>): String
 }
 
 class EnvironmentVariableInjectorImpl(
     private val dynamicVariableProvider: DynamicVariableProvider = DynamicVariableProviderImpl()
 ) : EnvironmentVariableInjector {
-    override fun inject(source: String, environment: Map<String, String>): String {
+    override fun inject(source: String, vararg environments: Map<String, String>): String {
+        if (environments.isEmpty()) {
+            return source
+        }
         var result = source
         val matches = VARIABLE_REGEX.findAll(source).toList()
         // MUST replace variable string reversed for keeping match index.
         matches.asReversed().forEach {
             val variableName = it.groupValues[VARIABLE_GROUP_INDEX]
-            val variableValue = obtainVariableValue(variableName, environment)
+            val variableValue = obtainVariableValue(variableName, *environments)
             if (variableValue is VariableValue.Value) {
                 result = result.replaceRange(it.range, variableValue.value)
             }
@@ -23,7 +30,7 @@ class EnvironmentVariableInjectorImpl(
 
     private fun obtainVariableValue(
         variableName: String,
-        environment: Map<String, String>
+        vararg environments: Map<String, String>
     ): VariableValue {
         val isDynamicVariable = variableName.startsWith("$")
         if (isDynamicVariable) {
@@ -35,7 +42,9 @@ class EnvironmentVariableInjectorImpl(
                 VariableValue.Value(dynamicVariableValue)
             }
         }
-        if (!environment.containsKey(variableName)) {
+        val environment = environments.firstOrNull { it.containsKey(variableName) }
+
+        if (environment == null) {
             println("WARNING: Define $variableName but there is no define in environment")
             return VariableValue.Unknown
         }
