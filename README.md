@@ -10,8 +10,8 @@
 <h4 align="center">A missing commandline application for execute <a href="https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html" target="_blank">Intellij HTTP Client file</a>.</h4>
 
 <p align="center">
-  <a href="https://github.com/quangson91/intellij_rest_cli/releases/tag/1.0">
-    <img src="https://img.shields.io/badge/restcli-1.0-brightgreen"
+  <a href="https://github.com/quangson91/intellij_rest_cli/releases/tag/v1.1">
+    <img src="https://img.shields.io/badge/restcli-1.1-brightgreen"
          alt="restcli">
   </a>
   <a href="https://github.com/quangson91/intellij_rest_cli/blob/master/LICENSE">
