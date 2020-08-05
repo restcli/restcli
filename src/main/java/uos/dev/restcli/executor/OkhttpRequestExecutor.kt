@@ -1,5 +1,6 @@
 package uos.dev.restcli.executor
 
+import com.github.ajalt.mordant.TermColors
 import okhttp3.Interceptor
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -107,7 +108,9 @@ class OkhttpRequestExecutor(
         }
 
     private class CustomLogger : HttpLoggingInterceptor.Logger {
-        private val logger: Logger = Logger.getLogger("RestCli")
-        override fun log(message: String) = logger.log(Level.INFO, message)
+        private val t: TermColors = TermColors()
+        override fun log(message: String) {
+            println(t.gray(message))
+        }
     }
 }
