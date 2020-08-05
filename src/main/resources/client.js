@@ -3,6 +3,7 @@ var response = new HttpResponse();
 var logger = new Logger();
 var logTestingCapture = null;
 var testReportStore = new TestReportStore();
+var testFailedCount = 0
 
 ///////////// HttpClient /////////////
 function HttpClient() {
@@ -18,10 +19,15 @@ HttpClient.prototype.test = function (testName, func) {
     try {
         func();
         logger.green("✓ " + testName);
-        testReportStore.add(response.url + "-" + testName, true, null);
+        testReportStore.add(testName, true, null, null);
     } catch (e) {
-        logger.error("✗ " + testName + "\n" + e.message);
-        testReportStore.add(response.url + "-" + testName, false, e.message + "\n" + logTestingCapture.details.join("\n"));
+        testFailedCount += 1;
+        logger.error("✗ " + testFailedCount + ". " + testName + "(" + e.message + ")");
+        testReportStore.add(
+            testName,
+            false,
+            e.name,
+            e.message + "\n" + logTestingCapture.details.join("\n"));
     }
     logTestingCapture = null;
 }
@@ -35,7 +41,7 @@ HttpClient.prototype.assert = function (condition, message) {
     if (condition) {
         // Well done. Do nothing.
     } else {
-        throw new Error(message);
+        throw {name: "AssertionFailure", message: message};
     }
 }
 
@@ -70,12 +76,6 @@ function HttpResponse() {
      * Value of 'Content-Type' response header.
      */
     this.contentType = new ContentType();
-
-    /**
-     * The current request url.
-     * @type {string}
-     */
-    this.url = "";
 }
 
 HttpResponse.prototype.set = function (varName, varValue) {
@@ -194,10 +194,10 @@ var store = null;
 function TestReportStore() {
 }
 
-TestReportStore.prototype.add = function (name, isPassed, details) {
+TestReportStore.prototype.add = function (name, isPassed, exception, detail) {
     try {
         store = store || Java.type("uos.dev.restcli.report.TestReportStore");
-        store.add(name, isPassed, details);
+        store.addTestReport(name, isPassed, exception, detail);
     } catch (e) {
         print(e.message);
     }

@@ -1,17 +1,31 @@
 package uos.dev.restcli.report
 
 object TestReportStore {
-    private val _testReports: MutableList<TestReport> = mutableListOf()
-    val testReports: List<TestReport> get() = _testReports
+    private val _testGroupReports: MutableList<TestGroupReport> = mutableListOf()
+    val testGroupReports: List<TestGroupReport> get() = _testGroupReports
 
-    @JvmOverloads
+    fun addTestGroupReport(name: String) {
+        _testGroupReports += TestGroupReport(name)
+    }
+
+    @Suppress("unused") // Used in client.js.
     @JvmStatic
-    fun add(name: String, isPassed: Boolean, details: String? = null) {
-        val report = TestReport(name = name, isPassed = isPassed, details = details.orEmpty())
-        _testReports.add(report)
+    fun addTestReport(
+        name: String,
+        isPassed: Boolean,
+        exception: String?,
+        detail: String?
+    ) {
+        val report = TestReport(
+            name = name,
+            isPassed = isPassed,
+            detail = detail.orEmpty(),
+            exception = exception.orEmpty()
+        )
+        _testGroupReports.last().addTestReport(report)
     }
 
     fun clear() {
-        _testReports.clear()
+        _testGroupReports.clear()
     }
 }
