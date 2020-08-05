@@ -22,7 +22,7 @@ import java.util.concurrent.Callable
 import kotlin.math.min
 
 @CommandLine.Command(
-    name = "restcli", version = ["Intellij RestCli v1.2"],
+    name = "restcli", version = ["Intellij RestCli v1.3"],
     mixinStandardHelpOptions = true,
     description = ["@|bold Intellij Restcli|@"]
 )
@@ -145,7 +145,7 @@ class RestCli : Callable<Unit> {
                     border = true
                 }
                 row {
-                    cell("restcli v1.2") {
+                    cell("restcli v1.3") {
                         columnSpan = 2
                     }
                 }
