@@ -19,6 +19,7 @@ import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 import java.util.concurrent.Callable
+import kotlin.math.min
 
 @CommandLine.Command(
     name = "restcli", version = ["Intellij RestCli v1.2"],
@@ -127,7 +128,7 @@ class RestCli : Callable<Unit> {
 
     private fun generateTestReport(testGroupReports: List<TestGroupReport>) {
         val reportName = testReportName ?: return
-        val reportDirectory = File("rest-cli-test-reports")
+        val reportDirectory = File("test-reports")
         reportDirectory.mkdirs()
         val reportFile = File(reportDirectory, "$reportName.xml")
         val writer = FileWriter(reportFile)
@@ -206,9 +207,9 @@ class RestCli : Callable<Unit> {
                                 index += 1
                                 row {
                                     cell(index)
-                                    cell(testReport.name)
-                                    cell(testReport.exception)
-                                    cell(testReport.detail)
+                                    cell(testReport.name.autoWrap(30))
+                                    cell(testReport.exception?.autoWrap(16))
+                                    cell(testReport.detail.autoWrap(30))
                                 }
                             }
                         }
@@ -231,5 +232,17 @@ class RestCli : Callable<Unit> {
 
     private fun Table.println() {
         println(toString())
+    }
+
+    private fun String.autoWrap(maxCharactersPerLine: Int): String {
+        val builder = StringBuilder()
+        for (start in 0..length step maxCharactersPerLine) {
+            val text = substring(start, min(length, start + maxCharactersPerLine))
+            builder.append(text)
+            if (start + maxCharactersPerLine < length) {
+                builder.append("\n")
+            }
+        }
+        return builder.toString()
     }
 }
