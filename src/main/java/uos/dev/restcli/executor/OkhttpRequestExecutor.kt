@@ -10,16 +10,21 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
+import org.apache.commons.validator.routines.RegexValidator
 import org.apache.commons.validator.routines.UrlValidator
+import org.intellij.lang.annotations.Language
 import uos.dev.restcli.parser.Request
-import java.util.logging.Level
-import java.util.logging.Logger
 import okhttp3.Request as OkhttpRequest
 
 class OkhttpRequestExecutor(
     private val logLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.BODY
 ) : RequestExecutor {
-    private val urlValidator: UrlValidator = UrlValidator()
+    @Suppress("RegExpRedundantEscape")
+    @Language("RegExp")
+    private val urlValidator: UrlValidator = UrlValidator(
+        RegexValidator("^[a-zA-Z0-9]([a-zA-Z0-9\\-\\.]*[a-zA-Z0-9])?(:\\d+)?"),
+        UrlValidator.ALLOW_LOCAL_URLS
+    )
     private val loggingInterceptor: Interceptor = HttpLoggingInterceptor(CustomLogger())
         .apply { setLevel(logLevel) }
 
