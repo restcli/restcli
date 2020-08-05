@@ -13,8 +13,8 @@
 <h4 align="center">A missing commandline application for execute <a href="https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html" target="_blank">Intellij HTTP Client file</a>.</h4>
 
 <p align="center">
-  <a href="https://github.com/quangson91/intellij_rest_cli/releases/tag/v1.1">
-    <img src="https://img.shields.io/badge/restcli-1.1-brightgreen"
+  <a href="https://github.com/quangson91/intellij_rest_cli/releases/tag/v1.3">
+    <img src="https://img.shields.io/badge/restcli-1.3-brightgreen"
          alt="restcli">
   </a>
   <a href="https://github.com/quangson91/intellij_rest_cli/blob/master/LICENSE">
@@ -105,6 +105,8 @@ This software uses the following open source packages:
 - [Jflex](https://jflex.de/) -  a lexical analyzer generator (also known as scanner generator) for Java.
 - [PicoCli](https://picocli.info/) - a mighty tiny command line interface
 - [okhttp](https://github.com/square/okhttp) - the way modern applications network. It’s how we exchange data & media. Doing HTTP efficiently makes your stuff load faster and saves bandwidth.
+- [picnic](https://github.com/JakeWharton/picnic) - A Kotlin DSL and Java/Kotlin builder API for constructing HTML-like tables which can be rendered to text.
+- [mordant](https://github.com/ajalt/mordant) - Full-featured text styling for Kotlin command-line applications.
 
 ## Support
 
