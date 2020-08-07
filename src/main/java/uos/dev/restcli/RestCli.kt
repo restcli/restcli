@@ -1,7 +1,6 @@
 package uos.dev.restcli
 
 import com.github.ajalt.mordant.TermColors
-import com.jakewharton.picnic.Table
 import com.jakewharton.picnic.table
 import okhttp3.logging.HttpLoggingInterceptor
 import picocli.CommandLine
@@ -11,6 +10,7 @@ import uos.dev.restcli.parser.EnvironmentVariableInjector
 import uos.dev.restcli.parser.EnvironmentVariableInjectorImpl
 import uos.dev.restcli.parser.Parser
 import uos.dev.restcli.parser.Request
+import uos.dev.restcli.report.AsciiArtTestReportGenerator
 import uos.dev.restcli.report.JunitTestReportGenerator
 import uos.dev.restcli.report.TestGroupReport
 import uos.dev.restcli.report.TestReportGenerator
@@ -18,8 +18,8 @@ import uos.dev.restcli.report.TestReportStore
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
+import java.io.PrintWriter
 import java.util.concurrent.Callable
-import kotlin.math.min
 
 @CommandLine.Command(
     name = "restcli", version = ["Intellij RestCli v1.3"],
@@ -95,7 +95,7 @@ class RestCli : Callable<Unit> {
         }
         log("\n__________________________________________________\n")
         val testGroupReports = TestReportStore.testGroupReports
-        showTestReport(testGroupReports)
+        PrintWriter(System.out).use { AsciiArtTestReportGenerator().generate(testGroupReports, it) }
         generateTestReport(testGroupReports)
     }
 
@@ -158,67 +158,6 @@ class RestCli : Callable<Unit> {
         println(content)
     }
 
-    private fun showTestReport(testGroupReports: List<TestGroupReport>) {
-        val allTestReports = testGroupReports.flatMap { it.testReports }
-        val failedTestsCount = allTestReports.count { !it.isPassed }
-        val passedTestsCount = allTestReports.size - failedTestsCount
-
-        table {
-            style { border = true }
-            header {
-                cellStyle { border = true }
-                row("TEST RESULT")
-            }
-            body {
-                row("Total tests: ${allTestReports.size}")
-                row("Passed tests: $passedTestsCount")
-                row("Failed tests: $failedTestsCount")
-            }
-        }.println()
-
-        if (failedTestsCount > 0) {
-            table {
-                style {
-                    border = true
-                }
-                cellStyle {
-                    border = true
-                }
-                header {
-                    row {
-                        cell("#")
-                        cell("name")
-                        cell("failure")
-                        cell("detail")
-                    }
-                }
-                body {
-                    var index = 0
-                    testGroupReports
-                        .filter { it.testReports.any { report -> !report.isPassed } }
-                        .forEach {
-                            val failedTests = it.testReports.filter { report -> !report.isPassed }
-                            row {
-                                cell("[REQUEST] ${it.name}") {
-                                    columnSpan = 4
-                                }
-                            }
-                            failedTests.forEach { testReport ->
-                                index += 1
-                                row {
-                                    cell(index)
-                                    cell(testReport.name.autoWrap(30))
-                                    cell(testReport.exception?.autoWrap(16))
-                                    cell(testReport.detail.autoWrap(30))
-                                }
-                            }
-                        }
-
-                }
-            }.println()
-        }
-    }
-
     private fun runSafe(action: () -> Unit) {
         try {
             action()
@@ -229,20 +168,4 @@ class RestCli : Callable<Unit> {
     }
 
     private fun log(message: String) = println(message)
-
-    private fun Table.println() {
-        println(toString())
-    }
-
-    private fun String.autoWrap(maxCharactersPerLine: Int): String {
-        val builder = StringBuilder()
-        for (start in 0..length step maxCharactersPerLine) {
-            val text = substring(start, min(length, start + maxCharactersPerLine))
-            builder.append(text)
-            if (start + maxCharactersPerLine < length) {
-                builder.append("\n")
-            }
-        }
-        return builder.toString()
-    }
 }
