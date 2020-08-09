@@ -62,7 +62,7 @@ class RestCli : Callable<Unit> {
     override fun call() {
         showInfo()
 
-        println("Test file: $httpFilePath")
+        logger.info("Test file: $httpFilePath")
 
         val parser = Parser()
         val jsClient = JsClient()
@@ -78,18 +78,18 @@ class RestCli : Callable<Unit> {
                 val jsGlobalEnv = jsClient.globalEnvironment()
                 val request = injectEnv(rawRequest, environment, jsGlobalEnv)
                 TestReportStore.addTestGroupReport(request.requestTarget)
-                log("\n__________________________________________________\n")
-                log(t.bold("##### ${request.method.name} ${request.requestTarget} #####"))
+                logger.info("\n__________________________________________________\n")
+                logger.info(t.bold("##### ${request.method.name} ${request.requestTarget} #####"))
                 val response = executor.execute(request)
                 jsClient.updateResponse(response)
                 request.scriptHandler?.let { script ->
                     val testTitle = t.bold("TESTS:")
-                    log("\n$testTitle")
+                    logger.info("\n$testTitle")
                     jsClient.execute(script)
                 }
             }
         }
-        log("\n__________________________________________________\n")
+        logger.info("\n__________________________________________________\n")
         val testGroupReports = TestReportStore.testGroupReports
 
         TestReportPrinter(
@@ -144,11 +144,7 @@ class RestCli : Callable<Unit> {
                     cell(environmentName)
                 }
             }
-        }
-        println(content)
-    }
-
-    private fun log(message: String) {
-        logger.info { message }
+        }.toString()
+        logger.info(content)
     }
 }

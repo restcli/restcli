@@ -2,7 +2,7 @@
 <Configuration xmlns="http://logging.apache.org/log4j/2.0/config">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%msg"/>
+            <PatternLayout pattern="%msg%n"/>
         </Console>
     </Appenders>
     <Loggers>

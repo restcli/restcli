@@ -1,5 +1,6 @@
 package uos.dev.restcli.report
 
+import mu.KotlinLogging
 import java.io.File
 import java.io.FileWriter
 import java.io.PrintWriter
@@ -8,14 +9,15 @@ class TestReportPrinter(
     private val testReportName: String,
     private val isCreateTestReport: Boolean = false
 ) {
+    private val logger = KotlinLogging.logger {}
     fun print(testGroupReports: List<TestGroupReport>) {
         val consoleWriter = PrintWriter(System.out)
         AsciiArtTestReportGenerator().generate(testGroupReports, consoleWriter)
         consoleWriter.flush()
         if (isCreateTestReport) {
-            println("[START] Creating test report: $testReportName")
+            logger.info("[START] Creating test report: $testReportName")
             generateJunitTestReport(testGroupReports)
-            println("[FINISHED]")
+            logger.info("[FINISHED]")
         }
     }
 
