@@ -11,9 +11,9 @@ import java.io.Writer
  * ┌───────────────┐
  * │TEST RESULT    │
  * ├───────────────┤
- * │Total tests: 6 │
- * │Passed tests: 5│
- * │Failed tests: 1│
+ * │Total: 6       │
+ * │Passed: 5      │
+ * │Failed: 1      │
  * └───────────────┘
  * </pre>
  * This is especially useful when print to the console.
@@ -31,9 +31,9 @@ class AsciiArtTestReportGenerator : TestReportGenerator {
                 row("TEST RESULT")
             }
             body {
-                row("Total tests: ${allTestReports.size}")
-                row("Passed tests: $passedTestsCount")
-                row("Failed tests: $failedTestsCount")
+                row("Total: ${allTestReports.size}")
+                row("Passed: $passedTestsCount")
+                row("Failed: $failedTestsCount")
             }
         }.printlnTo(writer)
 
@@ -81,7 +81,7 @@ class AsciiArtTestReportGenerator : TestReportGenerator {
     }
 
     private fun Table.printlnTo(writer: Writer) {
-        writer.write(toString())
-        writer.write("\n")
+        writer.write(toString() + "\n")
+        writer.flush()
     }
 }

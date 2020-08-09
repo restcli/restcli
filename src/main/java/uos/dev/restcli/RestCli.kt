@@ -10,21 +10,16 @@ import uos.dev.restcli.parser.EnvironmentVariableInjector
 import uos.dev.restcli.parser.EnvironmentVariableInjectorImpl
 import uos.dev.restcli.parser.Parser
 import uos.dev.restcli.parser.Request
-import uos.dev.restcli.report.AsciiArtTestReportGenerator
-import uos.dev.restcli.report.JunitTestReportGenerator
-import uos.dev.restcli.report.TestGroupReport
-import uos.dev.restcli.report.TestReportGenerator
+import uos.dev.restcli.report.TestReportPrinter
 import uos.dev.restcli.report.TestReportStore
 import java.io.File
 import java.io.FileReader
-import java.io.FileWriter
-import java.io.PrintWriter
 import java.util.concurrent.Callable
 
 @CommandLine.Command(
-    name = "restcli", version = ["Intellij RestCli v1.3"],
+    name = "restcli", version = ["IntelliJ RestCli v1.3"],
     mixinStandardHelpOptions = true,
-    description = ["@|bold Intellij Restcli|@"]
+    description = ["@|bold IntelliJ Restcli|@"]
 )
 class RestCli : Callable<Unit> {
     @CommandLine.Option(
@@ -54,12 +49,11 @@ class RestCli : Callable<Unit> {
 
     @CommandLine.Option(
         names = ["-r", "--report"],
-        description = ["The name of the test report such as \"test_report\"."]
+        description = ["Create test report inside folder \"test-reports\""]
     )
-    var testReportName: String? = null
+    var isCreateTestReport: Boolean = false
 
     private val t: TermColors = TermColors()
-    private val testReportGenerator: TestReportGenerator = JunitTestReportGenerator()
     private val environmentVariableInjector: EnvironmentVariableInjector =
         EnvironmentVariableInjectorImpl()
 
@@ -95,8 +89,11 @@ class RestCli : Callable<Unit> {
         }
         log("\n__________________________________________________\n")
         val testGroupReports = TestReportStore.testGroupReports
-        PrintWriter(System.out).use { AsciiArtTestReportGenerator().generate(testGroupReports, it) }
-        generateTestReport(testGroupReports)
+
+        TestReportPrinter(
+            testReportName = File(httpFilePath).nameWithoutExtension,
+            isCreateTestReport = isCreateTestReport
+        ).print(testGroupReports)
     }
 
     private fun injectEnv(
@@ -124,15 +121,6 @@ class RestCli : Callable<Unit> {
             body = request.body?.let(::inject),
             parts = request.parts.map(::inject)
         )
-    }
-
-    private fun generateTestReport(testGroupReports: List<TestGroupReport>) {
-        val reportName = testReportName ?: return
-        val reportDirectory = File("test-reports")
-        reportDirectory.mkdirs()
-        val reportFile = File(reportDirectory, "$reportName.xml")
-        val writer = FileWriter(reportFile)
-        writer.use { testReportGenerator.generate(testGroupReports, it) }
     }
 
     private fun showInfo() {

@@ -27,6 +27,8 @@ dependencies {
     implementation("commons-validator:commons-validator:1.6")
     implementation("com.jakewharton.picnic:picnic:0.3.1")
     implementation("com.github.ajalt:mordant:1.2.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
+
 }
 
 tasks.named<Test>("test") {
