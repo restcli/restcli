@@ -2,6 +2,7 @@ package uos.dev.restcli
 
 import com.github.ajalt.mordant.TermColors
 import com.jakewharton.picnic.table
+import mu.KotlinLogging
 import okhttp3.logging.HttpLoggingInterceptor
 import picocli.CommandLine
 import uos.dev.restcli.executor.OkhttpRequestExecutor
@@ -56,6 +57,7 @@ class RestCli : Callable<Unit> {
     private val t: TermColors = TermColors()
     private val environmentVariableInjector: EnvironmentVariableInjector =
         EnvironmentVariableInjectorImpl()
+    private val logger = KotlinLogging.logger {}
 
     override fun call() {
         showInfo()
@@ -146,14 +148,7 @@ class RestCli : Callable<Unit> {
         println(content)
     }
 
-    private fun runSafe(action: () -> Unit) {
-        try {
-            action()
-        } catch (e: Exception) {
-            log(e.message.orEmpty())
-            e.printStackTrace()
-        }
+    private fun log(message: String) {
+        logger.info { message }
     }
-
-    private fun log(message: String) = println(message)
 }
