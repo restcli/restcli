@@ -4,6 +4,7 @@ var logger = new Logger();
 var logTestingCapture = null;
 var testReportStore = new TestReportStore();
 var testFailedCount = 0
+var t = new TermColors();
 
 ///////////// HttpClient /////////////
 function HttpClient() {
@@ -18,11 +19,11 @@ HttpClient.prototype.test = function (testName, func) {
     logTestingCapture = new LogTestingCapture();
     try {
         func();
-        logger.green("✓ " + testName);
+        logger.info(t.green("✓ " + testName));
         testReportStore.add(testName, true, null, null);
     } catch (e) {
         testFailedCount += 1;
-        logger.error("✗ " + testFailedCount + ". " + testName + "(" + e.message + ")");
+        logger.error(t.red("✗ " + testFailedCount + ". " + testName + "(" + e.message + ")"));
         testReportStore.add(
             testName,
             false,
@@ -189,21 +190,42 @@ LogTestingCapture.prototype.add = function (detail) {
 
 ///////////// TestReportStore /////////////
 // Lazy variable to referenced to uos.dev.restcli.report.TestReportStore
-var store = null;
+var _store = Java.type("uos.dev.restcli.report.TestReportStore");
 
 function TestReportStore() {
 }
 
 TestReportStore.prototype.add = function (name, isPassed, exception, detail) {
-    try {
-        store = store || Java.type("uos.dev.restcli.report.TestReportStore");
-        store.addTestReport(name, isPassed, exception, detail);
-    } catch (e) {
-        print(e.message);
-    }
+    _store.addTestReport(name, isPassed, exception, detail);
 }
 
-///////////// Logging /////////////
+///////////// Logger /////////////
+var _jsLogger = Java.type("uos.dev.restcli.jsbridge.JsLogger");
+
+function Logger() {
+}
+
+Logger.prototype.debug = function (message) {
+    _jsLogger.debug(message);
+}
+
+Logger.prototype.info = function (message) {
+    _jsLogger.info(message);
+}
+
+Logger.prototype.warn = function (message) {
+    _jsLogger.warn(message);
+}
+
+Logger.prototype.error = function (message) {
+    _jsLogger.error(message);
+}
+
+Logger.prototype.trace = function (message) {
+    _jsLogger.trace(message);
+}
+
+///////////// TermColors /////////////
 var ANSI_RESET = "\u001B[0m";
 var ANSI_BLACK = "\u001B[30m";
 var ANSI_RED = "\u001B[31m";
@@ -214,21 +236,37 @@ var ANSI_PURPLE = "\u001B[35m";
 var ANSI_CYAN = "\u001B[36m";
 var ANSI_WHITE = "\u001B[37m";
 
-function Logger() {
+function TermColors() {
 }
 
-Logger.prototype.info = function (message) {
-    print(message);
+TermColors.prototype.green = function (message) {
+    return ANSI_GREEN + message + ANSI_RESET;
 }
 
-Logger.prototype.error = function (message) {
-    print(ANSI_RED + message + ANSI_RESET);
+TermColors.prototype.red = function (message) {
+    return ANSI_RED + message + ANSI_RESET;
 }
 
-Logger.prototype.warning = function (message) {
-    print(ANSI_YELLOW + message + ANSI_RESET);
+TermColors.prototype.black = function (message) {
+    return ANSI_BLACK + message + ANSI_RESET;
 }
 
-Logger.prototype.green = function (message) {
-    print(ANSI_GREEN + message + ANSI_RESET);
+TermColors.prototype.yellow = function (message) {
+    return ANSI_YELLOW + message + ANSI_RESET;
+}
+
+TermColors.prototype.blue = function (message) {
+    return ANSI_BLUE + message + ANSI_RESET;
+}
+
+TermColors.prototype.purple = function (message) {
+    return ANSI_PURPLE + message + ANSI_RESET;
+}
+
+TermColors.prototype.cyan = function (message) {
+    return ANSI_CYAN + message + ANSI_RESET;
+}
+
+TermColors.prototype.white = function (message) {
+    return ANSI_WHITE + message + ANSI_RESET;
 }

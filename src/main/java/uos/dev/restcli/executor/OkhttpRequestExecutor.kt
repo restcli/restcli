@@ -1,6 +1,7 @@
 package uos.dev.restcli.executor
 
 import com.github.ajalt.mordant.TermColors
+import mu.KotlinLogging
 import okhttp3.Interceptor
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -113,9 +114,10 @@ class OkhttpRequestExecutor(
         }
 
     private class CustomLogger : HttpLoggingInterceptor.Logger {
+        private val logger = KotlinLogging.logger {}
         private val t: TermColors = TermColors()
         override fun log(message: String) {
-            println(t.gray(message))
+            logger.info(t.gray(message))
         }
     }
 }

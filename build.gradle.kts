@@ -27,6 +27,9 @@ dependencies {
     implementation("commons-validator:commons-validator:1.6")
     implementation("com.jakewharton.picnic:picnic:0.3.1")
     implementation("com.github.ajalt:mordant:1.2.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
+    implementation("io.github.microutils:kotlin-logging:1.8.3")
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.13.3")
 }
 
 tasks.named<Test>("test") {

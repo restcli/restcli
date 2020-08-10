@@ -3,6 +3,8 @@
 package uos.dev.restcli.jsbridge
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror
+import mu.KotlinLogging
+import mu.Marker
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Response
 import okhttp3.ResponseBody
@@ -12,6 +14,7 @@ import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
 
 class JsClient {
+    private val logger = KotlinLogging.logger {}
     private val engine: ScriptEngine = ScriptEngineManager().getEngineByName("nashorn")
 
     init {
@@ -87,7 +90,7 @@ class JsClient {
     private fun log(message: String) {
         @Suppress("ConstantConditionIf")
         if (DEBUG) {
-            println(message)
+            logger.info(message)
         }
     }
 

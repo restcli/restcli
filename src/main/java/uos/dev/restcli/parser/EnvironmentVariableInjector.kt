@@ -1,5 +1,7 @@
 package uos.dev.restcli.parser
 
+import mu.KotlinLogging
+
 interface EnvironmentVariableInjector {
     /**
      * Injects the variables in the [source] by checking the variables in [environments].
@@ -11,6 +13,7 @@ interface EnvironmentVariableInjector {
 class EnvironmentVariableInjectorImpl(
     private val dynamicVariableProvider: DynamicVariableProvider = DynamicVariableProviderImpl()
 ) : EnvironmentVariableInjector {
+    private val logger = KotlinLogging.logger {}
     override fun inject(source: String, vararg environments: Map<String, String>): String {
         if (environments.isEmpty()) {
             return source
@@ -36,7 +39,7 @@ class EnvironmentVariableInjectorImpl(
         if (isDynamicVariable) {
             val dynamicVariableValue = dynamicVariableProvider(variableName)
             return if (dynamicVariableValue == null) {
-                println("WARNING: dynamic variable $variableName is not supported, fallback null")
+                logger.info("WARNING: dynamic variable $variableName is not supported, fallback null")
                 VariableValue.Unknown
             } else {
                 VariableValue.Value(dynamicVariableValue)
@@ -45,7 +48,7 @@ class EnvironmentVariableInjectorImpl(
         val environment = environments.firstOrNull { it.containsKey(variableName) }
 
         if (environment == null) {
-            println("WARNING: Define $variableName but there is no define in environment")
+            logger.info("WARNING: Define $variableName but there is no define in environment")
             return VariableValue.Unknown
         }
         val variableValue = environment[variableName].toString()
