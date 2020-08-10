@@ -86,12 +86,11 @@ class RestCli : Callable<Unit> {
             }
         }
         logger.info("\n__________________________________________________\n")
-        val testGroupReports = TestReportStore.testGroupReports
 
         TestReportPrinter(
             testReportName = File(httpFilePath).nameWithoutExtension,
             isCreateTestReport = isCreateTestReport
-        ).print(testGroupReports)
+        ).print(TestReportStore.testGroupReports)
     }
 
     private fun showInfo() {
