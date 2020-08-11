@@ -59,9 +59,17 @@
 ##### Demo
 ![demo-rest-cli](images/demo-rest-cli.gif)
 
+**1. Show detail request/response including test result**
+
 <img alt="request-with-test-success" src="images/request-with-test-success.png" width="480">
 <img alt="request-with-test-failed" src="images/request-with-test-failed.png" width="480">
+
+**2. Test result table**
+
 <img alt="test-result-table" src="images/test-result-table.png" width="480">
+
+**3. Generate junit test report (xml) that can be viewed by other tools such as xunit-viewer**
+
 <img alt="generate-junit-test-report" src="images/generate-junit-test-report.png" width="480">
 
 ## How To Use
