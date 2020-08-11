@@ -59,10 +59,10 @@
 ##### Demo
 ![demo-rest-cli](images/demo-rest-cli.gif)
 
-<img alt="request-with-test-success" src="images/request-with-test-success.png" width="200">
-<img alt="request-with-test-failed" src="images/request-with-test-failed.png" width="200">
-<img alt="test-result-table" src="images/test-result-table.png" width="200">
-<img alt="generate-junit-test-report" src="images/generate-junit-test-report.png" width="200">
+<img alt="request-with-test-success" src="images/request-with-test-success.png" width="480">
+<img alt="request-with-test-failed" src="images/request-with-test-failed.png" width="480">
+<img alt="test-result-table" src="images/test-result-table.png" width="480">
+<img alt="generate-junit-test-report" src="images/generate-junit-test-report.png" width="480">
 
 ## How To Use
 
