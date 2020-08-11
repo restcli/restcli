@@ -18,7 +18,7 @@
          alt="restcli">
   </a>
   <a href="https://github.com/quangson91/intellij_rest_cli/blob/master/LICENSE">
-      <img src="https://img.shields.io/badge/license-mit-blue"
+      <img src="https://img.shields.io/badge/license-MIT-blue"
            alt="restcli">
     </a>    
   <a href="https://paypal.me/quangson8128">
@@ -38,6 +38,7 @@
 ![screenshot](images/restcli_screenshots.png)
 
 ## Key Features
+* Written by Kotlin 🤩
 * Execute Intellij HTTP request files
 * Running test script including:
     - Embedded script inside HTTP request file
@@ -45,21 +46,31 @@
 * Loading and inject environment variables from
     - http-client.env.json
     - http-client.private.env.json
-* Cross platform
+* Cross platform 💻🖥️
   - Windows, macOS and Linux ready.
-* Easy to custom via commandline arguments
+* Beautiful request log 🤑🤑🤑
+  - Request & response detail
+  - Test result table  
+* Easy to custom via commandline arguments 😎
   - Custom logging request
   - Inject environment name
 * [Generate test report - junit format.](https://github.com/quangson91/demo_intellij_rest_cli) 🥰🥰🥰
+
+##### Demo
+![demo-rest-cli](images/demo-rest-cli.gif)
+
+<img alt="request-with-test-success" src="images/request-with-test-success.png" width="200">
+<img alt="request-with-test-failed" src="images/request-with-test-failed.png" width="200">
+<img alt="test-result-table" src="images/test-result-table.png" width="200">
+<img alt="generate-junit-test-report" src="images/generate-junit-test-report.png" width="200">
 
 ## How To Use
 
 The fastest way to get rest cli is download jar from [releases tab](https://github.com/quangson91/intellij_rest_cli/releases)
 
 ```
-Usage: restcli [-hV] [-e=<environmentName>] [-l=<logLevel>]
-               [-r=<testReportName>] -s=<httpFilePath>
-Intellij Restcli
+Usage: rest-cli [-hrV] [-e=<environmentName>] [-l=<logLevel>] -s=<httpFilePath>
+IntelliJ RestCli
   -e, --env=<environmentName>
                   Name of the environment in config file
                   (http-client.env.json/http-client.private.env.json).
@@ -67,8 +78,7 @@ Intellij Restcli
   -l, --log-level=<logLevel>
                   Config log level while the executor running.
                   Valid values: NONE, BASIC, HEADERS, BODY
-  -r, --report=<testReportName>
-                  The name of the test report such as "test_report".
+  -r, --report    Create test report inside folder "test-reports"
   -s, --script=<httpFilePath>
                   Path to the http script file.
   -V, --version   Print version information and exit.
