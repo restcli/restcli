@@ -69,21 +69,29 @@ class RestCli : Callable<Unit> {
         val executor = OkhttpRequestExecutor(logLevel)
         TestReportStore.clear()
         requests.forEach { rawRequest ->
-            runSafe {
+            runCatching {
                 val jsGlobalEnv = jsClient.globalEnvironment()
                 val request =
                     requestEnvironmentInjector.inject(rawRequest, environment, jsGlobalEnv)
                 TestReportStore.addTestGroupReport(request.requestTarget)
                 logger.info("\n__________________________________________________\n")
                 logger.info(t.bold("##### ${request.method.name} ${request.requestTarget} #####"))
-                val response = executor.execute(request)
-                jsClient.updateResponse(response)
-                request.scriptHandler?.let { script ->
-                    val testTitle = t.bold("TESTS:")
-                    logger.info("\n$testTitle")
-                    jsClient.execute(script)
-                }
-            }
+                runCatching { executor.execute(request) }
+                    .onSuccess { response ->
+                        jsClient.updateResponse(response)
+                        request.scriptHandler?.let { script ->
+                            val testTitle = t.bold("TESTS:")
+                            logger.info("\n$testTitle")
+                            jsClient.execute(script)
+                        }
+                    }
+                    .onFailure {
+                        val hasScriptHandler = request.scriptHandler != null
+                        if (hasScriptHandler) {
+                            logger.info(t.yellow("[SKIP TEST] Because: ") + it.message.orEmpty())
+                        }
+                    }
+            }.onFailure { logger.error { t.red(it.message.orEmpty()) } }
         }
         logger.info("\n__________________________________________________\n")
 
