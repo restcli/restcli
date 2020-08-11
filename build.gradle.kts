@@ -40,6 +40,7 @@ tasks.named<Test>("test") {
 tasks.withType<Jar> {
     manifest {
         attributes["Main-Class"] = "uos.dev.restcli.AppKt"
+        attributes["Multi-Release"] = true
     }
     archiveBaseName.set("restcli")
     from(configurations.runtimeClasspath.get().map {
