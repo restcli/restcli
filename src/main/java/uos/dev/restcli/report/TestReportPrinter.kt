@@ -3,25 +3,11 @@ package uos.dev.restcli.report
 import mu.KotlinLogging
 import java.io.File
 import java.io.FileWriter
-import java.io.PrintWriter
 
-class TestReportPrinter(
-    private val testReportName: String,
-    private val isCreateTestReport: Boolean = false
-) {
+class TestReportPrinter(private val testReportName: String) {
     private val logger = KotlinLogging.logger {}
     fun print(testGroupReports: List<TestGroupReport>) {
-        val consoleWriter = PrintWriter(System.out)
-        AsciiArtTestReportGenerator().generate(testGroupReports, consoleWriter)
-        consoleWriter.flush()
-        if (isCreateTestReport) {
-            logger.info("[START] Creating test report: $testReportName")
-            generateJunitTestReport(testGroupReports)
-            logger.info("[FINISHED]")
-        }
-    }
-
-    private fun generateJunitTestReport(testGroupReports: List<TestGroupReport>) {
+        logger.info("[START] Creating test report: $testReportName")
         val result = runCatching {
             val reportName = testReportName.ifBlank { DEFAULT_TEST_REPORT_NAME }
             val reportDirectory = File(TEST_REPORTS_FOLDER_NAME).apply { mkdirs() }
@@ -31,10 +17,11 @@ class TestReportPrinter(
         result.onFailure {
             it.printStackTrace()
         }
+        logger.info("[FINISHED]")
     }
 
     companion object {
         private const val TEST_REPORTS_FOLDER_NAME = "test-reports"
-        private const val DEFAULT_TEST_REPORT_NAME = "restcli-test-report"
+        private const val DEFAULT_TEST_REPORT_NAME = "rest-cli-test-report"
     }
 }

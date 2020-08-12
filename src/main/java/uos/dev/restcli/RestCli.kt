@@ -1,18 +1,8 @@
 package uos.dev.restcli
 
-import com.github.ajalt.mordant.TermColors
 import com.jakewharton.picnic.table
 import mu.KotlinLogging
-import okhttp3.logging.HttpLoggingInterceptor
 import picocli.CommandLine
-import uos.dev.restcli.executor.OkhttpRequestExecutor
-import uos.dev.restcli.jsbridge.JsClient
-import uos.dev.restcli.parser.Parser
-import uos.dev.restcli.parser.RequestEnvironmentInjector
-import uos.dev.restcli.report.TestReportPrinter
-import uos.dev.restcli.report.TestReportStore
-import java.io.File
-import java.io.FileReader
 import java.util.concurrent.Callable
 
 @CommandLine.Command(
@@ -30,12 +20,12 @@ class RestCli : Callable<Unit> {
     )
     var environmentName: String? = null
 
-    @CommandLine.Option(
-        names = ["-s", "--script"],
-        description = ["Path to the http script file."],
-        required = true
+    @CommandLine.Parameters(
+        paramLabel = "FILES",
+        arity = "1..1000000",
+        description = ["Path to one ore more http script files."]
     )
-    lateinit var httpFilePath: String
+    lateinit var httpFilePaths: Array<String>
 
     @CommandLine.Option(
         names = ["-l", "--log-level"],
@@ -44,7 +34,7 @@ class RestCli : Callable<Unit> {
             "Valid values: \${COMPLETION-CANDIDATES}"
         ]
     )
-    var logLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.BODY
+    var logLevel: HttpLoggingLevel = HttpLoggingLevel.BODY
 
     @CommandLine.Option(
         names = ["-r", "--report"],
@@ -52,45 +42,16 @@ class RestCli : Callable<Unit> {
     )
     var isCreateTestReport: Boolean = false
 
-    private val t: TermColors = TermColors()
     private val logger = KotlinLogging.logger {}
 
     override fun call() {
         showInfo()
-
-        val parser = Parser()
-        val jsClient = JsClient()
-        val requestEnvironmentInjector = RequestEnvironmentInjector()
-        val environment = (environmentName?.let { EnvironmentLoader().load(it) } ?: emptyMap())
-            .toMutableMap()
-
-        val requests = parser.parse(FileReader(httpFilePath))
-
-        val executor = OkhttpRequestExecutor(logLevel)
-        TestReportStore.clear()
-        requests.forEach { rawRequest ->
-            runSafe {
-                val jsGlobalEnv = jsClient.globalEnvironment()
-                val request =
-                    requestEnvironmentInjector.inject(rawRequest, environment, jsGlobalEnv)
-                TestReportStore.addTestGroupReport(request.requestTarget)
-                logger.info("\n__________________________________________________\n")
-                logger.info(t.bold("##### ${request.method.name} ${request.requestTarget} #####"))
-                val response = executor.execute(request)
-                jsClient.updateResponse(response)
-                request.scriptHandler?.let { script ->
-                    val testTitle = t.bold("TESTS:")
-                    logger.info("\n$testTitle")
-                    jsClient.execute(script)
-                }
-            }
-        }
-        logger.info("\n__________________________________________________\n")
-
-        TestReportPrinter(
-            testReportName = File(httpFilePath).nameWithoutExtension,
+        HttpRequestFilesExecutor(
+            httpFilePaths = httpFilePaths,
+            environmentName = environmentName,
+            logLevel = logLevel,
             isCreateTestReport = isCreateTestReport
-        ).print(TestReportStore.testGroupReports)
+        ).run()
     }
 
     private fun showInfo() {
@@ -107,6 +68,5 @@ class RestCli : Callable<Unit> {
             }
         }.toString()
         logger.info(content)
-        logger.info("Test file: $httpFilePath")
     }
 }
