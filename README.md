@@ -13,8 +13,8 @@
 <h4 align="center">A missing commandline application for execute <a href="https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html" target="_blank">Intellij HTTP Client file</a>.</h4>
 
 <p align="center">
-  <a href="https://github.com/quangson91/intellij_rest_cli/releases/tag/v1.3">
-    <img src="https://img.shields.io/badge/restcli-1.3-brightgreen"
+  <a href="https://github.com/quangson91/intellij_rest_cli/releases/tag/v1.4">
+    <img src="https://img.shields.io/badge/restcli-1.4-brightgreen"
          alt="restcli">
   </a>
   <a href="https://github.com/quangson91/intellij_rest_cli/blob/master/LICENSE">
@@ -77,8 +77,9 @@
 The fastest way to get rest cli is download jar from [releases tab](https://github.com/quangson91/intellij_rest_cli/releases)
 
 ```
-Usage: rest-cli [-hrV] [-e=<environmentName>] [-l=<logLevel>] -s=<httpFilePath>
+Usage: rest-cli [-hrV] [-e=<environmentName>] [-l=<logLevel>] FILES...
 IntelliJ RestCli
+      FILES...    Path to one ore more http script files.
   -e, --env=<environmentName>
                   Name of the environment in config file
                   (http-client.env.json/http-client.private.env.json).
@@ -87,8 +88,6 @@ IntelliJ RestCli
                   Config log level while the executor running.
                   Valid values: NONE, BASIC, HEADERS, BODY
   -r, --report    Create test report inside folder "test-reports"
-  -s, --script=<httpFilePath>
-                  Path to the http script file.
   -V, --version   Print version information and exit.
 ```
 
@@ -107,7 +106,7 @@ $ tree
 ├── requests-with-tests.http
 └── test_script.js
 
-$ java -jar /path/to/restcli-1.0.jar -e "test" -s get-requests.http
+$ java -jar /path/to/restcli.jar -e "test" get-requests.http
 ```
 
 Note: This application required you install `java` on your machine.
