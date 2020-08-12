@@ -9,10 +9,13 @@ import uos.dev.restcli.executor.OkhttpRequestExecutor
 import uos.dev.restcli.jsbridge.JsClient
 import uos.dev.restcli.parser.Parser
 import uos.dev.restcli.parser.RequestEnvironmentInjector
+import uos.dev.restcli.report.AsciiArtTestReportGenerator
+import uos.dev.restcli.report.TestGroupReport
 import uos.dev.restcli.report.TestReportPrinter
 import uos.dev.restcli.report.TestReportStore
 import java.io.File
 import java.io.FileReader
+import java.io.PrintWriter
 import java.util.concurrent.Callable
 
 @CommandLine.Command(
@@ -30,12 +33,12 @@ class RestCli : Callable<Unit> {
     )
     var environmentName: String? = null
 
-    @CommandLine.Option(
-        names = ["-s", "--script"],
-        description = ["Path to the http script file."],
-        required = true
+    @CommandLine.Parameters(
+        paramLabel = "FILES",
+        arity = "1..1000000",
+        description = ["Path to one ore more http script files."]
     )
-    lateinit var httpFilePath: String
+    lateinit var httpFilePaths: Array<String>
 
     @CommandLine.Option(
         names = ["-l", "--log-level"],
@@ -58,47 +61,58 @@ class RestCli : Callable<Unit> {
     override fun call() {
         showInfo()
 
+        if (httpFilePaths.isEmpty()) {
+            logger.error { t.red("HTTP request file[s] is required") }
+            return
+        }
+
         val parser = Parser()
         val jsClient = JsClient()
         val requestEnvironmentInjector = RequestEnvironmentInjector()
         val environment = (environmentName?.let { EnvironmentLoader().load(it) } ?: emptyMap())
             .toMutableMap()
-
-        val requests = parser.parse(FileReader(httpFilePath))
-
         val executor = OkhttpRequestExecutor(logLevel)
-        TestReportStore.clear()
-        requests.forEach { rawRequest ->
-            runCatching {
-                val jsGlobalEnv = jsClient.globalEnvironment()
-                val request =
-                    requestEnvironmentInjector.inject(rawRequest, environment, jsGlobalEnv)
-                TestReportStore.addTestGroupReport(request.requestTarget)
-                logger.info("\n__________________________________________________\n")
-                logger.info(t.bold("##### ${request.method.name} ${request.requestTarget} #####"))
-                runCatching { executor.execute(request) }
-                    .onSuccess { response ->
-                        jsClient.updateResponse(response)
-                        request.scriptHandler?.let { script ->
-                            val testTitle = t.bold("TESTS:")
-                            logger.info("\n$testTitle")
-                            jsClient.execute(script)
+        val testGroupReports = mutableListOf<TestGroupReport>()
+        httpFilePaths.forEach { httpFilePath ->
+            logger.info(t.bold("Test file: $httpFilePath"))
+            TestReportStore.clear()
+            val requests = parser.parse(FileReader(httpFilePath))
+            requests.forEach { rawRequest ->
+                runCatching {
+                    val jsGlobalEnv = jsClient.globalEnvironment()
+                    val request =
+                        requestEnvironmentInjector.inject(rawRequest, environment, jsGlobalEnv)
+                    TestReportStore.addTestGroupReport(request.requestTarget)
+                    logger.info("\n__________________________________________________\n")
+                    logger.info(t.bold("##### ${request.method.name} ${request.requestTarget} #####"))
+                    runCatching { executor.execute(request) }
+                        .onSuccess { response ->
+                            jsClient.updateResponse(response)
+                            request.scriptHandler?.let { script ->
+                                val testTitle = t.bold("TESTS:")
+                                logger.info("\n$testTitle")
+                                jsClient.execute(script)
+                            }
                         }
-                    }
-                    .onFailure {
-                        val hasScriptHandler = request.scriptHandler != null
-                        if (hasScriptHandler) {
-                            logger.info(t.yellow("[SKIP TEST] Because: ") + it.message.orEmpty())
+                        .onFailure {
+                            val hasScriptHandler = request.scriptHandler != null
+                            if (hasScriptHandler) {
+                                logger.info(t.yellow("[SKIP TEST] Because: ") + it.message.orEmpty())
+                            }
                         }
-                    }
-            }.onFailure { logger.error { t.red(it.message.orEmpty()) } }
-        }
-        logger.info("\n__________________________________________________\n")
+                }.onFailure { logger.error { t.red(it.message.orEmpty()) } }
+            }
+            logger.info("\n__________________________________________________\n")
 
-        TestReportPrinter(
-            testReportName = File(httpFilePath).nameWithoutExtension,
-            isCreateTestReport = isCreateTestReport
-        ).print(TestReportStore.testGroupReports)
+            if (isCreateTestReport) {
+                TestReportPrinter(File(httpFilePath).nameWithoutExtension)
+                    .print(TestReportStore.testGroupReports)
+            }
+            testGroupReports.addAll(TestReportStore.testGroupReports)
+        }
+        val consoleWriter = PrintWriter(System.out)
+        AsciiArtTestReportGenerator().generate(testGroupReports, consoleWriter)
+        consoleWriter.flush()
     }
 
     private fun showInfo() {
@@ -115,6 +129,5 @@ class RestCli : Callable<Unit> {
             }
         }.toString()
         logger.info(content)
-        logger.info("Test file: $httpFilePath")
     }
 }

@@ -28,6 +28,14 @@ class AsciiArtTestReportGenerator : TestReportGenerator {
             style { border = true }
             header {
                 cellStyle { border = true }
+                row("TOTAL REQUESTS: ${testGroupReports.size}")
+            }
+        }.printlnTo(writer)
+
+        table {
+            style { border = true }
+            header {
+                cellStyle { border = true }
                 row("TEST RESULT")
             }
             body {
