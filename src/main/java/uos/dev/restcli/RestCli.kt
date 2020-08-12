@@ -2,7 +2,6 @@ package uos.dev.restcli
 
 import com.jakewharton.picnic.table
 import mu.KotlinLogging
-import okhttp3.logging.HttpLoggingInterceptor
 import picocli.CommandLine
 import java.util.concurrent.Callable
 
@@ -35,7 +34,7 @@ class RestCli : Callable<Unit> {
             "Valid values: \${COMPLETION-CANDIDATES}"
         ]
     )
-    var logLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.BODY
+    var logLevel: HttpLoggingLevel = HttpLoggingLevel.BODY
 
     @CommandLine.Option(
         names = ["-r", "--report"],

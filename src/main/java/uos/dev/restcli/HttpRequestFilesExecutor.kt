@@ -19,7 +19,7 @@ import java.io.PrintWriter
 class HttpRequestFilesExecutor constructor(
     private val httpFilePaths: Array<String>,
     private val environmentName: String?,
-    private val logLevel: HttpLoggingInterceptor.Level,
+    private val logLevel: HttpLoggingLevel,
     private val isCreateTestReport: Boolean
 ) : Runnable {
     private val parser: Parser = Parser()
@@ -36,10 +36,10 @@ class HttpRequestFilesExecutor constructor(
         }
         val environment = (environmentName?.let { EnvironmentLoader().load(it) } ?: emptyMap())
             .toMutableMap()
-        val executor = OkhttpRequestExecutor(logLevel)
+        val executor = OkhttpRequestExecutor(logLevel.toOkHttpLoggingLevel())
         val testGroupReports = mutableListOf<TestGroupReport>()
         httpFilePaths.forEach { httpFilePath ->
-            logger.info(t.bold("Test file: $httpFilePath"))
+            logger.info(t.bold("HTTP REQUEST FILE: $httpFilePath"))
             TestReportStore.clear()
             executeHttpRequestFile(
                 httpFilePath,
