@@ -1,6 +1,7 @@
 package uos.dev.restcli.parser
 
 data class Request(
+    val name: String? = null,
     val method: RequestMethod = RequestMethod.GET,
     val requestTarget: String,
     val httpVersion: String = DEFAULT_HTTP_VERSION,
@@ -36,6 +37,7 @@ data class Request(
     }
 
     data class Builder @JvmOverloads constructor(
+        var name: String? = null,
         var method: RequestMethod = RequestMethod.GET,
         var requestTarget: String? = null,
         var httpVersion: String = DEFAULT_HTTP_VERSION,
@@ -58,6 +60,7 @@ data class Request(
                 return null
             }
             return Request(
+                name = name,
                 method = method,
                 requestTarget = requestTarget.orEmpty(),
                 httpVersion = httpVersion,

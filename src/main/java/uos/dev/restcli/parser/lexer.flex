@@ -60,6 +60,18 @@ private Yytoken createTokenTrimmed(TokenType type) {
   return new Yytoken(type, yytext().trim());
 }
 
+private Yytoken createTokenRequestName() {
+  String text = yytext();
+  String nameField = "@name=";
+  int index = text.indexOf(nameField);
+  if (index < 0) {
+    throwError();
+  }
+  int start = index + nameField.length();
+  String requestName = text.substring(start).trim();
+  return new Yytoken(TokenType.TYPE_REQUEST_NAME, requestName);
+}
+
 private Yytoken createTokenMessageLineFile() {
   if (yytext().charAt(0) != '<') {
     throwError();
@@ -133,6 +145,7 @@ ConfigNoRedirect = "#"{RequiredWhiteSpace}"@no-redirect"{OptionalWhiteSpace}{Lin
 ConfigNoCookieJar = "#"{RequiredWhiteSpace}"@no-cookie-jar"{OptionalWhiteSpace}{LineTerminator}
 ConfigNoLog = "#"{RequiredWhiteSpace}"@no-log"{OptionalWhiteSpace}{LineTerminator}
 ConfigUseOsCredentials = "#"{RequiredWhiteSpace}"@use-os-credentials"{OptionalWhiteSpace}{LineTerminator}
+ConfigRequestName = "#"{RequiredWhiteSpace}"@name="{Alpha}[a-zA-Z\-_]*{OptionalWhiteSpace}{LineTerminator}
 
 // Request separator.
 RequestSeparator = ###{LineTail}
@@ -182,6 +195,7 @@ FallbackCharacter = [^]
   {ConfigNoCookieJar}                      { return createTokenWithoutValue(TokenType.TYPE_NO_COOKIE_JAR); }
   {ConfigNoLog}                            { return createTokenWithoutValue(TokenType.TYPE_NO_LOG); }
   {ConfigUseOsCredentials}                 { return createTokenWithoutValue(TokenType.TYPE_USE_OS_CREDENTIALS); }
+  {ConfigRequestName}                      { return createTokenRequestName(); }
   {LineComment}                            { return createTokenNormal(TokenType.TYPE_COMMENT); }
   {AnySpace}+                              { T("Ignore any space in S_REQUEST_SEPARATOR"); }
   {FallbackCharacter}                      { yypushback(yylength()); switchState(S_REQUEST_LINE);}

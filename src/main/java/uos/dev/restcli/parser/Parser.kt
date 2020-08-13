@@ -89,6 +89,7 @@ class Parser {
                 TokenType.TYPE_NO_COOKIE_JAR -> builder.isNoCookieJar = true
                 TokenType.TYPE_NO_LOG -> builder.isNoLog = true
                 TokenType.TYPE_USE_OS_CREDENTIALS -> builder.isUseOsCredentials = true
+                TokenType.TYPE_REQUEST_NAME -> builder.name = token.value
             }
         }
         // Build the latest request if exist.

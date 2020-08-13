@@ -32,6 +32,19 @@ class ParserTest {
         @JvmStatic
         private fun parserTestCases(): Stream<Arguments> = Stream.of(
             createParserTestCase(
+                name = "GET request with define request name",
+                input = "### GET request with define request name\n" +
+                        "# @name=get-ip\n" +
+                        "GET https://httpbin.org/ip\n" +
+                        "Accept: application/json\n",
+                expected = Request(
+                    name = "get-ip",
+                    method = RequestMethod.GET,
+                    requestTarget = "https://httpbin.org/ip",
+                    headers = mapOf("Accept" to "application/json")
+                )
+            ),
+            createParserTestCase(
                 name = "GET request with a header",
                 input = "### GET request with a header\n" +
                         "GET https://httpbin.org/ip\n" +
