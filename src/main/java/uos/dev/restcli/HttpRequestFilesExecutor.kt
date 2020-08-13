@@ -2,7 +2,6 @@ package uos.dev.restcli
 
 import com.github.ajalt.mordant.TermColors
 import mu.KotlinLogging
-import okhttp3.logging.HttpLoggingInterceptor
 import uos.dev.restcli.executor.OkhttpRequestExecutor
 import uos.dev.restcli.jsbridge.JsClient
 import uos.dev.restcli.parser.Parser
@@ -70,7 +69,37 @@ class HttpRequestFilesExecutor constructor(
             logger.error(e) { "Can't parse $httpFilePath" }
             return
         }
-        requests.forEach { rawRequest ->
+        var requestIndex = -1
+        while (requestIndex < requests.size) {
+            val requestName = TestReportStore.nextRequestName
+            TestReportStore.setNextRequest(null)
+            if (requestName == REQUEST_NAME_END) {
+                logger.warn { t.yellow("Next request is _END_ -> FINISH.") }
+                return
+            }
+            if (requestName == null) {
+                requestIndex++
+            } else {
+                val indexOfRequestName = requests.indexOfFirst { it.name == requestName }
+                requestIndex = if (indexOfRequestName < 0) {
+                    logger.warn {
+                        t.yellow(
+                            "Request name: $requestName is not defined yet." +
+                                    " So continue execute the request by order"
+                        )
+                    }
+                    requestIndex + 1
+                } else {
+                    indexOfRequestName
+                }
+            }
+
+            if (requestIndex < 0 || requestIndex >= requests.size) {
+                return
+            }
+
+            val rawRequest = requests[requestIndex]
+
             runCatching {
                 val jsGlobalEnv = jsClient.globalEnvironment()
                 val request =
@@ -99,5 +128,13 @@ class HttpRequestFilesExecutor constructor(
                     logger.info(t.yellow("[SKIP TEST] Because: ") + it.message.orEmpty())
                 }
             }
+    }
+
+    companion object {
+        /**
+         * The specific request name. If the next request is sets to this name, the executor will
+         * be end immediately.
+         */
+        const val REQUEST_NAME_END: String = "_END_"
     }
 }

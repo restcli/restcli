@@ -34,11 +34,13 @@ class ParserTest {
             createParserTestCase(
                 name = "GET request with define request name",
                 input = "### GET request with define request name\n" +
-                        "# @name=get-ip\n" +
+                        "# @no-redirect\n" +
+                        "# @name=request1\n" +
                         "GET https://httpbin.org/ip\n" +
                         "Accept: application/json\n",
                 expected = Request(
-                    name = "get-ip",
+                    isFollowRedirects = true,
+                    name = "request1",
                     method = RequestMethod.GET,
                     requestTarget = "https://httpbin.org/ip",
                     headers = mapOf("Accept" to "application/json")

@@ -145,7 +145,7 @@ ConfigNoRedirect = "#"{RequiredWhiteSpace}"@no-redirect"{OptionalWhiteSpace}{Lin
 ConfigNoCookieJar = "#"{RequiredWhiteSpace}"@no-cookie-jar"{OptionalWhiteSpace}{LineTerminator}
 ConfigNoLog = "#"{RequiredWhiteSpace}"@no-log"{OptionalWhiteSpace}{LineTerminator}
 ConfigUseOsCredentials = "#"{RequiredWhiteSpace}"@use-os-credentials"{OptionalWhiteSpace}{LineTerminator}
-ConfigRequestName = "#"{RequiredWhiteSpace}"@name="{Alpha}[a-zA-Z\-_]*{OptionalWhiteSpace}{LineTerminator}
+ConfigRequestName = "#"{RequiredWhiteSpace}"@name="[a-zA-Z_][a-zA-Z0-9\-_]*{OptionalWhiteSpace}{LineTerminator}
 
 // Request separator.
 RequestSeparator = ###{LineTail}
