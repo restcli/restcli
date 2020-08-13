@@ -152,14 +152,6 @@ Please file issues if you find bugs and have feature requests. If you are able t
 
 For larger PRs, please ping [@quangson91](https://twitter.com/quangson91) to discuss first.
 
-## TODO
-There are still many things will be bring in the next versions such as:
-
-- [ ] Build native application by using graalvm.
-- [ ] Remove usage of nashorn engine.
-- [ ] Support call other requests by name.
-- [ ] Or [File an issue](https://github.com/quangson91/intellij_rest_cli/issues/new).
-
 ## License
 
 MIT License
