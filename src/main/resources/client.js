@@ -6,6 +6,7 @@ var testReportStore = new TestReportStore();
 var testFailedCount = 0
 var t = new TermColors();
 var REST_CLI = true;
+var _END_ = "_END_";
 
 ///////////// HttpClient /////////////
 function HttpClient() {
