@@ -13,8 +13,8 @@
 <h4 align="center">A missing commandline application for execute <a href="https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html" target="_blank">Intellij HTTP Client file</a>.</h4>
 
 <p align="center">
-  <a href="https://github.com/quangson91/intellij_rest_cli/releases/tag/v1.4">
-    <img src="https://img.shields.io/badge/restcli-1.4-brightgreen"
+  <a href="https://github.com/quangson91/intellij_rest_cli/releases/tag/v1.5">
+    <img src="https://img.shields.io/badge/restcli-1.5-brightgreen"
          alt="restcli">
   </a>
   <a href="https://github.com/quangson91/intellij_rest_cli/blob/master/LICENSE">
@@ -55,6 +55,7 @@
   - Custom logging request
   - Inject environment name
 * [Generate test report - junit format.](https://github.com/quangson91/demo_intellij_rest_cli) 🥰🥰🥰
+* [Support setNextRequest. So you can custom flexbile the test flow](https://github.com/quangson91/intellij_rest_cli/releases/tag/v1.5) ✨✨✨
 
 ##### Demo
 ![demo-rest-cli](images/demo-rest-cli.gif)
@@ -77,7 +78,8 @@
 The fastest way to get rest cli is download jar from [releases tab](https://github.com/quangson91/intellij_rest_cli/releases)
 
 ```
-Usage: rest-cli [-hrV] [-e=<environmentName>] [-l=<logLevel>] FILES...
+Usage: rest-cli [-hV] [-e=<environmentName>] [-l=<logLevel>]
+                [-r=<testReportNames>] FILES...
 IntelliJ RestCli
       FILES...    Path to one ore more http script files.
   -e, --env=<environmentName>
@@ -87,7 +89,19 @@ IntelliJ RestCli
   -l, --log-level=<logLevel>
                   Config log level while the executor running.
                   Valid values: NONE, BASIC, HEADERS, BODY
-  -r, --report    Create test report inside folder "test-reports"
+  -r, --report-names=<testReportNames>
+                  Custom test report names inside folder "test-reports".
+                  The report names must separate by ':' character;
+                  If the split string of the report name is empty, then the
+                    test request file name will
+                  be used for report name
+                  Such as:
+                  java -jar restcli.jar -r custom_report1::custom_report3 test1.
+                    http test2.http test3.http
+                  Then the test report for test1.http will be custom_report1.xml
+                  test2.http -> test2.xml (Because the report name for test2.
+                    http is empty)
+                  test3.http -> custom_report3.xml
   -V, --version   Print version information and exit.
 ```
 
@@ -145,14 +159,14 @@ If this project help you, you can give me a cup of coffee :)
 </a>
 <a href="https://www.producthunt.com/posts/intellij-rest-cli?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-intellij-rest-cli" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=226394&theme=light" alt="IntelliJ Rest CLI - A missing command line application for execute for IntelliJ | Product Hunt Embed" style="width: 250px; height: 54px;" width="250px" height="54px" /></a>
 
-## Contributing
+## 🤝 Contributing
 I appreciate your support and feedbacks!
 
 Please file issues if you find bugs and have feature requests. If you are able to send small PRs to improve or fix bugs, that would be awesome too.
 
 For larger PRs, please ping [@quangson91](https://twitter.com/quangson91) to discuss first.
 
-## License
+## 📝 License
 
 MIT License
 ```
