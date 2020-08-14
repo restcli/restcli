@@ -15,11 +15,12 @@ import java.io.File
 import java.io.FileReader
 import java.io.PrintWriter
 
+
 class HttpRequestFilesExecutor constructor(
     private val httpFilePaths: Array<String>,
     private val environmentName: String?,
     private val logLevel: HttpLoggingLevel,
-    private val isCreateTestReport: Boolean
+    private val testReportNames: Array<String>
 ) : Runnable {
     private val parser: Parser = Parser()
     private val jsClient: JsClient = JsClient()
@@ -37,7 +38,7 @@ class HttpRequestFilesExecutor constructor(
             .toMutableMap()
         val executor = OkhttpRequestExecutor(logLevel.toOkHttpLoggingLevel())
         val testGroupReports = mutableListOf<TestGroupReport>()
-        httpFilePaths.forEach { httpFilePath ->
+        httpFilePaths.forEachIndexed { index, httpFilePath ->
             logger.info(t.bold("HTTP REQUEST FILE: $httpFilePath"))
             TestReportStore.clear()
             executeHttpRequestFile(
@@ -47,10 +48,10 @@ class HttpRequestFilesExecutor constructor(
             )
             logger.info("\n__________________________________________________\n")
 
-            if (isCreateTestReport) {
-                TestReportPrinter(File(httpFilePath).nameWithoutExtension)
-                    .print(TestReportStore.testGroupReports)
-            }
+            val customReportName = testReportNames.getOrNull(index)?.trim()
+                ?.takeIf(this@HttpRequestFilesExecutor::isValidFileName)
+            val reportName = customReportName ?: File(httpFilePath).nameWithoutExtension
+            TestReportPrinter(reportName).print(TestReportStore.testGroupReports)
             testGroupReports.addAll(TestReportStore.testGroupReports)
         }
         val consoleWriter = PrintWriter(System.out)
@@ -136,5 +137,14 @@ class HttpRequestFilesExecutor constructor(
          * be end immediately.
          */
         const val REQUEST_NAME_END: String = "_END_"
+    }
+
+    private fun isValidFileName(name: String): Boolean {
+        return try {
+            File(name).canonicalPath
+            name.isNotEmpty()
+        } catch (_: Exception) {
+            false
+        }
     }
 }
