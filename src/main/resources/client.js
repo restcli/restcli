@@ -5,6 +5,7 @@ var logTestingCapture = null;
 var testReportStore = new TestReportStore();
 var testFailedCount = 0
 var t = new TermColors();
+var REST_CLI = true;
 
 ///////////// HttpClient /////////////
 function HttpClient() {
@@ -54,6 +55,14 @@ HttpClient.prototype.log = function (text) {
         logTestingCapture.add(text);
     }
     logger.info(text);
+}
+
+/**
+ * Sets the name of the next request. The next `requestName` will be after all test of the current
+ * request run finished.
+ */
+HttpClient.prototype.setNextRequest = function (requestName) {
+    _store.setNextRequest(requestName);
 }
 
 ///////////// HttpResponse /////////////

@@ -1,11 +1,20 @@
 package uos.dev.restcli.report
 
 object TestReportStore {
+    var nextRequestName: String? = null
+        private set
+
     private val _testGroupReports: MutableList<TestGroupReport> = mutableListOf()
     val testGroupReports: List<TestGroupReport> get() = _testGroupReports
 
     fun addTestGroupReport(name: String) {
         _testGroupReports += TestGroupReport(name)
+    }
+
+    @Suppress("unused") // Used in client.js.
+    @JvmStatic
+    fun setNextRequest(requestName: String?) {
+        nextRequestName = requestName
     }
 
     @Suppress("unused") // Used in client.js.

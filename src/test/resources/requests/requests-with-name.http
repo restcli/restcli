@@ -1,0 +1,38 @@
+### Request with name request1
+# @no-redirect
+# @name=request1
+GET https://httpbin.org/status/200
+
+> {%
+client.log("Login in request1; next = request3")
+if (typeof REST_CLI !== 'undefined') client.setNextRequest("request3");
+%}
+
+### Request with name request2
+# @name=request2
+GET https://httpbin.org/status/404
+
+> {%
+client.log("Login in request2; next = _END_")
+if (typeof REST_CLI !== 'undefined')  client.setNextRequest("_END_");
+%}
+
+### Request with name request3
+# @name=request3
+GET https://httpbin.org/get
+
+> {%
+client.log("Login in request3; next = null")
+%}
+
+### Request with name request4
+# @name=request4
+GET https://httpbin.org/get
+
+> {%
+client.log("Login in request4; next = request2")
+if (typeof REST_CLI !== 'undefined')  client.setNextRequest("request2");
+%}
+
+###
+
