@@ -19,8 +19,7 @@ import java.io.PrintWriter
 class HttpRequestFilesExecutor constructor(
     private val httpFilePaths: Array<String>,
     private val environmentName: String?,
-    private val logLevel: HttpLoggingLevel,
-    private val testReportNames: Array<String>
+    private val logLevel: HttpLoggingLevel
 ) : Runnable {
     private val parser: Parser = Parser()
     private val jsClient: JsClient = JsClient()
@@ -48,9 +47,7 @@ class HttpRequestFilesExecutor constructor(
             )
             logger.info("\n__________________________________________________\n")
 
-            val customReportName = testReportNames.getOrNull(index)?.trim()
-                ?.takeIf(this@HttpRequestFilesExecutor::isValidFileName)
-            val reportName = customReportName ?: File(httpFilePath).nameWithoutExtension
+            val reportName =  File(httpFilePath).nameWithoutExtension
             TestReportPrinter(reportName).print(TestReportStore.testGroupReports)
             testGroupReports.addAll(TestReportStore.testGroupReports)
         }
@@ -137,14 +134,5 @@ class HttpRequestFilesExecutor constructor(
          * be end immediately.
          */
         const val REQUEST_NAME_END: String = "_END_"
-    }
-
-    private fun isValidFileName(name: String): Boolean {
-        return try {
-            File(name).canonicalPath
-            name.isNotEmpty()
-        } catch (_: Exception) {
-            false
-        }
     }
 }
