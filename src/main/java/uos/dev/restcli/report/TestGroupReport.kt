@@ -1,7 +1,8 @@
 package uos.dev.restcli.report
 
 data class TestGroupReport(
-    val name: String
+    val name: String,
+    val trace: Trace
 ) {
     private val _testReports: MutableList<TestReport> =
         mutableListOf()
@@ -10,4 +11,6 @@ data class TestGroupReport(
     fun addTestReport(testReport: TestReport) {
         _testReports += testReport
     }
+
+    data class Trace(val httpTestFilePath: String, val scriptHandlerStartLine: Int)
 }

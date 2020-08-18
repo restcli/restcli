@@ -37,7 +37,8 @@ class HttpRequestFilesExecutor constructor(
             .toMutableMap()
         val executor = OkhttpRequestExecutor(logLevel.toOkHttpLoggingLevel())
         val testGroupReports = mutableListOf<TestGroupReport>()
-        httpFilePaths.forEachIndexed { index, httpFilePath ->
+        httpFilePaths.forEach { httpFilePath ->
+            logger.info("\n__________________________________________________\n")
             logger.info(t.bold("HTTP REQUEST FILE: $httpFilePath"))
             TestReportStore.clear()
             executeHttpRequestFile(
@@ -47,8 +48,7 @@ class HttpRequestFilesExecutor constructor(
             )
             logger.info("\n__________________________________________________\n")
 
-            val reportName =  File(httpFilePath).nameWithoutExtension
-            TestReportPrinter(reportName).print(TestReportStore.testGroupReports)
+            TestReportPrinter(httpFilePath).print(TestReportStore.testGroupReports)
             testGroupReports.addAll(TestReportStore.testGroupReports)
         }
         val consoleWriter = PrintWriter(System.out)
@@ -102,7 +102,11 @@ class HttpRequestFilesExecutor constructor(
                 val jsGlobalEnv = jsClient.globalEnvironment()
                 val request =
                     requestEnvironmentInjector.inject(rawRequest, environment, jsGlobalEnv)
-                TestReportStore.addTestGroupReport(request.requestTarget)
+                val trace = TestGroupReport.Trace(
+                    httpTestFilePath = httpFilePath,
+                    scriptHandlerStartLine = request.scriptHandlerStartLine
+                )
+                TestReportStore.addTestGroupReport(request.requestTarget, trace)
                 logger.info("\n__________________________________________________\n")
                 logger.info(t.bold("##### ${request.method.name} ${request.requestTarget} #####"))
                 executeSingleRequest(executor, request)

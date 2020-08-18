@@ -7,8 +7,8 @@ object TestReportStore {
     private val _testGroupReports: MutableList<TestGroupReport> = mutableListOf()
     val testGroupReports: List<TestGroupReport> get() = _testGroupReports
 
-    fun addTestGroupReport(name: String) {
-        _testGroupReports += TestGroupReport(name)
+    fun addTestGroupReport(name: String, trace: TestGroupReport.Trace) {
+        _testGroupReports += TestGroupReport(name, trace)
     }
 
     @Suppress("unused") // Used in client.js.

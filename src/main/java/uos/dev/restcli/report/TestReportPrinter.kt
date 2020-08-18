@@ -4,9 +4,10 @@ import mu.KotlinLogging
 import java.io.File
 import java.io.FileWriter
 
-class TestReportPrinter(private val testReportName: String) {
+class TestReportPrinter(private val httpFilePath: String) {
     private val logger = KotlinLogging.logger {}
     fun print(testGroupReports: List<TestGroupReport>) {
+        val testReportName = File(httpFilePath).nameWithoutExtension
         logger.info("[START] Creating test report: $testReportName")
         val result = runCatching {
             val reportName = testReportName.ifBlank { DEFAULT_TEST_REPORT_NAME }

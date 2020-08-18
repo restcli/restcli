@@ -68,7 +68,11 @@ class AsciiArtTestReportGenerator : TestReportGenerator {
                         .forEach {
                             val failedTests = it.testReports.filter { report -> !report.isPassed }
                             row {
-                                cell("[REQUEST] ${it.name}") {
+                                cell(
+                                    "[REQUEST] ${it.name}\n" +
+                                            "[FILE] ${it.trace.httpTestFilePath}\n" +
+                                            "[LINE] near ${it.trace.scriptHandlerStartLine}"
+                                ) {
                                     columnSpan = 4
                                 }
                             }

@@ -84,6 +84,7 @@ class Parser {
                         token.value
                     }
                     builder.rawScriptHandler.add(script)
+                    builder.scriptHandlerStartLine = token.lineNumber + 1
                 }
                 TokenType.TYPE_NO_REDIRECT -> builder.isFollowRedirects = true
                 TokenType.TYPE_NO_COOKIE_JAR -> builder.isNoCookieJar = true
