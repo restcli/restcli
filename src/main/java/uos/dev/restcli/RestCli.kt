@@ -6,7 +6,7 @@ import picocli.CommandLine
 import java.util.concurrent.Callable
 
 @CommandLine.Command(
-    name = "rest-cli", version = ["IntelliJ RestCli v1.4"],
+    name = "rest-cli", version = ["IntelliJ RestCli v1.6"],
     mixinStandardHelpOptions = true,
     description = ["@|bold IntelliJ RestCli|@"]
 )
@@ -36,22 +36,6 @@ class RestCli : Callable<Unit> {
     )
     var logLevel: HttpLoggingLevel = HttpLoggingLevel.BODY
 
-    @CommandLine.Option(
-        names = ["-r", "--report-names"],
-        description = [
-            "Custom test report names inside folder \"test-reports\".",
-            "The report names must separate by ':' character;",
-            "If the split string of the report name is empty, then the test request file name will",
-            "be used for report name",
-            "Such as:",
-            "java -jar restcli.jar -r custom_report1::custom_report3 test1.http test2.http test3.http",
-            "Then the test report for test1.http will be custom_report1.xml",
-            "test2.http -> test2.xml (Because the report name for test2.http is empty)",
-            "test3.http -> custom_report3.xml"
-        ]
-    )
-    var testReportNames: String = ""
-
     private val logger = KotlinLogging.logger {}
 
     override fun call() {
@@ -59,8 +43,7 @@ class RestCli : Callable<Unit> {
         HttpRequestFilesExecutor(
             httpFilePaths = httpFilePaths,
             environmentName = environmentName,
-            logLevel = logLevel,
-            testReportNames = testReportNames.split(':').toTypedArray()
+            logLevel = logLevel
         ).run()
     }
 
@@ -70,7 +53,7 @@ class RestCli : Callable<Unit> {
             header {
                 cellStyle { border = true }
                 row {
-                    cell("restcli v1.4") {
+                    cell("restcli v1.6") {
                         columnSpan = 2
                     }
                 }

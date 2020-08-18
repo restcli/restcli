@@ -4,6 +4,7 @@ package uos.dev.restcli.parser;
 %public
 
 //%debug
+%line
 %unicode
 %state S_REQUEST_SEPARATOR, S_REQUEST_LINE, S_HEADER, S_BODY, S_MULTILE_PART, S_SCRIPT_HANDLER, S_RESPONSE_REFERENCE
 %state S_MULTIPLE_PART_HEADER, S_MULTIPLE_PART_BODY
@@ -85,7 +86,7 @@ private Yytoken createTokenHandlerFileScript() {
     throwError();
   }
   String filePath = yytext().trim().substring(1).trim();
-  return new Yytoken(TokenType.TYPE_HANDLER_FILE_SCRIPT, filePath);
+  return new Yytoken(TokenType.TYPE_HANDLER_FILE_SCRIPT, filePath, yyline);
 }
 
 private Yytoken createAndSaveFieldNameToken(TokenType type) {
@@ -101,7 +102,7 @@ private Yytoken createTokenEmbeddedScriptHandler() {
   int start = text.indexOf(openScript) + openScript.length();
   int end = text.lastIndexOf(closeScript);
   String script = text.substring(start, end).trim();
-  return new Yytoken(TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT, script);
+  return new Yytoken(TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT, script, yyline);
 }
 
 private Yytoken createFieldValueToken() {

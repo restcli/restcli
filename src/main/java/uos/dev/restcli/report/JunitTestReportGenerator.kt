@@ -17,7 +17,8 @@ class JunitTestReportGenerator : TestReportGenerator {
                 val name = StringEscapeUtils.escapeXml11(groupReports.name)
                 builder.append("""<testsuite tests="${groupReports.testReports.size}" name="$name">""")
                 groupReports.testReports.forEach { report ->
-                    builder.append(report.createTestCaseElement()).append(NEW_LINE)
+                    builder.append(report.createTestCaseElement(groupReports.trace))
+                        .append(NEW_LINE)
                 }
                 builder.append("</testsuite>")
             }
@@ -25,10 +26,12 @@ class JunitTestReportGenerator : TestReportGenerator {
         writer.write(builder.toString())
     }
 
-    private fun TestReport.createTestCaseElement(): String {
+    private fun TestReport.createTestCaseElement(trace: TestGroupReport.Trace): String {
         val nameEscape = StringEscapeUtils.escapeXml11(name)
         val exceptionEscape = StringEscapeUtils.escapeXml11(exception ?: "TestScriptFailed")
-        val detailsEscape = StringEscapeUtils.escapeXml11(detail)
+        val detailWithTrace =
+            "$detail\nFile: ${trace.httpTestFilePath}\nLine: ${trace.scriptHandlerStartLine}"
+        val detailsEscape = StringEscapeUtils.escapeXml11(detailWithTrace)
         return if (isPassed) {
             """<testcase name="$nameEscape"/>"""
         } else {

@@ -2,7 +2,8 @@ package uos.dev.restcli.parser
 
 data class Yytoken @JvmOverloads constructor(
     val type: TokenType,
-    val value: String = ""
+    val value: String = "",
+    val lineNumber: Int = -1
 ) {
     override fun toString(): String = "${type.name}($value)"
 }
