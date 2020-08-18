@@ -6,7 +6,7 @@ import picocli.CommandLine
 import java.util.concurrent.Callable
 
 @CommandLine.Command(
-    name = "rest-cli", version = ["IntelliJ RestCli v1.4"],
+    name = "rest-cli", version = ["IntelliJ RestCli v1.6"],
     mixinStandardHelpOptions = true,
     description = ["@|bold IntelliJ RestCli|@"]
 )
@@ -53,7 +53,7 @@ class RestCli : Callable<Unit> {
             header {
                 cellStyle { border = true }
                 row {
-                    cell("restcli v1.4") {
+                    cell("restcli v1.6") {
                         columnSpan = 2
                     }
                 }
