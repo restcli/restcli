@@ -8,38 +8,54 @@ import styles from './styles.module.css';
 
 const features = [
   {
-    title: <>Easy to Use</>,
-    imageUrl: 'img/undraw_docusaurus_mountain.svg',
+    title: <>Execute http files</>,
+    imageUrl: 'img/undraw_text_files_au1q.svg',
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Execute IntelliJ HTTP request files in the command-line.
       </>
     ),
   },
   {
-    title: <>Focus on What Matters</>,
-    imageUrl: 'img/undraw_docusaurus_tree.svg',
+    title: <>Running test script</>,
+    imageUrl: 'img/undraw_code_inspection_bdl7.svg',
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Running test script and give you the beautiful log and junit test report.
       </>
     ),
   },
   {
-    title: <>Powered by React</>,
+    title: <>Custom environment variables</>,
     imageUrl: 'img/undraw_docusaurus_react.svg',
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Loading and inject environment variables through http-client.env.json file.
+      </>
+    ),
+  },
+  {
+    title: <>Cross platform</>,
+    imageUrl: 'img/undraw_designer_life_w96d.svg',
+    description: (
+      <>
+        Windows, macOS and Linux
+      </>
+    ),
+  },
+  {
+    title: <>Easy to create test flows</>,
+    imageUrl: 'img/undraw_advanced_customization_58j6.svg',
+    description: (
+      <>
+        By using control the next request in test script. It is easy to custom the next request in
+        the test script base on your conditional of the test flow.
       </>
     ),
   },
 ];
 
-function Feature({imageUrl, title, description}) {
+function Feature({ imageUrl, title, description }) {
   const imgUrl = useBaseUrl(imageUrl);
   return (
     <div className={clsx('col col--4', styles.feature)}>
@@ -56,11 +72,12 @@ function Feature({imageUrl, title, description}) {
 
 function Home() {
   const context = useDocusaurusContext();
-  const {siteConfig = {}} = context;
+  const { siteConfig = {} } = context;
   return (
     <Layout
       title={`Hello from ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />">
+      description="Description will go into a meta tag in <head />"
+    >
       <header className={clsx('hero hero--primary', styles.heroBanner)}>
         <div className="container">
           <h1 className="hero__title">{siteConfig.title}</h1>
@@ -71,7 +88,8 @@ function Home() {
                 'button button--outline button--secondary button--lg',
                 styles.getStarted,
               )}
-              to={useBaseUrl('docs/')}>
+              to={useBaseUrl('docs/')}
+            >
               Get Started
             </Link>
           </div>
