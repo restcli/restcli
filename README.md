@@ -10,7 +10,7 @@
   <br>
 </h1>
 
-<h4 align="center">A missing commandline application for execute <a href="https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html" target="_blank">Intellij HTTP Client file</a>.</h4>
+<h4 align="center">A missing commandline application for execute <a href="https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html" target="_blank">IntelliJ HTTP Client file</a>.</h4>
 
 <p align="center">
   <a href="https://github.com/quangson91/intellij_rest_cli/releases/tag/v1.6">
