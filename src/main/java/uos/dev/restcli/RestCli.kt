@@ -3,6 +3,7 @@ package uos.dev.restcli
 import com.jakewharton.picnic.table
 import mu.KotlinLogging
 import picocli.CommandLine
+import picocli.CommandLine.Option
 import java.util.concurrent.Callable
 
 @CommandLine.Command(
@@ -11,7 +12,7 @@ import java.util.concurrent.Callable
     description = ["@|bold IntelliJ RestCli|@"]
 )
 class RestCli : Callable<Unit> {
-    @CommandLine.Option(
+    @Option(
         names = ["-e", "--env"],
         description = [
             "Name of the environment in config file ",
@@ -27,7 +28,7 @@ class RestCli : Callable<Unit> {
     )
     lateinit var httpFilePaths: Array<String>
 
-    @CommandLine.Option(
+    @Option(
         names = ["-l", "--log-level"],
         description = [
             "Config log level while the executor running. ",
@@ -36,6 +37,18 @@ class RestCli : Callable<Unit> {
     )
     var logLevel: HttpLoggingLevel = HttpLoggingLevel.BODY
 
+    @Option(
+        names = ["-P", "--private-env"],
+        description = ["Private environment variables"]
+    )
+    var privateEnv: Map<String, String> = emptyMap()
+
+    @Option(
+        names = ["-G", "--global-env"],
+        description = ["Public environment variables"]
+    )
+    var publicEnv: Map<String, String> = emptyMap()
+
     private val logger = KotlinLogging.logger {}
 
     override fun call() {
@@ -43,6 +56,7 @@ class RestCli : Callable<Unit> {
         HttpRequestFilesExecutor(
             httpFilePaths = httpFilePaths,
             environmentName = environmentName,
+            customEnvironment = CustomEnvironment(privateEnv, publicEnv),
             logLevel = logLevel
         ).run()
     }
