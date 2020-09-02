@@ -1,4 +1,4 @@
-name: Auto release
+name: Auto release snapshot
 
 on:
   push:
