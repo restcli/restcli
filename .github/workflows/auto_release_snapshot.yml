@@ -1,4 +1,4 @@
-name: Auto release
+name: Auto release snapshot
 
 on:
   push:
@@ -23,6 +23,11 @@ jobs:
           # The Java version to make available on the path. Takes a whole or semver Java version, or 1.x syntax (e.g. 1.8 => Java 8.x). Early access versions can be specified in the form of e.g. 14-ea, 14.0.0-ea, or 14.0.0-ea.28
           java-version: 11.0.3
 
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
       - name: Build project
         run: |
           ./gradlew clean jar
@@ -32,9 +37,11 @@ jobs:
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
         with:
-          tag_name: ${{ github.ref }}-${{ env.GITHUB_RUN_NUMBER }}
-          release_name: Release ${{ github.ref }}-${{ env.GITHUB_RUN_NUMBER }}
+          tag_name: ${{ env.BRANCH_NAME }}-${{ env.GITHUB_RUN_NUMBER }}
+          release_name: Release ${{ env.BRANCH_NAME }}-${{ env.GITHUB_RUN_NUMBER }}
           draft: false
           prerelease: true
       - name: Upload Release Asset
