@@ -168,7 +168,7 @@ MessageLineFile = "<"{RequiredWhiteSpace}{FilePath}
 
 MultiplePartBoundary = \-\-{LineTail}
 // Response handler.
-ResponseHandlerEmbeddedScript = ">"{RequiredWhiteSpace}"{%"~"%}"
+ResponseHandlerEmbeddedScript = ">"{RequiredWhiteSpace}"{%"~"%}"{OptionalWhiteSpace}{LineTerminator}*
 ResponseHandlerFileScript = ">"{RequiredWhiteSpace}{FilePath}
 ResponseHandler = ">"{RequiredWhiteSpace}({FilePath}|"{%")
 
@@ -228,7 +228,7 @@ FallbackCharacter = [^]
                                            }
   "<>"{LineTail}                           { T("State S_BODY but got <>.* => fallback to response reference");
                                              yypushback(yylength());
-                                             switchState(S_RESPONSE_REFERENCE);   
+                                             switchState(S_RESPONSE_REFERENCE);
                                            }
   {LineComment}                            { return createTokenNormal(TokenType.TYPE_COMMENT); }
   {MessageLineFile}                        { return createTokenMessageLineFile(); }
@@ -276,11 +276,11 @@ FallbackCharacter = [^]
 }
 
 <S_SCRIPT_HANDLER> {
-  {ResponseHandlerFileScript}              { switchState(S_RESPONSE_REFERENCE);
-                                             return createTokenHandlerFileScript();
-                                           }
   {ResponseHandlerEmbeddedScript}          { switchState(S_RESPONSE_REFERENCE);
                                              return createTokenEmbeddedScriptHandler();
+                                           }
+  {ResponseHandlerFileScript}              { switchState(S_RESPONSE_REFERENCE);
+                                             return createTokenHandlerFileScript();
                                            }
   {FallbackCharacter}                      { yypushback(yylength()); switchState(S_SCRIPT_HANDLER); }
 }

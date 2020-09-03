@@ -235,7 +235,7 @@ class ParserTest {
                 expected = Request(
                     method = RequestMethod.GET,
                     requestTarget = "https://httpbin.org/status/200",
-                    scriptHandlerStartLine = 3,
+                    scriptHandlerStartLine = 4,
                     scriptHandler =
                     "client.test(\"Request executed successfully\", function() {\n" +
                             "  client.assert(response.status === 200, \"Response status is not 200\");\n" +
@@ -255,7 +255,7 @@ class ParserTest {
                 expected = Request(
                     method = RequestMethod.GET,
                     requestTarget = "https://httpbin.org/status/404",
-                    scriptHandlerStartLine = 3,
+                    scriptHandlerStartLine = 4,
                     scriptHandler =
                     "client.test(\"Request executed successfully\", function() {\n" +
                             "  client.assert(response.status === 200, \"Response status is not 200\");\n" +
@@ -283,7 +283,7 @@ class ParserTest {
                 expected = Request(
                     method = RequestMethod.GET,
                     requestTarget = "https://httpbin.org/status/404",
-                    scriptHandlerStartLine = 3,
+                    scriptHandlerStartLine = 4,
                     scriptHandler = "client.test(\"Request executed successfully\", function() {\n" +
                             "    client.assert(response.status === 200, \"Response status is not 200\");\n" +
                             "});\n"

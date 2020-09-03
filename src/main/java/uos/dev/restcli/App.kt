@@ -5,7 +5,7 @@ import kotlin.system.exitProcess
 
 fun main(vararg args: String) {
     val exitCode = CommandLine(RestCli())
-        .apply { setCaseInsensitiveEnumValuesAllowed(true) }
+        .apply { isCaseInsensitiveEnumValuesAllowed = true }
         .execute(*args)
     exitProcess(exitCode)
 }
