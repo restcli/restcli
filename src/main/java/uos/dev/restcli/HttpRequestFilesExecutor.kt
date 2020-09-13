@@ -11,14 +11,13 @@ import uos.dev.restcli.report.AsciiArtTestReportGenerator
 import uos.dev.restcli.report.TestGroupReport
 import uos.dev.restcli.report.TestReportPrinter
 import uos.dev.restcli.report.TestReportStore
-import java.io.File
 import java.io.FileReader
 import java.io.PrintWriter
-
 
 class HttpRequestFilesExecutor constructor(
     private val httpFilePaths: Array<String>,
     private val environmentName: String?,
+    private val customEnvironment: CustomEnvironment,
     private val logLevel: HttpLoggingLevel
 ) : Runnable {
     private val parser: Parser = Parser()
@@ -100,8 +99,12 @@ class HttpRequestFilesExecutor constructor(
 
             runCatching {
                 val jsGlobalEnv = jsClient.globalEnvironment()
-                val request =
-                    requestEnvironmentInjector.inject(rawRequest, environment, jsGlobalEnv)
+                val request = requestEnvironmentInjector.inject(
+                    rawRequest,
+                    customEnvironment,
+                    environment,
+                    jsGlobalEnv
+                )
                 val trace = TestGroupReport.Trace(
                     httpTestFilePath = httpFilePath,
                     scriptHandlerStartLine = request.scriptHandlerStartLine

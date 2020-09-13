@@ -1,16 +1,24 @@
 package uos.dev.restcli.parser
 
+import uos.dev.restcli.CustomEnvironment
+
 class RequestEnvironmentInjector(
     private val environmentVariableInjector: EnvironmentVariableInjector =
         EnvironmentVariableInjectorImpl()
 ) {
     fun inject(
         request: Request,
+        customEnvironment: CustomEnvironment,
         environment: Map<String, String>,
         jsGlobalEnv: Map<String, String>
     ): Request {
-        fun inject(source: String): String =
-            environmentVariableInjector.inject(source, jsGlobalEnv, environment)
+        fun inject(source: String): String = environmentVariableInjector.inject(
+            source,
+            customEnvironment.privateEnv,
+            customEnvironment.publicEnv,
+            jsGlobalEnv,
+            environment
+        )
 
         fun inject(headers: Map<String, String>): Map<String, String> {
             val result = mutableMapOf<String, String>()
