@@ -1,7 +1,7 @@
 package uos.dev.restcli
 
 import com.google.common.truth.Truth.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 /**
  * IMPORTANT: When run this test, the working directory must be set to:

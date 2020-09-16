@@ -6,12 +6,13 @@ import picocli.CommandLine
 import picocli.CommandLine.Option
 import java.util.concurrent.Callable
 
+
 @CommandLine.Command(
     name = "rest-cli", version = ["IntelliJ RestCli v1.6"],
     mixinStandardHelpOptions = true,
     description = ["@|bold IntelliJ RestCli|@"]
 )
-class RestCli : Callable<Unit> {
+class RestCli : Callable<Unit>, CommandLine.IExitCodeGenerator {
     @Option(
         names = ["-e", "--env"],
         description = [
@@ -50,15 +51,18 @@ class RestCli : Callable<Unit> {
     var publicEnv: Map<String, String> = emptyMap()
 
     private val logger = KotlinLogging.logger {}
+    private var exitCode = CommandLine.ExitCode.OK
 
     override fun call() {
         showInfo()
-        HttpRequestFilesExecutor(
+        val executor = HttpRequestFilesExecutor(
             httpFilePaths = httpFilePaths,
             environmentName = environmentName,
             customEnvironment = CustomEnvironment(privateEnv, publicEnv),
             logLevel = logLevel
-        ).run()
+        )
+        executor.run()
+        exitCode = if (executor.allTestsFinishedWithSuccess()) CommandLine.ExitCode.OK else CommandLine.ExitCode.SOFTWARE
     }
 
     private fun showInfo() {
@@ -76,4 +80,6 @@ class RestCli : Callable<Unit> {
         }.toString()
         logger.info(content)
     }
+
+    override fun getExitCode(): Int = exitCode
 }
