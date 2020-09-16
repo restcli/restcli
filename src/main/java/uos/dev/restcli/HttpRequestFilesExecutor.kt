@@ -55,6 +55,12 @@ class HttpRequestFilesExecutor constructor(
         consoleWriter.flush()
     }
 
+    fun allTestsFinishedWithSuccess(): Boolean {
+        return TestReportStore.testGroupReports
+            .flatMap { it.testReports }
+            .all { it.isPassed }
+    }
+
     private fun executeHttpRequestFile(
         httpFilePath: String,
         environment: Map<String, String>,
