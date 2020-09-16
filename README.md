@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <h1 align="center">
   <br>
@@ -209,6 +209,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://github.com/martinqvistgard"><img src="https://avatars2.githubusercontent.com/u/703595?v=4" width="100px;" alt=""/><br /><sub><b>Martin Qvistgård</b></sub></a><br /><a href="#userTesting-martinqvistgard" title="User Testing">📓</a></td>
     <td align="center"><a href="https://medium.com/@willitheowl"><img src="https://avatars2.githubusercontent.com/u/1067460?v=4" width="100px;" alt=""/><br /><sub><b>Robert Jack Will</b></sub></a><br /><a href="#ideas-matey-jack" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/gsobczyk"><img src="https://avatars2.githubusercontent.com/u/1021528?v=4" width="100px;" alt=""/><br /><sub><b>gsobczyk</b></sub></a><br /><a href="https://github.com/restcli/restcli/commits?author=gsobczyk" title="Code">💻</a></td>
   </tr>
 </table>
 
