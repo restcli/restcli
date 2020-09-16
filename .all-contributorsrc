@@ -22,11 +22,20 @@
       "contributions": [
         "ideas"
       ]
+    },
+    {
+      "login": "gsobczyk",
+      "name": "gsobczyk",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/1021528?v=4",
+      "profile": "https://github.com/gsobczyk",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
-  "projectName": "intellij_rest_cli",
-  "projectOwner": "quangson91",
+  "projectName": "restcli",
+  "projectOwner": "restcli",
   "repoType": "github",
   "repoHost": "https://github.com",
   "skipCi": true
