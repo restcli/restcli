@@ -1,5 +1,6 @@
 package uos.dev.restcli
 
+import com.github.ajalt.mordant.TermColors
 import com.jakewharton.picnic.table
 import mu.KotlinLogging
 import picocli.CommandLine
@@ -12,7 +13,7 @@ import java.util.concurrent.Callable
     mixinStandardHelpOptions = true,
     description = ["@|bold IntelliJ RestCli|@"]
 )
-class RestCli : Callable<Unit>, CommandLine.IExitCodeGenerator {
+class RestCli : Callable<Int> {
     @Option(
         names = ["-e", "--env"],
         description = [
@@ -53,7 +54,7 @@ class RestCli : Callable<Unit>, CommandLine.IExitCodeGenerator {
     private val logger = KotlinLogging.logger {}
     private var exitCode = CommandLine.ExitCode.OK
 
-    override fun call() {
+    override fun call(): Int {
         showInfo()
         val executor = HttpRequestFilesExecutor(
             httpFilePaths = httpFilePaths,
@@ -62,16 +63,21 @@ class RestCli : Callable<Unit>, CommandLine.IExitCodeGenerator {
             logLevel = logLevel
         )
         executor.run()
-        exitCode = if (executor.allTestsFinishedWithSuccess()) CommandLine.ExitCode.OK else CommandLine.ExitCode.SOFTWARE
+        return if (executor.allTestsFinishedWithSuccess()) {
+            CommandLine.ExitCode.OK
+        } else {
+            CommandLine.ExitCode.SOFTWARE
+        }
     }
 
     private fun showInfo() {
+        val t = TermColors()
         val content = table {
             style { border = true }
             header {
                 cellStyle { border = true }
                 row {
-                    cell("restcli v1.6") {
+                    cell(t.bold("restcli v1.6")) {
                         columnSpan = 2
                     }
                 }
@@ -80,6 +86,4 @@ class RestCli : Callable<Unit>, CommandLine.IExitCodeGenerator {
         }.toString()
         logger.info(content)
     }
-
-    override fun getExitCode(): Int = exitCode
 }
