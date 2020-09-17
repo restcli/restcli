@@ -8,7 +8,7 @@ import picocli.CommandLine
 class E2ETest {
     /**
      * Tests execute the http request `fileName` in the test resource folder.
-     * If you running the test on the IDE, you have to set the working directory is the test
+     * If you running the test on the IDE, you have to set the working directory point to the test
      * resource folder.
      */
     @ParameterizedTest
@@ -20,14 +20,14 @@ class E2ETest {
         "requests-with-tests.http"
     ])
     fun `should not fail requests`(fileName: String) {
-        //given
+        // Given
         println("Test file: $fileName")
         val args = arrayOf("-e", "test", "-l", "BASIC", fileName)
-        //when
+        // When
         val exitCode = CommandLine(RestCli())
             .apply { isCaseInsensitiveEnumValuesAllowed = true }
             .execute(*args)
-        //then
+        // Then
         assertThat(exitCode).isEqualTo(0)
     }
 
@@ -38,14 +38,15 @@ class E2ETest {
         ]
     )
     fun `should fail request`(fileName: String) {
-        //given
+        // Given
         println("Test file: $fileName")
         val args = arrayOf("-e", "test", "-l", "BASIC", fileName)
-        //when
+
+        // When
         val exitCode = CommandLine(RestCli())
             .apply { isCaseInsensitiveEnumValuesAllowed = true }
             .execute(*args)
-        //then
+        // Then
         assertThat(exitCode).isEqualTo(1)
     }
 }
