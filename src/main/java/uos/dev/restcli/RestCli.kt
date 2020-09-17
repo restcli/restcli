@@ -1,5 +1,6 @@
 package uos.dev.restcli
 
+import com.github.ajalt.mordant.TermColors
 import com.jakewharton.picnic.table
 import mu.KotlinLogging
 import picocli.CommandLine
@@ -62,16 +63,18 @@ class RestCli : Callable<Unit>, CommandLine.IExitCodeGenerator {
             logLevel = logLevel
         )
         executor.run()
-        exitCode = if (executor.allTestsFinishedWithSuccess()) CommandLine.ExitCode.OK else CommandLine.ExitCode.SOFTWARE
+        exitCode =
+            if (executor.allTestsFinishedWithSuccess()) CommandLine.ExitCode.OK else CommandLine.ExitCode.SOFTWARE
     }
 
     private fun showInfo() {
+        val t = TermColors()
         val content = table {
             style { border = true }
             header {
                 cellStyle { border = true }
                 row {
-                    cell("restcli v1.6") {
+                    cell(t.bold("restcli v1.6")) {
                         columnSpan = 2
                     }
                 }

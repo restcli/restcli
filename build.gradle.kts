@@ -25,7 +25,7 @@ dependencies {
     implementation("org.apache.commons:commons-text:1.9")
     implementation("com.squareup.okhttp3:logging-interceptor:4.8.0")
     implementation("commons-validator:commons-validator:1.6")
-    implementation("com.jakewharton.picnic:picnic:0.3.1")
+    implementation("com.jakewharton.picnic:picnic:0.5.0")
     implementation("com.github.ajalt:mordant:1.2.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
     implementation("io.github.microutils:kotlin-logging:1.8.3")

@@ -1,5 +1,6 @@
 package uos.dev.restcli.report
 
+import com.github.ajalt.mordant.TermColors
 import com.jakewharton.picnic.Table
 import com.jakewharton.picnic.table
 import uos.dev.restcli.extension.autoWrap
@@ -19,6 +20,8 @@ import java.io.Writer
  * This is especially useful when print to the console.
  */
 class AsciiArtTestReportGenerator : TestReportGenerator {
+    private val t: TermColors = TermColors()
+
     override fun generate(testGroupReports: List<TestGroupReport>, writer: Writer) {
         val allTestReports = testGroupReports.flatMap { it.testReports }
         val failedTestsCount = allTestReports.count { !it.isPassed }
@@ -28,7 +31,7 @@ class AsciiArtTestReportGenerator : TestReportGenerator {
             style { border = true }
             header {
                 cellStyle { border = true }
-                row("TOTAL REQUESTS: ${testGroupReports.size}")
+                row(t.bold("TOTAL REQUESTS: ${testGroupReports.size}"))
             }
         }.printlnTo(writer)
 
@@ -36,12 +39,12 @@ class AsciiArtTestReportGenerator : TestReportGenerator {
             style { border = true }
             header {
                 cellStyle { border = true }
-                row("TEST RESULT")
+                row(t.bold("TEST RESULT"))
             }
             body {
-                row("Total: ${allTestReports.size}")
-                row("Passed: $passedTestsCount")
-                row("Failed: $failedTestsCount")
+                row(t.bold("Total: ${allTestReports.size}"))
+                row(t.green("Passed: $passedTestsCount"))
+                row(t.red("Failed: $failedTestsCount"))
             }
         }.printlnTo(writer)
 
