@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "uos.dev"
-version = "1.6"
+version = "1.7.2"
 
 repositories {
     mavenCentral()
