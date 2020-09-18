@@ -27,21 +27,12 @@ jobs:
         run: |
           ./gradlew clean jar
           sh brew/package.sh
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
       - name: Upload Release Asset
         run: |
           set -x
           assets="-a ./build/__restcli__/brew_restcli.zip -a ./build/__restcli__/restcli.zip -a ./build/__restcli__/checksums.txt"
-          tag_name="${{ github.ref }}"
+          tag_name="${{ env.TAG_NAME }}"
           hub release create "${assets}" -m "$tag_name" "$tag_name"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ github.ref }}
