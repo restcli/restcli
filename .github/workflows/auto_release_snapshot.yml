@@ -45,34 +45,10 @@ jobs:
           draft: false
           prerelease: true
       - name: Upload Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
+        run: |
+          set -x
+          assets="-a ./build/__restcli__/brew_restcli.zip -a ./build/__restcli__/restcli.zip -a ./build/__restcli__/checksums.txt"
+          tag_name="${{ env.BRANCH_NAME }}-${{ env.GITHUB_RUN_NUMBER }}"
+          hub release create "${assets}" -m "$tag_name" "$tag_name"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: ./build/__restcli__/restcli.zip
-          asset_name: restcli.zip
-          asset_content_type: application/zip
-
-      - name: Upload Release Brew Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: ./build/__restcli__/brew_restcli.zip
-          asset_name: restcli.zip
-          asset_content_type: application/zip
-
-      - name: Upload shasum
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: ./build/__restcli__/shasum.txt
-          asset_name: shasum.txt
-          asset_content_type: text/plain

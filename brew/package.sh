@@ -17,6 +17,6 @@ cp "$jar_file" "$PACKAGE_DIRECTORY/restcli.jar"
 pushd $PACKAGE_DIRECTORY_ROOT
 zip -r brew_restcli.zip "brew_restcli"
 zip -j restcli.zip "brew_restcli/restcli.jar"
-shasum -a 256 brew_restcli.zip restcli.zip > shasum.txt
+shasum -a 256 brew_restcli.zip restcli.zip > checksums.txt
 # shellcheck disable=SC2164
 popd
