@@ -4,7 +4,7 @@
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <h1 align="center">
   <br>
-  <a href="https://github.com/quangson91/intellij_rest_cli"><img src="images/logo.png" alt="restcli" width="200"></a>
+  <a href="https://github.com/restcli/restcli"><img src="images/logo.png" alt="restcli" width="200"></a>
   <br>
   restcli
   <br>
@@ -13,11 +13,11 @@
 <h4 align="center">A missing commandline application for execute <a href="https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html" target="_blank">IntelliJ HTTP Client file</a>.</h4>
 
 <p align="center">
-  <a href="https://github.com/quangson91/intellij_rest_cli/releases/tag/v1.6">
-    <img src="https://img.shields.io/badge/restcli-1.6-brightgreen"
+  <a href="https://github.com/restcli/restcli/releases/">
+    <img src="https://img.shields.io/badge/restcli-latest-brightgreen"
          alt="restcli">
   </a>
-  <a href="https://github.com/quangson91/intellij_rest_cli/blob/master/LICENSE">
+  <a href="https://github.com/restcli/restcli/blob/master/LICENSE">
       <img src="https://img.shields.io/badge/license-MIT-blue"
            alt="restcli">
     </a>    
@@ -54,8 +54,8 @@
 * Easy to custom via commandline arguments 😎
   - Custom logging request
   - Inject environment name
-* [Generate test report - junit format.](https://github.com/quangson91/demo_intellij_rest_cli) 🥰🥰🥰
-* [Support setNextRequest. So you can custom flexbile the test flow](https://github.com/quangson91/intellij_rest_cli/releases/tag/v1.5) ✨✨✨
+* Generate test report - junit format.  🥰🥰🥰
+* Support setNextRequest. So you can custom flexbile the test flow. ✨✨✨
 
 ##### Demo
 ![demo-rest-cli](images/demo-rest-cli.gif)
@@ -75,7 +75,7 @@
 
 ## How To Use
 
-The fastest way to get rest cli is download jar from [releases tab](https://github.com/quangson91/intellij_rest_cli/releases)
+The fastest way to get rest cli is download jar from [releases tab](https://github.com/restcli/restcli/releases)
 
 ```
 Usage: rest-cli [-hV] [-e=<environmentName>] [-l=<logLevel>]
@@ -127,7 +127,7 @@ Note: This application required you install `java` on your machine.
 
 ## Download
 
-You can [download](https://github.com/quangson91/intellij_rest_cli/releases) the latest version of restcli for Windows, macOS and Linux.
+You can [download](https://github.com/restcli/restcli/releases) the latest version of restcli for Windows, macOS and Linux.
 
 ## Credits
 
@@ -141,7 +141,7 @@ This software uses the following open source packages:
 
 ## Support
 
-If you need help, please don't hesitate to [file an issue](https://github.com/quangson91/intellij_rest_cli/issues/new).
+If you need help, please don't hesitate to [file an issue](https://github.com/restcli/restcli/issues/new).
  
 
 ## Sponsoring
@@ -194,7 +194,7 @@ SOFTWARE.
 
 <h2 class="text-white mb-4">Made with <span class="heart">❤</span> by quangson91</h2>
 
-> [quangson91.gitbook.io](https://quangson91.gitbook.io/uos/) &nbsp;&middot;&nbsp;
+> [restcli.github.io](https://restcli.github.io/) &nbsp;&middot;&nbsp;
 > GitHub [@quangson91](https://github.com/quangson91) &nbsp;&middot;&nbsp;
 > Twitter [@quangson91](https://twitter.com/quangson91)
 
