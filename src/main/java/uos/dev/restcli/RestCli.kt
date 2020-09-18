@@ -9,7 +9,7 @@ import java.util.concurrent.Callable
 
 
 @CommandLine.Command(
-    name = "rest-cli", version = ["IntelliJ RestCli v1.6"],
+    name = "rest-cli", version = ["IntelliJ RestCli v1.7.2"],
     mixinStandardHelpOptions = true,
     description = ["@|bold IntelliJ RestCli|@"]
 )
@@ -77,7 +77,7 @@ class RestCli : Callable<Int> {
             header {
                 cellStyle { border = true }
                 row {
-                    cell(t.bold("restcli v1.6")) {
+                    cell(t.bold("restcli")) {
                         columnSpan = 2
                     }
                 }
