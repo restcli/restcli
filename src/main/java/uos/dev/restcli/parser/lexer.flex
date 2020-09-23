@@ -203,8 +203,8 @@ FallbackCharacter = [^]
   {WhiteSpace}+                            { T("Ignore {WhiteSpace}+ in S_REQUEST_LINE"); }
   {RequestMethod} /{RequiredWhiteSpace}~{LineTerminator}    { return createTokenTrimmed(TokenType.TYPE_REQUEST_METHOD); }
   {OptionalWhiteSpace}{RequestHttpVersion} { return createTokenTrimmed(TokenType.TYPE_REQUEST_HTTP_VERSION); }
-  [^\r\n\s][^\r\n]+/{RequestHttpVersion}   { hasRequestTarget = true; return createTokenTrimmed(TokenType.TYPE_REQUEST_TARGET); }
-  [^\r\n\s][^\r\n]+                        { hasRequestTarget = true; return createTokenTrimmed(TokenType.TYPE_REQUEST_TARGET); }
+  [^\r\n\s][^\r\n]*/{RequestHttpVersion}   { hasRequestTarget = true; return createTokenTrimmed(TokenType.TYPE_REQUEST_TARGET); }
+  [^\r\n\s][^\r\n]*                        { hasRequestTarget = true; return createTokenTrimmed(TokenType.TYPE_REQUEST_TARGET); }
 
   {LineTerminator}                         { if (!hasRequestTarget) throwError(); switchState(S_HEADER); }
   {FallbackCharacter}                      { throwError(); }

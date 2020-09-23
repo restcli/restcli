@@ -66,7 +66,7 @@ class OkhttpRequestExecutor(
     }
 
     private fun obtainRequestTarget(request: Request): String? {
-        val path = request.requestTarget
+        val path = request.requestTarget.replace(" ", "+")
         if (urlValidator.isValid(path)) {
             // 1. If the path is url valid -> used it.
             return path
