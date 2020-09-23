@@ -32,6 +32,39 @@ class ParserTest {
         @JvmStatic
         private fun parserTestCases(): Stream<Arguments> = Stream.of(
             createParserTestCase(
+                name = "GET request with environment variables & space in target url",
+                input = "### GET request with environment variables\n" +
+                        "GET {{host}}/get?show_env={{show_env}} eq+ {{show_env}}\n" +
+                        "Accept: application/json\n" +
+                        "\n",
+                environment = mapOf(
+                    "host" to "https://httpbin.org",
+                    "show_env" to "1"
+                ),
+                expected = Request(
+                    method = RequestMethod.GET,
+                    requestTarget = "{{host}}/get?show_env={{show_env}} eq+ {{show_env}}",
+                    headers = mapOf("Accept" to "application/json")
+                )
+            ),
+            createParserTestCase(
+                name = "GET request with space in target url & http version",
+                input = "### GET request with environment variables\n" +
+                        "GET {{host}}/get?show_env={{show_env}} eq+ {{show_env}} HTTP/1.2\n" +
+                        "Accept: application/json\n" +
+                        "\n",
+                environment = mapOf(
+                    "host" to "https://httpbin.org",
+                    "show_env" to "1"
+                ),
+                expected = Request(
+                    method = RequestMethod.GET,
+                    httpVersion = "HTTP/1.2",
+                    requestTarget = "{{host}}/get?show_env={{show_env}} eq+ {{show_env}}",
+                    headers = mapOf("Accept" to "application/json")
+                )
+            ),
+            createParserTestCase(
                 name = "GET request with define request name - CRLF",
                 input = "### GET request with define request name\r\n" +
                         "# @no-redirect\r\n" +
