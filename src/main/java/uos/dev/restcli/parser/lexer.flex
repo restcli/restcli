@@ -129,7 +129,7 @@ Digit = [0-9]
 Alpha = [a-zA-Z]
 
 // Line terminators.
-LineTerminator = [\r|\n|\r\n]
+LineTerminator = \r|\n|\r\n
 LineTail = {InputCharacter}* {LineTerminator}
 
 // White space.
