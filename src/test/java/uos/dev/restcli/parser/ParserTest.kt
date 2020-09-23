@@ -32,6 +32,21 @@ class ParserTest {
         @JvmStatic
         private fun parserTestCases(): Stream<Arguments> = Stream.of(
             createParserTestCase(
+                name = "GET request with define request name - CRLF",
+                input = "### GET request with define request name\r\n" +
+                        "# @no-redirect\r\n" +
+                        "# @name=request1\r\n" +
+                        "GET https://httpbin.org/ip\r\n" +
+                        "Accept: application/json\r\n",
+                expected = Request(
+                    isFollowRedirects = true,
+                    name = "request1",
+                    method = RequestMethod.GET,
+                    requestTarget = "https://httpbin.org/ip",
+                    headers = mapOf("Accept" to "application/json")
+                )
+            ),
+            createParserTestCase(
                 name = "GET request with define request name",
                 input = "### GET request with define request name\n" +
                         "# @no-redirect\n" +
