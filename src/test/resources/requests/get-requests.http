@@ -1,3 +1,7 @@
+### GET request with space in target url
+GET https://httpbin.org/ip eq+ 10
+Accept: application/json
+
 ### GET request with a header
 GET https://httpbin.org/ip
 Accept: application/json

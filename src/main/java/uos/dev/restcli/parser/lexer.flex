@@ -126,7 +126,6 @@ private static final void T(String text) {
 
 InputCharacter = [^\r\n]
 Digit = [0-9]
-Alpha = [a-zA-Z]
 
 // Line terminators.
 LineTerminator = \r|\n|\r\n
@@ -154,8 +153,6 @@ RequestSeparator = ###{LineTail}
 // Request.
 RequestMethod = GET|HEAD|POST|PUT|DELETE|CONNECT|PATCH|OPTIONS|TRACE
 RequestHttpVersion = HTTP\/{Digit}+\.{Digit}+
-
-RequestTarget = [^\r\n\s]+
 
 FieldName = [^\r\n:]+
 // TODO: Support FieldValue in multiple lines.
@@ -204,11 +201,13 @@ FallbackCharacter = [^]
 
 <S_REQUEST_LINE> {
   {WhiteSpace}+                            { T("Ignore {WhiteSpace}+ in S_REQUEST_LINE"); }
-  {RequestMethod} /{RequiredWhiteSpace}    { return createTokenTrimmed(TokenType.TYPE_REQUEST_METHOD); }
-  {RequestTarget}                          { hasRequestTarget = true; return createTokenTrimmed(TokenType.TYPE_REQUEST_TARGET); }
-  {RequiredWhiteSpace}{RequestHttpVersion} { return createTokenTrimmed(TokenType.TYPE_REQUEST_HTTP_VERSION); }
+  {RequestMethod} /{RequiredWhiteSpace}~{LineTerminator}    { return createTokenTrimmed(TokenType.TYPE_REQUEST_METHOD); }
+  {OptionalWhiteSpace}{RequestHttpVersion} { return createTokenTrimmed(TokenType.TYPE_REQUEST_HTTP_VERSION); }
+  [^\r\n\s][^\r\n]*/{RequestHttpVersion}   { hasRequestTarget = true; return createTokenTrimmed(TokenType.TYPE_REQUEST_TARGET); }
+  [^\r\n\s][^\r\n]*                        { hasRequestTarget = true; return createTokenTrimmed(TokenType.TYPE_REQUEST_TARGET); }
+
   {LineTerminator}                         { if (!hasRequestTarget) throwError(); switchState(S_HEADER); }
-  {FallbackCharacter} { throwError(); }
+  {FallbackCharacter}                      { throwError(); }
 }
 
 <S_HEADER> {
