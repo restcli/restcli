@@ -31,6 +31,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "pil0t",
+      "name": "Vlad",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/820134?v=4",
+      "profile": "https://github.com/pil0t",
+      "contributions": [
+        "userTesting"
+      ]
     }
   ],
   "contributorsPerLine": 7,
