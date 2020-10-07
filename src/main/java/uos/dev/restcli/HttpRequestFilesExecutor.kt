@@ -18,7 +18,8 @@ class HttpRequestFilesExecutor constructor(
     private val httpFilePaths: Array<String>,
     private val environmentName: String?,
     private val customEnvironment: CustomEnvironment,
-    private val logLevel: HttpLoggingLevel
+    private val logLevel: HttpLoggingLevel,
+    private val environmentFilesDirectory: String = ""
 ) : Runnable {
     private val parser: Parser = Parser()
     private val jsClient: JsClient = JsClient()
@@ -32,7 +33,7 @@ class HttpRequestFilesExecutor constructor(
             logger.error { t.red("HTTP request file[s] is required") }
             return
         }
-        val environment = (environmentName?.let { EnvironmentLoader().load(it) } ?: emptyMap())
+        val environment = (environmentName?.let { EnvironmentLoader().load(environmentFilesDirectory, it) } ?: emptyMap())
             .toMutableMap()
         val executor = OkhttpRequestExecutor(logLevel.toOkHttpLoggingLevel())
         val testGroupReports = mutableListOf<TestGroupReport>()

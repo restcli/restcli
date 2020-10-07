@@ -11,7 +11,8 @@ import org.junit.jupiter.api.Test
 class EnvironmentLoaderTest {
     @Test
     fun load_http_client_env_config() {
-        val env = EnvironmentLoader().load("test")
+        val environmentFilesDirectory = javaClass.getResource("/requests").path
+        val env = EnvironmentLoader().load(environmentFilesDirectory, "test")
         assertThat(env).isEqualTo(
             mapOf(
                 "host" to "https://httpbin.org",

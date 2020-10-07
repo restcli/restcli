@@ -3,7 +3,6 @@ package uos.dev.restcli
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
-import picocli.CommandLine
 
 class E2ETest {
     /**
@@ -22,11 +21,15 @@ class E2ETest {
     fun `should not fail requests`(fileName: String) {
         // Given
         println("Test file: $fileName")
-        val args = arrayOf("-e", "test", "-l", "BASIC", fileName)
+        val restCli = RestCli().apply {
+            environmentName = "test"
+            logLevel = HttpLoggingLevel.BASIC
+            httpFilePaths = arrayOf(javaClass.getResource("/requests/${fileName}").path)
+            environmentFilesDirectory = javaClass.getResource("/requests/").path
+        }
+
         // When
-        val exitCode = CommandLine(RestCli())
-            .apply { isCaseInsensitiveEnumValuesAllowed = true }
-            .execute(*args)
+        val exitCode = restCli.call()
         // Then
         assertThat(exitCode).isEqualTo(0)
     }
@@ -40,12 +43,15 @@ class E2ETest {
     fun `should fail request`(fileName: String) {
         // Given
         println("Test file: $fileName")
-        val args = arrayOf("-e", "test", "-l", "BASIC", fileName)
+        val restCli = RestCli().apply {
+            environmentName = "test"
+            logLevel = HttpLoggingLevel.BASIC
+            httpFilePaths = arrayOf(javaClass.getResource("/requests/${fileName}").path)
+            environmentFilesDirectory = javaClass.getResource("/requests/").path
+        }
 
         // When
-        val exitCode = CommandLine(RestCli())
-            .apply { isCaseInsensitiveEnumValuesAllowed = true }
-            .execute(*args)
+        val exitCode = restCli.call()
         // Then
         assertThat(exitCode).isEqualTo(1)
     }

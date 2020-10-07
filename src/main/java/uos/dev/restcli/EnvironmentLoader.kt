@@ -10,9 +10,9 @@ import java.io.File
  */
 class EnvironmentLoader {
 
-    fun load(environmentName: String): Map<String, String> {
-        val privateEnvConfig = loadConfig(PRIVATE_ENV_FILE, environmentName)
-        val publicEnvConfig = loadConfig(PUBLIC_ENV_FILE, environmentName)
+    fun load(environmentFilesDirectory: String, environmentName: String): Map<String, String> {
+        val privateEnvConfig = loadConfig(environmentFilesDirectory, PRIVATE_ENV_FILE, environmentName)
+        val publicEnvConfig = loadConfig(environmentFilesDirectory, PUBLIC_ENV_FILE, environmentName)
         val result = mutableMapOf<String, String>()
         // Transfer all key/value from public env config to the result map.
         publicEnvConfig?.keySet()?.forEach { key ->
@@ -33,10 +33,11 @@ class EnvironmentLoader {
     }
 
     private fun loadConfig(
+        environmentFilesDirectory: String,
         httpClientEnvConfigFilePath: String,
         environmentName: String
     ): JsonObject? {
-        val file = File(httpClientEnvConfigFilePath)
+        val file = File(File(environmentFilesDirectory).absolutePath, httpClientEnvConfigFilePath)
         if (!file.exists()) {
             return null
         }
