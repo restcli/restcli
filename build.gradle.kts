@@ -34,7 +34,6 @@ dependencies {
 
 tasks.named<Test>("test") {
     useJUnitPlatform()
-    workingDir = File(rootDir, "src/test/resources/requests")
 }
 
 tasks.withType<Jar> {

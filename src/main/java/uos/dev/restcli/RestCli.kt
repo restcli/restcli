@@ -23,6 +23,15 @@ class RestCli : Callable<Int> {
     )
     var environmentName: String? = null
 
+    @Option(
+        names = ["-d", "--env-dir"],
+        description = [
+            "Directory where config files are (default: current directory)",
+            "(http-client.env.json/http-client.private.env.json)."
+        ]
+    )
+    var environmentFilesDirectory: String = ""
+
     @CommandLine.Parameters(
         paramLabel = "FILES",
         arity = "1..1000000",
@@ -52,7 +61,6 @@ class RestCli : Callable<Int> {
     var publicEnv: Map<String, String> = emptyMap()
 
     private val logger = KotlinLogging.logger {}
-    private var exitCode = CommandLine.ExitCode.OK
 
     override fun call(): Int {
         showInfo()
@@ -60,7 +68,8 @@ class RestCli : Callable<Int> {
             httpFilePaths = httpFilePaths,
             environmentName = environmentName,
             customEnvironment = CustomEnvironment(privateEnv, publicEnv),
-            logLevel = logLevel
+            logLevel = logLevel,
+            environmentFilesDirectory = environmentFilesDirectory
         )
         executor.run()
         return if (executor.allTestsFinishedWithSuccess()) {

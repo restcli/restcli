@@ -210,7 +210,7 @@ class ParserTest {
                         "Content-Disposition: form-data; name=\"data\"; filename=\"data.json\"\n" +
                         "Content-Type: application/json\n" +
                         "\n" +
-                        "< ./request-form-data.json\n" +
+                        "< ${ParserTest::class.java.getResource("/requests").path}/request-form-data.json\n" +
                         "--WebAppBoundary--\n",
                 expected = Request(
                     method = RequestMethod.POST,
@@ -327,7 +327,7 @@ class ParserTest {
                 input = "### Test from referenced file script\n" +
                         "GET https://httpbin.org/status/404\n" +
                         "\n" +
-                        "> test_script.js\n",
+                        "> ${ParserTest::class.java.getResource("/requests").path}/test_script.js\n",
                 expected = Request(
                     method = RequestMethod.GET,
                     requestTarget = "https://httpbin.org/status/404",
