@@ -15,7 +15,8 @@ class JunitTestReportGenerator : TestReportGenerator {
             .filter { it.testReports.isNotEmpty() }
             .forEach { groupReports ->
                 val name = StringEscapeUtils.escapeXml11(groupReports.name)
-                builder.append("""<testsuite tests="${groupReports.testReports.size}" name="$name">""")
+                var failures = groupReports.testReports.filter { !it.isPassed }.size
+                builder.append("""<testsuite tests="${groupReports.testReports.size}" name="$name" errors="0" failures="$failures" skip="0">""")
                 groupReports.testReports.forEach { report ->
                     builder.append(report.createTestCaseElement(groupReports.trace))
                         .append(NEW_LINE)
@@ -32,12 +33,13 @@ class JunitTestReportGenerator : TestReportGenerator {
         val detailWithTrace =
             "$detail\nFile: ${trace.httpTestFilePath}\nLine: ${trace.scriptHandlerStartLine}"
         val detailsEscape = StringEscapeUtils.escapeXml11(detailWithTrace)
+        var detailFirstLine = StringEscapeUtils.escapeXml11(detail)
         return if (isPassed) {
-            """<testcase name="$nameEscape"/>"""
+            """<testcase  classname="Test" name="$nameEscape" time="0"/>"""
         } else {
             """
-                <testcase name="$nameEscape">
-                    <failure type="$exceptionEscape">$detailsEscape</failure>
+                <testcase  classname="Test" name="$nameEscape" time="0">
+                    <failure type="$exceptionEscape" message="$detailFirstLine">$detailsEscape</failure>
                 </testcase>
             """.trimIndent()
         }
