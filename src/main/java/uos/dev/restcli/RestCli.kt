@@ -60,6 +60,12 @@ class RestCli : Callable<Int> {
     )
     var publicEnv: Map<String, String> = emptyMap()
 
+    @Option(
+        names = ["-k", "--insecure"],
+        description = ["Disable ssl validation"]
+    )
+    var insecure:Boolean = false
+
     private val logger = KotlinLogging.logger {}
 
     override fun call(): Int {
@@ -69,7 +75,8 @@ class RestCli : Callable<Int> {
             environmentName = environmentName,
             customEnvironment = CustomEnvironment(privateEnv, publicEnv),
             logLevel = logLevel,
-            environmentFilesDirectory = environmentFilesDirectory
+            environmentFilesDirectory = environmentFilesDirectory,
+            insecure = insecure
         )
         executor.run()
         return if (executor.allTestsFinishedWithSuccess()) {

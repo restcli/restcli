@@ -19,7 +19,8 @@ class HttpRequestFilesExecutor constructor(
     private val environmentName: String?,
     private val customEnvironment: CustomEnvironment,
     private val logLevel: HttpLoggingLevel,
-    private val environmentFilesDirectory: String = ""
+    private val environmentFilesDirectory: String = "",
+    private val insecure:Boolean
 ) : Runnable {
     private val parser: Parser = Parser()
     private val jsClient: JsClient = JsClient()
@@ -35,7 +36,7 @@ class HttpRequestFilesExecutor constructor(
         }
         val environment = (environmentName?.let { EnvironmentLoader().load(environmentFilesDirectory, it) } ?: emptyMap())
             .toMutableMap()
-        val executor = OkhttpRequestExecutor(logLevel.toOkHttpLoggingLevel())
+        val executor = OkhttpRequestExecutor(logLevel.toOkHttpLoggingLevel(),insecure)
         val testGroupReports = mutableListOf<TestGroupReport>()
         httpFilePaths.forEach { httpFilePath ->
             logger.info("\n__________________________________________________\n")
@@ -120,7 +121,9 @@ class HttpRequestFilesExecutor constructor(
                 logger.info("\n__________________________________________________\n")
                 logger.info(t.bold("##### ${request.method.name} ${request.requestTarget} #####"))
                 executeSingleRequest(executor, request)
-            }.onFailure { logger.error { t.red(it.message.orEmpty()) } }
+            }.onFailure {
+                logger.error { t.red(it.message.orEmpty()) }
+            }
         }
     }
 

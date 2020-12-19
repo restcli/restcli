@@ -17,6 +17,7 @@ class E2ETest {
         "requests-with-authorization.http",
         "requests-with-name.http",
         "requests-with-tests.http"
+
     ])
     fun `should not fail requests`(fileName: String) {
         // Given
@@ -26,6 +27,30 @@ class E2ETest {
             logLevel = HttpLoggingLevel.BASIC
             httpFilePaths = arrayOf(javaClass.getResource("/requests/${fileName}").path)
             environmentFilesDirectory = javaClass.getResource("/requests/").path
+        }
+
+        // When
+        val exitCode = restCli.call()
+        // Then
+        assertThat(exitCode).isEqualTo(0)
+    }
+
+
+    @ParameterizedTest
+    @CsvSource(
+        value = [
+            "requests-bad-ssl.http"
+        ]
+    )
+    fun `request with bad ssl`(fileName: String) {
+        // Given
+        println("Test file: $fileName")
+        val restCli = RestCli().apply {
+            environmentName = "test"
+            logLevel = HttpLoggingLevel.BASIC
+            httpFilePaths = arrayOf(javaClass.getResource("/requests/${fileName}").path)
+            environmentFilesDirectory = javaClass.getResource("/requests/").path
+            insecure = true
         }
 
         // When
@@ -55,4 +80,7 @@ class E2ETest {
         // Then
         assertThat(exitCode).isEqualTo(1)
     }
+
+
+
 }
