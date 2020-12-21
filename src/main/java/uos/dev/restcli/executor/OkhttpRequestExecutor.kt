@@ -10,15 +10,19 @@ import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
+import okhttp3.internal.tls.OkHostnameVerifier
 import okhttp3.logging.HttpLoggingInterceptor
 import org.apache.commons.validator.routines.RegexValidator
 import org.apache.commons.validator.routines.UrlValidator
 import org.intellij.lang.annotations.Language
 import uos.dev.restcli.parser.Request
+import javax.net.ssl.HostnameVerifier
+import javax.net.ssl.SSLSession
 import okhttp3.Request as OkhttpRequest
 
 class OkhttpRequestExecutor(
-    private val logLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.BODY
+    private val logLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.BODY,
+    private val insecure:Boolean
 ) : RequestExecutor {
     @Suppress("RegExpRedundantEscape")
     @Language("RegExp")
@@ -29,8 +33,13 @@ class OkhttpRequestExecutor(
     private val loggingInterceptor: Interceptor = HttpLoggingInterceptor(CustomLogger())
         .apply { setLevel(logLevel) }
 
+
+    private val hostnameVerifier = if (insecure) HostnameVerifier { _, _ -> true }  else OkHostnameVerifier
+
+
     private val okHttpClient: OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
+        .hostnameVerifier(hostnameVerifier)
         .build()
 
     override fun execute(request: Request): Response {

@@ -1,0 +1,30 @@
+### Successful test: check response status is 200
+GET https://wrong.host.badssl.com/
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### Check response status and content-type
+GET https://self-signed.badssl.com/
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+
+### Check response body
+GET https://wrong.host.badssl.com/
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+
+%}
+###
+
