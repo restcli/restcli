@@ -42,3 +42,10 @@ client.test("Headers option exists", function() {
 ### timeout after 3s (this request took 4s)
 GET https://httpbin.org/delay/4
 
+
+### javascript error
+GET https://httpbin.org/get
+
+> {%
+response.body.undified_field.hasOwnProperty("dummy")
+%}
