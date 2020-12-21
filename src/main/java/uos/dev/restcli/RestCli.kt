@@ -66,6 +66,12 @@ class RestCli : Callable<Int> {
     )
     var insecure:Boolean = false
 
+    @Option(
+        names =[ "-t","--timeout"],
+        description = ["Number of milliseconds for request timeout, default=3000"]
+    )
+    var requestTimeout:Long = 3000
+
     private val logger = KotlinLogging.logger {}
 
     override fun call(): Int {
@@ -76,7 +82,8 @@ class RestCli : Callable<Int> {
             customEnvironment = CustomEnvironment(privateEnv, publicEnv),
             logLevel = logLevel,
             environmentFilesDirectory = environmentFilesDirectory,
-            insecure = insecure
+            insecure = insecure,
+            requestTimeout = requestTimeout
         )
         executor.run()
         return if (executor.allTestsFinishedWithSuccess()) {
