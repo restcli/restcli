@@ -16,13 +16,15 @@ import org.apache.commons.validator.routines.RegexValidator
 import org.apache.commons.validator.routines.UrlValidator
 import org.intellij.lang.annotations.Language
 import uos.dev.restcli.parser.Request
+import java.util.concurrent.TimeUnit
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLSession
 import okhttp3.Request as OkhttpRequest
 
 class OkhttpRequestExecutor(
     private val logLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.BODY,
-    private val insecure:Boolean
+    private val insecure:Boolean,
+    private val requestTimeout:Long
 ) : RequestExecutor {
     @Suppress("RegExpRedundantEscape")
     @Language("RegExp")
@@ -45,6 +47,7 @@ class OkhttpRequestExecutor(
     override fun execute(request: Request): Response {
         val client = okHttpClient.newBuilder()
             .followRedirects(request.isFollowRedirects)
+            .callTimeout(requestTimeout, TimeUnit.MILLISECONDS)
             .build()
         val builder = OkhttpRequest.Builder()
         val requestTarget = obtainRequestTarget(request)
