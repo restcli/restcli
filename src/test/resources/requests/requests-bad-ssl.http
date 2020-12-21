@@ -1,4 +1,4 @@
-### Successful test: check response status is 200
+### certif with wrong host
 GET https://wrong.host.badssl.com/
 
 > {%
@@ -7,7 +7,7 @@ client.test("Request executed successfully", function() {
 });
 %}
 
-### Check response status and content-type
+### certif self signed
 GET https://self-signed.badssl.com/
 
 > {%
@@ -17,8 +17,8 @@ client.test("Request executed successfully", function() {
 
 %}
 
-### Check response body
-GET https://wrong.host.badssl.com/
+### untrusted
+GET https://revoked.badssl.com/
 
 > {%
 client.test("Request executed successfully", function() {
@@ -26,5 +26,4 @@ client.test("Request executed successfully", function() {
 });
 
 %}
-###
 
