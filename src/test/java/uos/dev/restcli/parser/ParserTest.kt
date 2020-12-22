@@ -23,7 +23,7 @@ class ParserTest {
         expected: Request
     ) {
         val reader = input.reader()
-        val result = parser.parse(reader)
+        val result = parser.parse(reader,"")
         assertThat(result.first()).isEqualTo(expected)
     }
 

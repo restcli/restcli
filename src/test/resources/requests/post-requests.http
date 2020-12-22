@@ -29,6 +29,12 @@ Content-Type: application/json
 < ./request-form-data.json
 --WebAppBoundary--
 
+> {%
+client.test("the files have been sent", function() {
+  client.assert(response.body.files.hasOwnProperty("data"), "Cannot find 'files.data' option in response");
+});
+%}
+
 ### Send request with dynamic variables in request's body
 POST https://httpbin.org/post
 Content-Type: application/json

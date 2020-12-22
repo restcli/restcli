@@ -11,6 +11,7 @@ import uos.dev.restcli.report.AsciiArtTestReportGenerator
 import uos.dev.restcli.report.TestGroupReport
 import uos.dev.restcli.report.TestReportPrinter
 import uos.dev.restcli.report.TestReportStore
+import java.io.File
 import java.io.FileReader
 import java.io.PrintWriter
 
@@ -70,7 +71,7 @@ class HttpRequestFilesExecutor constructor(
         executor: OkhttpRequestExecutor
     ) {
         val requests = try {
-            parser.parse(FileReader(httpFilePath))
+            parser.parse(FileReader(httpFilePath),File(httpFilePath).parentFile.absolutePath)
         } catch (e: Exception) {
             logger.error(e) { "Can't parse $httpFilePath" }
             return

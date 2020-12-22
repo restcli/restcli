@@ -2,6 +2,7 @@ package uos.dev.restcli.parser
 
 import java.io.File
 import java.io.Reader
+import java.nio.file.Paths
 
 class Parser {
     private val lexer: Yylex = Yylex(null)
@@ -12,7 +13,17 @@ class Parser {
         lexer.yyreset(input)
     }
 
-    fun parse(input: Reader): List<Request> {
+    private fun readText(basedir: String, filepath: String): String {
+        val file = File(filepath)
+        val fileContent = if (file.isAbsolute) {
+            file.readText()
+        } else {
+            Paths.get(basedir, filepath).toFile().readText()
+        }
+        return fileContent
+    }
+
+    fun parse(input: Reader, basedir: String): List<Request> {
         reset(input)
         val result = mutableListOf<Request>()
         var builder = Request.Builder()
@@ -61,8 +72,7 @@ class Parser {
                 TokenType.TYPE_BODY_FILE_REF,
                 TokenType.TYPE_BODY_MESSAGE -> {
                     val bodyMessage = if (token.type == TokenType.TYPE_BODY_FILE_REF) {
-                        val fileContent = File(token.value).readText()
-                        Request.wrapContentWithBarrier(fileContent)
+                        Request.wrapContentWithBarrier(readText(basedir,token.value))
                     } else {
                         token.value
                     }
@@ -79,7 +89,7 @@ class Parser {
                 TokenType.TYPE_HANDLER_FILE_SCRIPT,
                 TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT -> {
                     val script = if (token.type == TokenType.TYPE_HANDLER_FILE_SCRIPT) {
-                        Request.wrapContentWithBarrier(File(token.value).readText())
+                        Request.wrapContentWithBarrier(readText(basedir,token.value))
                     } else {
                         token.value
                     }
