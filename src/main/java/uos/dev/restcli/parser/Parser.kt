@@ -99,7 +99,7 @@ class Parser {
                     builder.rawScriptHandler.add(script)
                     builder.scriptHandlerStartLine = token.lineNumber + 1
                 }
-                TokenType.TYPE_NO_REDIRECT -> builder.isFollowRedirects = true
+                TokenType.TYPE_NO_REDIRECT -> builder.isFollowRedirects = false
                 TokenType.TYPE_NO_COOKIE_JAR -> builder.isNoCookieJar = true
                 TokenType.TYPE_NO_LOG -> builder.isNoLog = true
                 TokenType.TYPE_USE_OS_CREDENTIALS -> builder.isUseOsCredentials = true
