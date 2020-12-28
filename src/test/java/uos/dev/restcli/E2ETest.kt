@@ -19,7 +19,6 @@ class E2ETest {
             "requests-with-authorization.http",
             "requests-with-name.http",
             "requests-with-tests.http"
-
         ]
     )
     fun `should not fail requests`(fileName: String) {

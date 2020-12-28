@@ -15,7 +15,7 @@ class RequestEnvironmentInjector(
     ): Request {
 
 
-        fun inject(source: String): String = environmentVariableInjector.inject(
+        fun envInject(source: String): String = environmentVariableInjector.inject(
             source,
             customEnvironment.privateEnv,
             customEnvironment.publicEnv,
@@ -23,30 +23,26 @@ class RequestEnvironmentInjector(
             environment
         )
 
-        fun inject(headers: Map<String, String>): Map<String, String> {
-            val result = mutableMapOf<String, String>()
-            headers.forEach { (key, value) -> result[inject(key)] = inject(value) }
-            return result
-        }
+        fun headerInject(headers: Map<String, String>): Map<String, String> =
+            headers.entries.associate { envInject(it.key) to envInject(it.value) }
+                .entries.associate(::authorizationTransform)
 
-        fun inject(part: Request.Part): Request.Part = part.copy(
-            headers = inject(part.headers).entries.associate(authorizationTransform()),
-            body = part.body?.let(::inject)
+        fun requestPartInject(part: Request.Part): Request.Part = part.copy(
+            headers = headerInject(part.headers),
+            body = part.body?.let(::envInject)
         )
 
         return request.copy(
-            requestTarget = inject(request.requestTarget),
-            headers = inject(request.headers),
-            body = request.body?.let(::inject),
-            parts = request.parts.map(::inject)
+            requestTarget = envInject(request.requestTarget),
+            headers = headerInject(request.headers),
+            body = request.body?.let(::envInject),
+            parts = request.parts.map(::requestPartInject)
         )
     }
 
-    private fun authorizationTransform(): ((Map.Entry<String, String>) -> Pair<String, String>) {
-        return { entry ->
-            val value = generateUsernamePasswordInBase64(entry.key, entry.value) ?: entry.value
-            entry.key to value
-        }
+    private fun authorizationTransform(entry: Map.Entry<String, String>): Pair<String, String> {
+        val value = generateUsernamePasswordInBase64(entry.key, entry.value) ?: entry.value
+        return entry.key to value
     }
 
     /**
