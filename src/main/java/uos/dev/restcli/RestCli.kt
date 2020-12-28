@@ -64,13 +64,13 @@ class RestCli : Callable<Int> {
         names = ["-k", "--insecure"],
         description = ["Disable ssl validation"]
     )
-    var insecure:Boolean = false
+    var insecure: Boolean = false
 
     @Option(
-        names =[ "-t","--timeout"],
+        names = ["-t", "--timeout"],
         description = ["Number of milliseconds for request timeout, default=3000"]
     )
-    var requestTimeout:Long = 3000
+    var requestTimeout: Long = 3000
 
     private val logger = KotlinLogging.logger {}
 
