@@ -30,35 +30,42 @@ class RequestEnvironmentInjector(
         }
 
         fun inject(part: Request.Part): Request.Part = part.copy(
-            headers = inject(part.headers),
+            headers = inject(part.headers).entries.associate(authorizationTransform()),
             body = part.body?.let(::inject)
         )
 
-        fun authorization(headers: Map<String, String>): Map<String, String> {
-            val result = mutableMapOf<String, String>()
-            headers.forEach { (key: String, value: String) ->
-                if (key.equals("authorization",ignoreCase = true)) {
-                    // format Basic Auth
-                   val methodUsernamePassword = value.split("\\s+".toRegex(),limit=3)
-                    if (methodUsernamePassword[0].equals("basic",ignoreCase = true) && methodUsernamePassword.size == 3 ) {
-                       val userPassword: String = (methodUsernamePassword[1]+":"+methodUsernamePassword[2])
-                        val basicAuth = Base64.getEncoder().encodeToString(userPassword.toByteArray())
-                        result[key] = "Basic $basicAuth"
-                    }else{
-                        result[key] = value
-                    }
-                }else {
-                    result[key] = value
-                }
-            }
-            return result
-        }
-
         return request.copy(
             requestTarget = inject(request.requestTarget),
-            headers = authorization(inject(request.headers)),
+            headers = inject(request.headers),
             body = request.body?.let(::inject),
             parts = request.parts.map(::inject)
         )
+    }
+
+    private fun authorizationTransform(): ((Map.Entry<String, String>) -> Pair<String, String>) {
+        return { entry ->
+            val value = generateUsernamePasswordInBase64(entry.key, entry.value) ?: entry.value
+            entry.key to value
+        }
+    }
+
+    /**
+     * Generates the value base64 with format: `Basic BASE64_USERNAME_PASSWORD_FORMAT` if the key/value is authorization
+     * headers. Otherwise, returns null.
+     */
+    private fun generateUsernamePasswordInBase64(key: String, value: String): String? {
+        if (!key.equals("authorization", ignoreCase = true)) {
+            return null
+        }
+        val methodUsernamePassword = value.split("\\s+".toRegex(), limit = 3)
+        val isBasicAuth =
+            methodUsernamePassword[0].equals("basic", ignoreCase = true) && methodUsernamePassword.size == 3
+
+        if (!isBasicAuth) {
+            return null
+        }
+        val userPassword = "${methodUsernamePassword[1]}:${methodUsernamePassword[2]}"
+        val basicAuth = Base64.getEncoder().encodeToString(userPassword.toByteArray())
+        return "Basic $basicAuth"
     }
 }
