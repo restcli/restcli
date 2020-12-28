@@ -3,6 +3,7 @@ package uos.dev.restcli
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.ValueSource
 
 class E2ETest {
     /**
@@ -10,8 +11,9 @@ class E2ETest {
      * If you running the test on the IDE, you have to set the working directory point to the test
      * resource folder.
      */
+
     @ParameterizedTest
-    @CsvSource(value = [
+    @ValueSource(strings = [
         "get-requests.http",
         "post-requests.http",
         "requests-with-authorization.http",
@@ -24,7 +26,7 @@ class E2ETest {
         println("Test file: $fileName")
         val restCli = RestCli().apply {
             environmentName = "test"
-            logLevel = HttpLoggingLevel.BASIC
+            logLevel = HttpLoggingLevel.HEADERS
             httpFilePaths = arrayOf(javaClass.getResource("/requests/${fileName}").path)
             environmentFilesDirectory = javaClass.getResource("/requests/").path
         }
