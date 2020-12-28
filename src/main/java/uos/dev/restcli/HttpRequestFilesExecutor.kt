@@ -11,8 +11,6 @@ import uos.dev.restcli.report.AsciiArtTestReportGenerator
 import uos.dev.restcli.report.TestGroupReport
 import uos.dev.restcli.report.TestReportPrinter
 import uos.dev.restcli.report.TestReportStore
-import java.io.File
-import java.io.FileReader
 import java.io.PrintWriter
 
 class HttpRequestFilesExecutor constructor(
@@ -21,8 +19,8 @@ class HttpRequestFilesExecutor constructor(
     private val customEnvironment: CustomEnvironment,
     private val logLevel: HttpLoggingLevel,
     private val environmentFilesDirectory: String = "",
-    private val insecure:Boolean,
-    private val requestTimeout:Long
+    private val insecure: Boolean,
+    private val requestTimeout: Long
 ) : Runnable {
     private val parser: Parser = Parser()
     private val jsClient: JsClient = JsClient()
@@ -36,9 +34,10 @@ class HttpRequestFilesExecutor constructor(
             logger.error { t.red("HTTP request file[s] is required") }
             return
         }
-        val environment = (environmentName?.let { EnvironmentLoader().load(environmentFilesDirectory, it) } ?: emptyMap())
-            .toMutableMap()
-        val executor = OkhttpRequestExecutor(logLevel.toOkHttpLoggingLevel(),insecure,requestTimeout)
+        val environment =
+            (environmentName?.let { EnvironmentLoader().load(environmentFilesDirectory, it) } ?: emptyMap())
+                .toMutableMap()
+        val executor = OkhttpRequestExecutor(logLevel.toOkHttpLoggingLevel(), insecure, requestTimeout)
         val testGroupReports = mutableListOf<TestGroupReport>()
         httpFilePaths.forEach { httpFilePath ->
             logger.info("\n__________________________________________________\n")
@@ -71,7 +70,7 @@ class HttpRequestFilesExecutor constructor(
         executor: OkhttpRequestExecutor
     ) {
         val requests = try {
-            parser.parse(FileReader(httpFilePath),File(httpFilePath).parentFile.absolutePath)
+            parser.parse(httpFilePath)
         } catch (e: Exception) {
             logger.error(e) { "Can't parse $httpFilePath" }
             return

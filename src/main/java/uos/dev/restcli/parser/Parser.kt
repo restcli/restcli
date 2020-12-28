@@ -1,6 +1,7 @@
 package uos.dev.restcli.parser
 
 import java.io.File
+import java.io.FileReader
 import java.io.Reader
 import java.nio.file.Paths
 
@@ -13,17 +14,14 @@ class Parser {
         lexer.yyreset(input)
     }
 
-    private fun readText(basedir: String, filepath: String): String {
-        val file = File(filepath)
-        val fileContent = if (file.isAbsolute) {
-            file.readText()
-        } else {
-            Paths.get(basedir, filepath).toFile().readText()
-        }
-        return fileContent
+    fun parse(httpFilePath: String): List<Request> {
+        val httpFile = File(httpFilePath)
+        val input = FileReader(httpFile)
+        val basedir = httpFile.parentFile?.absolutePath.orEmpty()
+        return parse(input, basedir)
     }
 
-    fun parse(input: Reader, basedir: String): List<Request> {
+    fun parse(input: Reader, basedir: String = ""): List<Request> {
         reset(input)
         val result = mutableListOf<Request>()
         var builder = Request.Builder()
@@ -32,6 +30,11 @@ class Parser {
         fun buildRequestAndMakeBuilderNew() {
             builder.build()?.let { result.add(it) }
             builder = Request.Builder()
+        }
+
+        fun readFileContent(filePath: String): String {
+            val absoluteFilePath = if (File(filePath).isAbsolute) filePath else Paths.get(basedir, filePath).toString()
+            return File(absoluteFilePath).readText()
         }
 
         while (true) {
@@ -72,7 +75,7 @@ class Parser {
                 TokenType.TYPE_BODY_FILE_REF,
                 TokenType.TYPE_BODY_MESSAGE -> {
                     val bodyMessage = if (token.type == TokenType.TYPE_BODY_FILE_REF) {
-                        Request.wrapContentWithBarrier(readText(basedir, token.value))
+                        Request.wrapContentWithBarrier(readFileContent(token.value))
                     } else {
                         token.value
                     }
@@ -89,7 +92,7 @@ class Parser {
                 TokenType.TYPE_HANDLER_FILE_SCRIPT,
                 TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT -> {
                     val script = if (token.type == TokenType.TYPE_HANDLER_FILE_SCRIPT) {
-                        Request.wrapContentWithBarrier(readText(basedir, token.value))
+                        Request.wrapContentWithBarrier(readFileContent(token.value))
                     } else {
                         token.value
                     }
