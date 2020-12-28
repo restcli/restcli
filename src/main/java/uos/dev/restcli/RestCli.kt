@@ -9,7 +9,7 @@ import java.util.concurrent.Callable
 
 
 @CommandLine.Command(
-    name = "rest-cli", version = ["IntelliJ RestCli v1.7.2"],
+    name = "rest-cli", version = ["IntelliJ RestCli v1.7.4"],
     mixinStandardHelpOptions = true,
     description = ["@|bold IntelliJ RestCli|@"]
 )
