@@ -11,16 +11,17 @@ class E2ETest {
      * If you running the test on the IDE, you have to set the working directory point to the test
      * resource folder.
      */
-
     @ParameterizedTest
-    @ValueSource(strings = [
-        "get-requests.http",
-        "post-requests.http",
-        "requests-with-authorization.http",
-        "requests-with-name.http",
-        "requests-with-tests.http"
+    @ValueSource(
+        strings = [
+            "get-requests.http",
+            "post-requests.http",
+            "requests-with-authorization.http",
+            "requests-with-name.http",
+            "requests-with-tests.http"
 
-    ])
+        ]
+    )
     fun `should not fail requests`(fileName: String) {
         // Given
         println("Test file: $fileName")
@@ -82,7 +83,4 @@ class E2ETest {
         // Then
         assertThat(exitCode).isEqualTo(1)
     }
-
-
-
 }
