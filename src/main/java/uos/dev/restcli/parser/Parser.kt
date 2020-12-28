@@ -72,7 +72,7 @@ class Parser {
                 TokenType.TYPE_BODY_FILE_REF,
                 TokenType.TYPE_BODY_MESSAGE -> {
                     val bodyMessage = if (token.type == TokenType.TYPE_BODY_FILE_REF) {
-                        Request.wrapContentWithBarrier(readText(basedir,token.value))
+                        Request.wrapContentWithBarrier(readText(basedir, token.value))
                     } else {
                         token.value
                     }
@@ -89,7 +89,7 @@ class Parser {
                 TokenType.TYPE_HANDLER_FILE_SCRIPT,
                 TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT -> {
                     val script = if (token.type == TokenType.TYPE_HANDLER_FILE_SCRIPT) {
-                        Request.wrapContentWithBarrier(readText(basedir,token.value))
+                        Request.wrapContentWithBarrier(readText(basedir, token.value))
                     } else {
                         token.value
                     }
