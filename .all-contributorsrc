@@ -40,6 +40,15 @@
       "contributions": [
         "userTesting"
       ]
+    },
+    {
+      "login": "npeters",
+      "name": "Nicolas Peters",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/935249?v=4",
+      "profile": "https://github.com/npeters",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
