@@ -11,7 +11,7 @@ data class Request(
     val scriptHandlerStartLine: Int = -1,
     val responseReference: String? = null,
     val parts: List<Part> = mutableListOf(),
-    val isFollowRedirects: Boolean = false,
+    val isFollowRedirects: Boolean = true,
     val isNoCookieJar: Boolean = false,
     val isNoLog: Boolean = false,
     val isUseOsCredentials: Boolean = false
@@ -49,7 +49,7 @@ data class Request(
         val rawResponseHandler: MutableList<String> = mutableListOf(),
         var rawResponseReference: String? = null,
         val parts: MutableList<Part.Builder> = mutableListOf(),
-        var isFollowRedirects: Boolean = false,
+        var isFollowRedirects: Boolean = true,
         var isNoCookieJar: Boolean = false,
         var isNoLog: Boolean = false,
         var isUseOsCredentials: Boolean = false

@@ -33,6 +33,12 @@ Accept: application/json
 # @no-redirect
 GET http://httpbin.org/status/301
 
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 301, "Response status is 301");
+});
+%}
+
 ### GET request with dynamic variables
 GET http://httpbin.org/anything?id={{$uuid}}&ts={{$timestamp}}
 

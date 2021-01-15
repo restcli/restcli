@@ -1,6 +1,5 @@
 package uos.dev.restcli.parser
 
-import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -25,7 +24,7 @@ class ParserTest {
     ) {
         val reader = input.reader()
         val result = parser.parse(reader)
-        assertThat(result.first()).isEqualTo(expected)
+        assertWithMessage(name).that(result.first()).isEqualTo(expected)
     }
 
     companion object {
@@ -73,7 +72,7 @@ class ParserTest {
                         "GET https://httpbin.org/ip\r\n" +
                         "Accept: application/json\r\n",
                 expected = Request(
-                    isFollowRedirects = true,
+                    isFollowRedirects = false,
                     name = "request1",
                     method = RequestMethod.GET,
                     requestTarget = "https://httpbin.org/ip",
@@ -88,7 +87,7 @@ class ParserTest {
                         "GET https://httpbin.org/ip\n" +
                         "Accept: application/json\n",
                 expected = Request(
-                    isFollowRedirects = true,
+                    isFollowRedirects = false,
                     name = "request1",
                     method = RequestMethod.GET,
                     requestTarget = "https://httpbin.org/ip",
@@ -144,7 +143,7 @@ class ParserTest {
                 expected = Request(
                     method = RequestMethod.GET,
                     requestTarget = "http://httpbin.org/status/301",
-                    isFollowRedirects = true,
+                    isFollowRedirects = false,
                     isNoCookieJar = true,
                     isNoLog = true,
                     isUseOsCredentials = true
