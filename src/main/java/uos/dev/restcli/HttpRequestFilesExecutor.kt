@@ -78,7 +78,7 @@ class HttpRequestFilesExecutor constructor(
                 scriptHandlerStartLine = -1
             )
             TestReportStore.addTestGroupReport("-", trace)
-            TestReportStore.addTestReport("Parsing",false, e.message,e.message)
+            TestReportStore.addTestReport("Parsing", false, e.message, e.message)
             return
         }
         var requestIndex = -1
@@ -131,7 +131,7 @@ class HttpRequestFilesExecutor constructor(
                 executeSingleRequest(executor, request)
             }.onFailure {
                 logger.error { t.red(it.message.orEmpty()) }
-                TestReportStore.addTestReport("-",false, it.message,it.message)
+                TestReportStore.addTestReport("-", false, it.message, it.message)
             }
 
         }
@@ -148,12 +148,12 @@ class HttpRequestFilesExecutor constructor(
                         jsClient.execute(script)
                     }.onFailure {
                         logger.error { t.red(it.message.orEmpty()) }
-                        TestReportStore.addTestReport("eval script",false, it.message,script)
+                        TestReportStore.addTestReport("eval script", false, it.message, script)
                     }
                 }
             }
             .onFailure {
-                TestReportStore.addTestReport("Http",false, it.message,it.message)
+                TestReportStore.addTestReport("Http", false, it.message, it.message)
                 val hasScriptHandler = request.scriptHandler != null
                 if (hasScriptHandler) {
                     logger.info(t.yellow("[SKIP TEST] Because: ") + it.message.orEmpty())
