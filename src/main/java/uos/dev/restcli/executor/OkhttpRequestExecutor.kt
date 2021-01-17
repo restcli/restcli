@@ -64,7 +64,7 @@ class OkhttpRequestExecutor(
             val sslSocketFactory = sslContext.socketFactory
             this.sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
         }
-        return this;
+        return this
     }
 
     private val okHttpClient: OkHttpClient = OkHttpClient.Builder()

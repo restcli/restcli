@@ -73,6 +73,12 @@ class HttpRequestFilesExecutor constructor(
             parser.parse(httpFilePath)
         } catch (e: Exception) {
             logger.error(e) { "Can't parse $httpFilePath" }
+            val trace = TestGroupReport.Trace(
+                httpTestFilePath = httpFilePath,
+                scriptHandlerStartLine = -1
+            )
+            TestReportStore.addTestGroupReport("-", trace)
+            TestReportStore.addTestReport("Parsing", false, e.message, e.message)
             return
         }
         var requestIndex = -1
@@ -114,6 +120,7 @@ class HttpRequestFilesExecutor constructor(
                     environment,
                     jsGlobalEnv
                 )
+
                 val trace = TestGroupReport.Trace(
                     httpTestFilePath = httpFilePath,
                     scriptHandlerStartLine = request.scriptHandlerStartLine
@@ -124,7 +131,9 @@ class HttpRequestFilesExecutor constructor(
                 executeSingleRequest(executor, request)
             }.onFailure {
                 logger.error { t.red(it.message.orEmpty()) }
+                TestReportStore.addTestReport("-", false, it.message, it.message)
             }
+
         }
     }
 
@@ -135,10 +144,16 @@ class HttpRequestFilesExecutor constructor(
                 request.scriptHandler?.let { script ->
                     val testTitle = t.bold("TESTS:")
                     logger.info("\n$testTitle")
-                    jsClient.execute(script)
+                    runCatching {
+                        jsClient.execute(script)
+                    }.onFailure {
+                        logger.error { t.red(it.message.orEmpty()) }
+                        TestReportStore.addTestReport("eval script", false, it.message, script)
+                    }
                 }
             }
             .onFailure {
+                TestReportStore.addTestReport("Http", false, it.message, it.message)
                 val hasScriptHandler = request.scriptHandler != null
                 if (hasScriptHandler) {
                     logger.info(t.yellow("[SKIP TEST] Because: ") + it.message.orEmpty())

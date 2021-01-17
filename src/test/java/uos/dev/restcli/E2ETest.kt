@@ -3,7 +3,7 @@ package uos.dev.restcli
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
-import org.junit.jupiter.params.provider.ValueSource
+import uos.dev.restcli.report.TestReportStore
 
 class E2ETest {
     /**
@@ -12,8 +12,8 @@ class E2ETest {
      * resource folder.
      */
     @ParameterizedTest
-    @ValueSource(
-        strings = [
+    @CsvSource(
+        value = [
             "get-requests.http",
             "post-requests.http",
             "requests-with-authorization.http",
@@ -79,7 +79,10 @@ class E2ETest {
 
         // When
         val exitCode = restCli.call()
+
         // Then
         assertThat(exitCode).isEqualTo(1)
+
+        assertThat(TestReportStore.testGroupReports.all { it.testReports.size > 0 }).isTrue()
     }
 }
