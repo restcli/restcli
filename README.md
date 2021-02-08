@@ -38,7 +38,7 @@
 ![screenshot](images/restcli_screenshots.png)
 
 ## Key Features
-* Written by Kotlin 🤩
+* Written in Kotlin 🤩
 * Execute Intellij HTTP request files
 * Running test script including:
     - Embedded script inside HTTP request file
@@ -46,16 +46,16 @@
 * Loading and inject environment variables from
     - http-client.env.json
     - http-client.private.env.json
-* Cross platform 💻🖥️
-  - Windows, macOS and Linux ready.
+* Cross-platform 💻🖥️
+  - Windows, macOS, and Linux ready.
 * Beautiful request log 🤑🤑🤑
   - Request & response detail
   - Test result table  
-* Easy to custom via commandline arguments 😎
+* Easy to custom via command-line arguments 😎
   - Custom logging request
   - Inject environment name
-* Generate test report - junit format.  🥰🥰🥰
-* Support setNextRequest. So you can custom flexbile the test flow. ✨✨✨
+* Generate test report - JUnit format.  🥰🥰🥰
+* Support setNextRequest. So you can custom flexible the test flow. ✨✨✨
 
 ##### Demo
 ![demo-rest-cli](images/demo-rest-cli.gif)
@@ -69,20 +69,20 @@
 
 <img alt="test-result-table" src="images/test-result-table.png" width="480">
 
-**3. Generate junit test report (xml) that can be viewed by other tools such as xunit-viewer**
+**3. Generate JUnit test report (XML) that can be viewed by other tools such as xunit-viewer**
 
 <img alt="generate-junit-test-report" src="images/generate-junit-test-report.png" width="480">
 
 ## How To Use
 
-The fastest way to get rest cli is download jar from [releases tab](https://github.com/restcli/restcli/releases)
+The fastest way to get rest cli is to download the jar from [releases tab](https://github.com/restcli/restcli/releases)
 
 ```
 Usage: rest-cli [-hkV] [-d=<environmentFilesDirectory>] [-e=<environmentName>]
                 [-l=<logLevel>] [-G=<String=String>]... [-P=<String=String>]...
                 FILES...
 IntelliJ RestCli
-      FILES...     Path to one ore more http script files.
+      FILES...     Path to one or more http script files.
   -d, --env-dir=<environmentFilesDirectory>
                    Directory where config files are (default: current directory)
                    (http-client.env.json/http-client.private.env.json).
@@ -92,7 +92,7 @@ IntelliJ RestCli
   -G, --global-env=<String=String>
                    Public environment variables
   -h, --help       Show this help message and exit.
-  -k, --insecure   Disable ssl validation
+  -k, --insecure   Disable SSL validation
   -l, --log-level=<logLevel>
                    Config log level while the executor running.
                    Valid values: NONE, BASIC, HEADERS, BODY
@@ -103,7 +103,7 @@ IntelliJ RestCli
 
 #### Example
 ```bash
-# Move to folder that contains your http files.
+# Move to the folder that contains your http files.
 $ cd requests
 
 $ tree
@@ -119,20 +119,20 @@ $ tree
 $ java -jar /path/to/restcli.jar -e "test" get-requests.http
 ```
 
-Note: This application required you install `java` on your machine.
+Note: This application required you to install `java` on your machine.
 
 ## Download
 
-You can [download](https://github.com/restcli/restcli/releases) the latest version of restcli for Windows, macOS and Linux.
+You can [download](https://github.com/restcli/restcli/releases) the latest version of restcli for Windows, macOS, and Linux.
 
 ## Credits
 
-This software uses the following open source packages:
+This software uses the following open-source packages:
 
 - [Jflex](https://jflex.de/) -  a lexical analyzer generator (also known as scanner generator) for Java.
 - [PicoCli](https://picocli.info/) - a mighty tiny command line interface
 - [okhttp](https://github.com/square/okhttp) - the way modern applications network. It’s how we exchange data & media. Doing HTTP efficiently makes your stuff load faster and saves bandwidth.
-- [picnic](https://github.com/JakeWharton/picnic) - A Kotlin DSL and Java/Kotlin builder API for constructing HTML-like tables which can be rendered to text.
+- [picnic](https://github.com/JakeWharton/picnic) - A Kotlin DSL and Java/Kotlin builder API for constructing HTML-like tables that can be rendered to text.
 - [mordant](https://github.com/ajalt/mordant) - Full-featured text styling for Kotlin command-line applications.
 
 ## Support
@@ -142,12 +142,12 @@ If you need help, please don't hesitate to [file an issue](https://github.com/re
 
 ## Sponsoring
 
-This application is free and can be used for free, open source and commercial applications. `restcli` is under the MIT License (MIT). So hit the magic ⭐ button, I appreciate it!!! 🙏
+This application is free and can be used for free, open-source, and commercial applications. `restcli` is under the MIT License (MIT). So hit the magic ⭐ button; I appreciate it!!! 🙏
 
 ## 🤝 Contributing
-I appreciate your support and feedbacks!
+I appreciate your support and feedback!
 
-Please file issues if you find bugs and have feature requests. If you are able to send small PRs to improve or fix bugs, that would be awesome too.
+Please file issues if you find bugs and have feature requests. If you can send small PRs to improve or fix bugs, that would be awesome too.
 
 For larger PRs, please ping [@quangson91](https://twitter.com/quangson91) to discuss first.
 
@@ -159,13 +159,13 @@ Copyright (c) 2020 Duong Quang Son
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
+in the software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
+copies of the software, and to permit persons to whom the software is
 furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+copies or substantial portions of the software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
