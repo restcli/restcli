@@ -11,6 +11,16 @@ version = "1.7.4"
 repositories {
     mavenCentral()
 }
+java {
+    withSourcesJar()
+}
+publishing {
+    publications {
+        create<MavenPublication>("restcli") {
+            from(components["java"])
+        }
+    }
+}
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
