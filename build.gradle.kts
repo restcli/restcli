@@ -2,6 +2,7 @@ plugins {
     java
     kotlin("jvm") version "1.3.72"
     kotlin("kapt") version "1.3.72"
+    `maven-publish`
 }
 
 group = "uos.dev"
