@@ -5,6 +5,7 @@ import com.jakewharton.picnic.table
 import mu.KotlinLogging
 import picocli.CommandLine
 import picocli.CommandLine.Option
+import uos.dev.restcli.configs.*
 import java.util.concurrent.Callable
 
 
@@ -72,18 +73,37 @@ class RestCli : Callable<Int> {
     )
     var requestTimeout: Long = 3000
 
+    @Option(
+        names = ["-D", "--decorator"],
+        description = ["Decorator for private env variables ",
+            "Valid values: \${COMPLETION-CANDIDATES}"
+        ]
+    )
+    var decorator: ConfigDecorator = ConfigDecorator.NOOP
+
+    @Option(
+        names = ["-H", "--hide-private-in-logs"],
+        description = ["Allows to hide private variables in logs "]
+    )
+    var hidePrivateInLogs: Boolean = false
+
     private val logger = KotlinLogging.logger {}
 
     override fun call(): Int {
         showInfo()
+        EnvironmentConfigs.changeDefaultDecorator(decorator.toPrivateConfigDecorator())
         val executor = HttpRequestFilesExecutor(
             httpFilePaths = httpFilePaths,
             environmentName = environmentName,
-            customEnvironment = CustomEnvironment(privateEnv, publicEnv),
+            customEnvironment = CustomEnvironment(
+                EnvironmentConfigs.from(privateEnv, true),
+                EnvironmentConfigs.from(publicEnv, false)
+            ),
             logLevel = logLevel,
             environmentFilesDirectory = environmentFilesDirectory,
             insecure = insecure,
-            requestTimeout = requestTimeout
+            requestTimeout = requestTimeout,
+            hidePrivateInLogs = hidePrivateInLogs
         )
         executor.run()
         return if (executor.allTestsFinishedWithSuccess()) {

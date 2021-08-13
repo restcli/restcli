@@ -29,6 +29,8 @@ class E2ETest {
             logLevel = HttpLoggingLevel.HEADERS
             httpFilePaths = arrayOf(javaClass.getResource("/requests/${fileName}").path)
             environmentFilesDirectory = javaClass.getResource("/requests/").path
+            decorator = ConfigDecorator.THREE_STAR
+            hidePrivateInLogs = true
         }
 
         // When
