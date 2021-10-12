@@ -1,6 +1,7 @@
 package uos.dev.restcli.parser
 
 import uos.dev.restcli.CustomEnvironment
+import uos.dev.restcli.configs.EnvironmentConfigs
 import java.util.*
 
 class RequestEnvironmentInjector(
@@ -10,13 +11,15 @@ class RequestEnvironmentInjector(
     fun inject(
         request: Request,
         customEnvironment: CustomEnvironment,
-        environment: Map<String, String>,
-        jsGlobalEnv: Map<String, String>
+        environment: EnvironmentConfigs,
+        jsGlobalEnv: EnvironmentConfigs,
+        decoratePrivate: Boolean = false
     ): Request {
 
 
         fun envInject(source: String): String = environmentVariableInjector.inject(
             source,
+            decoratePrivate,
             customEnvironment.privateEnv,
             customEnvironment.publicEnv,
             jsGlobalEnv,

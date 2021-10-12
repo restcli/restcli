@@ -3,6 +3,8 @@ package uos.dev.restcli
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import uos.dev.restcli.configs.EnvironmentConfig
+import uos.dev.restcli.configs.EnvironmentConfigs
 import java.io.File
 
 /**
@@ -10,27 +12,22 @@ import java.io.File
  */
 class EnvironmentLoader {
 
-    fun load(environmentFilesDirectory: String, environmentName: String): Map<String, String> {
+    fun load(environmentFilesDirectory: String, environmentName: String): EnvironmentConfigs {
         val privateEnvConfig = loadConfig(environmentFilesDirectory, PRIVATE_ENV_FILE, environmentName)
         val publicEnvConfig = loadConfig(environmentFilesDirectory, PUBLIC_ENV_FILE, environmentName)
-        val result = mutableMapOf<String, String>()
-        // Transfer all key/value from public env config to the result map.
-        publicEnvConfig?.keySet()?.forEach { key ->
-            publicEnvConfig.get(key).asStringOrNull?.let { value ->
-                result[key] = value
-            }
-        }
+        val publicConfigs = getEnvironmentConfigs(publicEnvConfig, false)
+        val privateConfigs = getEnvironmentConfigs(privateEnvConfig, true)
 
-        // Then transfer all key/value from private env config to the result map.
-        // So, if there is the same key in private env config, this will override the public env
-        // config.
-        privateEnvConfig?.keySet()?.forEach { key ->
-            privateEnvConfig.get(key).asStringOrNull?.let { value ->
-                result[key] = value
-            }
-        }
-        return result
+        return publicConfigs.overwriteMergeWith(privateConfigs)
     }
+
+    private fun getEnvironmentConfigs(publicEnvConfig: JsonObject?, isPrivate: Boolean) =
+        publicEnvConfig?.keySet()?.fold(EnvironmentConfigs()) { acc, key ->
+            getEnvironmentConfigs(publicEnvConfig, key, isPrivate)?.let { config -> acc.with(key, config) } ?: acc
+        } ?: EnvironmentConfigs()
+
+    private fun getEnvironmentConfigs(jsonConfig: JsonObject, key: String, isPrivate: Boolean): EnvironmentConfig? =
+        jsonConfig.get(key).asStringOrNull?.let { value -> EnvironmentConfig(value, isPrivate) }
 
     private fun loadConfig(
         environmentFilesDirectory: String,
