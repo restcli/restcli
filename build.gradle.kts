@@ -2,6 +2,7 @@ plugins {
     java
     kotlin("jvm") version "1.3.72"
     kotlin("kapt") version "1.3.72"
+    `maven-publish`
 }
 
 group = "uos.dev"
@@ -9,6 +10,16 @@ version = "1.7.4"
 
 repositories {
     mavenCentral()
+}
+java {
+    withSourcesJar()
+}
+publishing {
+    publications {
+        create<MavenPublication>("restcli") {
+            from(components["java"])
+        }
+    }
 }
 
 dependencies {

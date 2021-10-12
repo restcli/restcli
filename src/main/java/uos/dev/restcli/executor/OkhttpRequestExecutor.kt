@@ -15,6 +15,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.apache.commons.validator.routines.RegexValidator
 import org.apache.commons.validator.routines.UrlValidator
 import org.intellij.lang.annotations.Language
+import uos.dev.restcli.configs.EnvironmentConfigs
 import uos.dev.restcli.parser.Request
 import java.util.concurrent.TimeUnit
 import java.security.cert.CertificateException
@@ -27,7 +28,9 @@ import okhttp3.Request as OkhttpRequest
 class OkhttpRequestExecutor(
     private val logLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.BODY,
     private val insecure: Boolean,
-    private val requestTimeout: Long
+    private val requestTimeout: Long,
+    private val environment: EnvironmentConfigs,
+    private val hidePrivateInLogs: Boolean
 ) : RequestExecutor {
     @Suppress("RegExpRedundantEscape")
     @Language("RegExp")
@@ -35,8 +38,9 @@ class OkhttpRequestExecutor(
         RegexValidator("^[a-zA-Z0-9]([a-zA-Z0-9\\-\\.]*[a-zA-Z0-9])?(:\\d+)?"),
         UrlValidator.ALLOW_LOCAL_URLS
     )
-    private val loggingInterceptor: Interceptor = HttpLoggingInterceptor(CustomLogger())
-        .apply { setLevel(logLevel) }
+    private val loggingInterceptor: Interceptor =
+        HttpLoggingInterceptor(CustomLogger(this.environment, this.hidePrivateInLogs))
+            .apply { setLevel(logLevel) }
 
     private val hostnameVerifier = if (insecure) HostnameVerifier { _, _ -> true } else OkHostnameVerifier
 
@@ -154,11 +158,16 @@ class OkhttpRequestExecutor(
             return headerContentType.value.toMediaTypeOrNull()
         }
 
-    private class CustomLogger : HttpLoggingInterceptor.Logger {
+    private class CustomLogger(private val environment: EnvironmentConfigs, private val hidePrivateInLogs: Boolean) :
+        HttpLoggingInterceptor.Logger {
         private val logger = KotlinLogging.logger {}
         private val t: TermColors = TermColors()
         override fun log(message: String) {
-            logger.info(t.gray(message))
+            if (hidePrivateInLogs) {
+                logger.info(t.gray(this.environment.obfuscate(message)))
+            } else {
+                logger.info(t.gray(message))
+            }
         }
     }
 }
