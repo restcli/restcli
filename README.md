@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <h1 align="center">
   <br>
@@ -199,6 +199,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/npeters"><img src="https://avatars2.githubusercontent.com/u/935249?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Nicolas Peters</b></sub></a><br /><a href="https://github.com/restcli/restcli/commits?author=npeters" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/xargon180"><img src="https://avatars2.githubusercontent.com/u/36171927?v=4?s=100" width="100px;" alt=""/><br /><sub><b>xargon180</b></sub></a><br /><a href="https://github.com/restcli/restcli/commits?author=xargon180" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/cylonid"><img src="https://avatars.githubusercontent.com/u/12037864?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Hannes U.</b></sub></a><br /><a href="https://github.com/restcli/restcli/commits?author=cylonid" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/sbenoistmics"><img src="https://avatars.githubusercontent.com/u/83581282?v=4?s=100" width="100px;" alt=""/><br /><sub><b>sbenoistmics</b></sub></a><br /><a href="https://github.com/restcli/restcli/commits?author=sbenoistmics" title="Code">💻</a></td>
   </tr>
 </table>
 
