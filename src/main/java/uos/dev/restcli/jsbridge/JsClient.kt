@@ -2,20 +2,18 @@
 
 package uos.dev.restcli.jsbridge
 
-import jdk.nashorn.api.scripting.ScriptObjectMirror
 import mu.KotlinLogging
-import mu.Marker
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Response
 import okhttp3.ResponseBody
 import org.apache.commons.text.StringEscapeUtils
 import org.intellij.lang.annotations.Language
+import uos.dev.restcli.jsbridge.ScriptEngineAdapter.Companion.store
 import javax.script.ScriptEngine
-import javax.script.ScriptEngineManager
 
 class JsClient {
     private val logger = KotlinLogging.logger {}
-    private val engine: ScriptEngine = ScriptEngineManager().getEngineByName("nashorn")
+    private val engine: ScriptEngine = ScriptEngineAdapter()
 
     init {
         val reader = javaClass.classLoader.getResourceAsStream("client.js")?.reader()
@@ -95,14 +93,7 @@ class JsClient {
     }
 
     fun globalEnvironment(): Map<String, String> {
-        @Suppress("DEPRECATION") // TODO: Using graalvmjs.
-        val store = engine.eval("client.global.store") as? ScriptObjectMirror
-            ?: return emptyMap()
-        val result = mutableMapOf<String, String>()
-        store.keys.forEach { key ->
-            result[key] = store[key].toString()
-        }
-        return result
+        return engine.store()
     }
 
     companion object {

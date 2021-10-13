@@ -42,6 +42,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
     implementation("io.github.microutils:kotlin-logging:1.8.3")
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.13.3")
+    val graalvmVersion = "21.1.0"
+    implementation("org.graalvm.js:js:$graalvmVersion") { exclude("org.graalvm.regex") }
+    implementation("org.graalvm.js:js-scriptengine:$graalvmVersion")
 }
 
 tasks.named<Test>("test") {
