@@ -8,12 +8,14 @@ import okhttp3.Response
 import okhttp3.ResponseBody
 import org.apache.commons.text.StringEscapeUtils
 import org.intellij.lang.annotations.Language
-import uos.dev.restcli.jsbridge.ScriptEngineAdapter.Companion.store
 import javax.script.ScriptEngine
+import javax.script.ScriptEngineManager
 
-class JsClient {
+class JsClient(private val engine: ScriptEngine) {
+    constructor(javaVersion: JavaVersion) : this(ScriptEngineManager().getEngineByName(javaVersion.jsEngineName))
+    constructor() : this(JavaVersion())
+
     private val logger = KotlinLogging.logger {}
-    private val engine: ScriptEngine = ScriptEngineAdapter()
 
     init {
         val reader = javaClass.classLoader.getResourceAsStream("client.js")?.reader()
@@ -92,12 +94,40 @@ class JsClient {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun globalEnvironment(): Map<String, String> {
-        return engine.store()
+        @Language("JavaScript")
+        val result = engine.eval("client.global.store") as? Map<String, String>
+        return result ?: emptyMap()
     }
 
     companion object {
         private val JSON_MEDIA_TYPE = "application/json; charset=utf-8".toMediaType()
         private const val DEBUG = false
+    }
+
+    class JavaVersion(private val versionElements: String = System.getProperty("java.version")) {
+        init {
+            if (useGraalJs()) {
+                System.setProperty("polyglot.js.nashorn-compat", "true")
+            }
+        }
+
+        val jsEngineName: String
+            get() = if (useGraalJs()) "graal.js" else "nashorn"
+
+        private fun useGraalJs(): Boolean {
+            val versionElements = versionElements.split(".")
+            val discard = versionElements[0].toInt()
+            return if (discard == 1) {
+                versionElements[1].toInt()
+            } else {
+                discard
+            } >= NASHORN_REMOVED_VERSION
+        }
+
+        companion object {
+            private const val NASHORN_REMOVED_VERSION = 15
+        }
     }
 }
