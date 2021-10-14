@@ -30,7 +30,7 @@ class ParserTest {
     companion object {
         @Suppress("unused")
         @JvmStatic
-        private fun parserTestCases(): Stream<Arguments> = Stream.of(
+        fun parserTestCases(): Stream<Arguments> = Stream.of(
             createParserTestCase(
                 name = "GET request with environment variables & space in target url",
                 input = "### GET request with environment variables\n" +
