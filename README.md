@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-9-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <h1 align="center">
   <br>
@@ -202,6 +202,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/sbenoistmics"><img src="https://avatars.githubusercontent.com/u/83581282?v=4?s=100" width="100px;" alt=""/><br /><sub><b>sbenoistmics</b></sub></a><br /><a href="https://github.com/restcli/restcli/commits?author=sbenoistmics" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/karian7"><img src="https://avatars.githubusercontent.com/u/247208?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kwangsu Kim</b></sub></a><br /><a href="https://github.com/restcli/restcli/commits?author=karian7" title="Code">💻</a></td>
   </tr>
 </table>
 
