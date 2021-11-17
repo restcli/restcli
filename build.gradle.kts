@@ -1,7 +1,8 @@
 plugins {
+    val kotlinVersion = "1.6.0"
     java
-    kotlin("jvm") version "1.5.31"
-    kotlin("kapt") version "1.5.31"
+    kotlin("jvm") version kotlinVersion
+    kotlin("kapt") version kotlinVersion
     `maven-publish`
 }
 
