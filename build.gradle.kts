@@ -30,8 +30,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     implementation("info.picocli:picocli:4.3.2")
-    // TODO: Using kapt instead of annotationProcessor. see https://youtrack.jetbrains.com/issue/KT-45545
-    annotationProcessor("info.picocli:picocli-codegen:4.3.2")
+    kapt("info.picocli:picocli-codegen:4.3.2")
     testImplementation("com.google.truth:truth:1.0.1")
     implementation("com.squareup.okhttp3:okhttp:4.7.2")
     implementation("com.google.code.gson:gson:2.8.6")
