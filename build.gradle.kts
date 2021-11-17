@@ -14,6 +14,12 @@ repositories {
 }
 java {
     withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_1_8
+}
+kapt {
+    arguments {
+        arg("project", "${project.group}/${project.name}")
+    }
 }
 publishing {
     publications {
@@ -47,36 +53,25 @@ dependencies {
     implementation("org.graalvm.js:js-scriptengine:$graalvmVersion")
 }
 
-tasks.named<Test>("test") {
-    useJUnitPlatform()
-}
-
-tasks.withType<Jar> {
-    manifest {
-        attributes["Main-Class"] = "uos.dev.restcli.AppKt"
-        attributes["Multi-Release"] = true
-    }
-    archiveBaseName.set("restcli")
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from(configurations.runtimeClasspath.get().map {
-        if (it.isDirectory) it else zipTree(it)
-    })
-}
-
-configure<JavaPluginExtension> {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-}
 tasks {
+    test {
+        useJUnitPlatform()
+    }
+    jar {
+        manifest {
+            attributes["Main-Class"] = "uos.dev.restcli.AppKt"
+            attributes["Multi-Release"] = true
+        }
+        archiveBaseName.set("restcli")
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        from(configurations.runtimeClasspath.get().map {
+            if (it.isDirectory) it else zipTree(it)
+        })
+    }
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
-    }
-}
-
-kapt {
-    arguments {
-        arg("project", "${project.group}/${project.name}")
     }
 }
