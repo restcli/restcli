@@ -5,9 +5,9 @@ import com.jakewharton.picnic.table
 import mu.KotlinLogging
 import picocli.CommandLine
 import picocli.CommandLine.Option
+import uos.dev.restcli.extension.glob
 import uos.dev.restcli.configs.*
 import java.util.concurrent.Callable
-
 
 @CommandLine.Command(
     name = "rest-cli", version = ["IntelliJ RestCli v1.7.4"],
@@ -36,7 +36,10 @@ class RestCli : Callable<Int> {
     @CommandLine.Parameters(
         paramLabel = "FILES",
         arity = "1..1000000",
-        description = ["Path to one ore more http script files."]
+        description = [
+            "Path to one or more http script files.",
+            "Glob pattens (ex. glob:/test/*.http)"
+        ]
     )
     lateinit var httpFilePaths: Array<String>
 
@@ -93,7 +96,7 @@ class RestCli : Callable<Int> {
         showInfo()
         EnvironmentConfigs.changeDefaultDecorator(decorator.toPrivateConfigDecorator())
         val executor = HttpRequestFilesExecutor(
-            httpFilePaths = httpFilePaths,
+            httpFilePaths = httpFilePaths.flatMap{it.glob()}.toTypedArray(),
             environmentName = environmentName,
             customEnvironment = CustomEnvironment(
                 EnvironmentConfigs.from(privateEnv, true),
