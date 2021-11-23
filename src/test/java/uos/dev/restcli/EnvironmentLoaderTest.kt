@@ -1,10 +1,11 @@
 package uos.dev.restcli
 
 import com.google.common.truth.Truth.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
-import uos.dev.restcli.configs.EnvironmentConfig
 import uos.dev.restcli.configs.EnvironmentConfigs
 import uos.dev.restcli.configs.NoopConfigDecorator
+import uos.dev.restcli.configs.ThreeStarConfigDecorator
 
 /**
  * IMPORTANT: When run this test, the working directory must be set to:
@@ -12,6 +13,11 @@ import uos.dev.restcli.configs.NoopConfigDecorator
  * That is needed for resolve referenced http env files.
  */
 class EnvironmentLoaderTest {
+    @AfterEach
+    fun tearDown() {
+        EnvironmentConfigs.changeDefaultDecorator(ThreeStarConfigDecorator)
+    }
+
     @Test
     fun load_http_client_env_config() {
         val environmentFilesDirectory = javaClass.getResource("/requests").path
