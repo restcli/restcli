@@ -78,26 +78,33 @@
 The fastest way to get rest cli is to download the jar from [releases tab](https://github.com/restcli/restcli/releases)
 
 ```
-Usage: rest-cli [-hkV] [-d=<environmentFilesDirectory>] [-e=<environmentName>]
-                [-l=<logLevel>] [-G=<String=String>]... [-P=<String=String>]...
-                FILES...
+Usage: rest-cli [-hHkV] [-d=<environmentFilesDirectory>] [-D=<decorator>]
+                [-e=<environmentName>] [-l=<logLevel>] [-t=<requestTimeout>]
+                [-G=<String=String>]... [-P=<String=String>]... FILES...
 IntelliJ RestCli
-      FILES...     Path to one or more http script files.
+      FILES...     Path to one ore more http script files.
   -d, --env-dir=<environmentFilesDirectory>
                    Directory where config files are (default: current directory)
                    (http-client.env.json/http-client.private.env.json).
+  -D, --decorator=<decorator>
+                   Decorator for private env variables
+                   Valid values: NOOP, THREE_STAR, FULL_STAR, MIDDLE_STAR
   -e, --env=<environmentName>
                    Name of the environment in config file
                    (http-client.env.json/http-client.private.env.json).
   -G, --global-env=<String=String>
                    Public environment variables
   -h, --help       Show this help message and exit.
-  -k, --insecure   Disable SSL validation
+  -H, --hide-private-in-logs
+                   Allows to hide private variables in logs
+  -k, --insecure   Disable ssl validation
   -l, --log-level=<logLevel>
                    Config log level while the executor running.
                    Valid values: NONE, BASIC, HEADERS, BODY
   -P, --private-env=<String=String>
                    Private environment variables
+  -t, --timeout=<requestTimeout>
+                   Number of milliseconds for request timeout, default=3000
   -V, --version    Print version information and exit.
 ```
 
