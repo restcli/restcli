@@ -6,7 +6,7 @@ plugins {
     `maven-publish`
 }
 
-group = "uos.dev.restcli"
+group = "com.github.restcli"
 version = "2.0.0"
 
 repositories {
