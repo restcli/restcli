@@ -1,0 +1,5 @@
+### Share variable file1
+GET https://httpbin.org/get?id=0
+Content-Type: application/json
+
+> {% client.global.set("my_variable", "MY_VARIABLE_SET_FROM_FILE1"); %}

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" name="IntelliJ Rest CLI - Test Generator">
+<testsuite tests="1" name="https://httpbin.org/get?id=MY_VARIABLE_SET_FROM_FILE1" errors="0" failures="0" skip="0"><testcase  classname="Test" name="Request executed successfully" time="0"/>
+</testsuite></testsuites>

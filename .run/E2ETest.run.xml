@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="E2ETest" type="JUnit" factoryName="JUnit">
+    <module name="restcli.test" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="ALTERNATIVE_JRE_PATH" value="$USER_HOME$/scoop/apps/zulu11-jdk/current" />
+    <option name="PACKAGE_NAME" value="uos.dev.restcli" />
+    <option name="MAIN_CLASS_NAME" value="uos.dev.restcli.E2ETest" />
+    <option name="METHOD_NAME" value="should share variables between two request files" />
+    <option name="TEST_OBJECT" value="method" />
+    <option name="WORKING_DIRECTORY" value="$ProjectFileDir$/src/test/resources" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

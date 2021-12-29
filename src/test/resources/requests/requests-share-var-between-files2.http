@@ -1,0 +1,9 @@
+### Share variable file2
+GET https://httpbin.org/get?id={{my_variable}}
+Content-Type: application/json
+
+> {%
+client.test("Request executed successfully", function() {
+  client.log("my_variable: " + client.global.get("my_variable"));
+});
+ %}
