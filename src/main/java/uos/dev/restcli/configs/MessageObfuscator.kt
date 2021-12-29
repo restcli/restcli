@@ -4,10 +4,6 @@ interface MessageObfuscator {
     fun obfuscate(message: String): String
 }
 
-class NoOpMessageObfuscator : MessageObfuscator {
-    override fun obfuscate(message: String): String = message
-}
-
 class DefaultMessageObfuscator(
     private val environmentConfigs: EnvironmentConfigs,
     private val decorator: PrivateConfigDecorator = ThreeStarConfigDecorator

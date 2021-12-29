@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import uos.dev.restcli.Resource.getResourcePath
 import uos.dev.restcli.report.TestReportStore
 
 class E2ETest {
@@ -22,8 +23,8 @@ class E2ETest {
         val restCli = RestCli().apply {
             environmentName = "test"
             logLevel = HttpLoggingLevel.HEADERS
-            httpFilePaths = arrayOf(javaClass.getResource("/requests/${fileName}").path)
-            environmentFilesDirectory = javaClass.getResource("/requests/").path
+            httpFilePaths = arrayOf(getResourcePath("/requests/${fileName}"))
+            environmentFilesDirectory = getResourcePath("/requests/")
             decorator = ConfigDecorator.THREE_STAR
         }
 
@@ -32,7 +33,6 @@ class E2ETest {
         // Then
         assertThat(exitCode).isEqualTo(0)
     }
-
 
     @ParameterizedTest
     @CsvSource(
@@ -44,8 +44,8 @@ class E2ETest {
         val restCli = RestCli().apply {
             environmentName = "test"
             logLevel = HttpLoggingLevel.BASIC
-            httpFilePaths = arrayOf(javaClass.getResource("/requests/${fileName}").path)
-            environmentFilesDirectory = javaClass.getResource("/requests/").path
+            httpFilePaths = arrayOf(getResourcePath("/requests/${fileName}"))
+            environmentFilesDirectory = getResourcePath("/requests/")
             insecure = true
         }
 
@@ -65,8 +65,8 @@ class E2ETest {
         val restCli = RestCli().apply {
             environmentName = "test"
             logLevel = HttpLoggingLevel.BASIC
-            httpFilePaths = arrayOf(javaClass.getResource("/requests/${fileName}").path)
-            environmentFilesDirectory = javaClass.getResource("/requests/").path
+            httpFilePaths = arrayOf(getResourcePath("/requests/${fileName}"))
+            environmentFilesDirectory = getResourcePath("/requests/")
         }
 
         // When
@@ -86,12 +86,12 @@ class E2ETest {
         )
 
         // Given
-        val httpFilePaths = paths.map { javaClass.getResource("/requests/$it").path }.toTypedArray()
+        val httpFilePaths = paths.map { getResourcePath("/requests/$it") }.toTypedArray()
         val restCli = RestCli().apply {
             environmentName = "test"
             logLevel = HttpLoggingLevel.BASIC
             this.httpFilePaths = httpFilePaths
-            environmentFilesDirectory = javaClass.getResource("/requests/").path
+            environmentFilesDirectory = getResourcePath("/requests/")
         }
 
         // When
