@@ -188,6 +188,11 @@ SOFTWARE.
 > GitHub [@quangson91](https://github.com/quangson91) &nbsp;&middot;&nbsp;
 > Twitter [@quangson91](https://twitter.com/quangson91)
 
+## Reference
+
+- [restcli-node](https://github.com/J4YF7O/restcli-node) Node docker image with rest-cli command installed.
+
+
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
