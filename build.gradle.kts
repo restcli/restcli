@@ -6,11 +6,12 @@ plugins {
     `maven-publish`
 }
 
-group = "uos.dev"
-version = "1.7.4"
+group = "uos.dev.restcli"
+version = "2.0.0"
 
 repositories {
     mavenCentral()
+    maven { setUrl("https://jitpack.io") }
 }
 java {
     withSourcesJar()
