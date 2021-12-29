@@ -1,6 +1,6 @@
 package uos.dev.restcli.parser
 
-import java.util.UUID
+import java.util.*
 import kotlin.random.Random
 
 interface DynamicVariableProvider {

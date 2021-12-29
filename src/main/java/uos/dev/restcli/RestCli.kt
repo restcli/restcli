@@ -5,7 +5,7 @@ import com.jakewharton.picnic.table
 import mu.KotlinLogging
 import picocli.CommandLine
 import picocli.CommandLine.Option
-import uos.dev.restcli.configs.*
+import uos.dev.restcli.configs.EnvironmentConfigs
 import java.util.concurrent.Callable
 
 

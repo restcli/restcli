@@ -25,8 +25,8 @@ class EnvironmentLoaderTest {
         val env = EnvironmentLoader().load(environmentFilesDirectory, "test")
         mapOf(
             "host" to "https://httpbin.org",
-            "show_env" to  "1",
-            "username" to  "user",
+            "show_env" to "1",
+            "username" to "user",
             "password" to "passwd"
         ).forEach { entry ->
             assertThat(env.containsKey(entry.key)).isTrue()

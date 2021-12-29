@@ -3,7 +3,6 @@ package uos.dev.restcli
 import com.github.ajalt.mordant.TermColors
 import mu.KotlinLogging
 import uos.dev.restcli.configs.EnvironmentConfigs
-import uos.dev.restcli.configs.PrivateConfigDecorator
 import uos.dev.restcli.executor.OkhttpRequestExecutor
 import uos.dev.restcli.jsbridge.JsClient
 import uos.dev.restcli.parser.Parser
@@ -39,7 +38,13 @@ class HttpRequestFilesExecutor constructor(
         }
         val environment =
             environmentName?.let { EnvironmentLoader().load(environmentFilesDirectory, it) } ?: EnvironmentConfigs()
-        val executor = OkhttpRequestExecutor(logLevel.toOkHttpLoggingLevel(), insecure, requestTimeout, environment, hidePrivateInLogs)
+        val executor = OkhttpRequestExecutor(
+            logLevel.toOkHttpLoggingLevel(),
+            insecure,
+            requestTimeout,
+            environment,
+            hidePrivateInLogs
+        )
         val testGroupReports = mutableListOf<TestGroupReport>()
         httpFilePaths.forEach { httpFilePath ->
             logger.info("\n__________________________________________________\n")

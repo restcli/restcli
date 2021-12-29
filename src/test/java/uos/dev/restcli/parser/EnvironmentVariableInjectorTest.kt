@@ -1,8 +1,8 @@
 package uos.dev.restcli.parser
 
 import com.google.common.truth.Truth.assertThat
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 import uos.dev.restcli.configs.EnvironmentConfigs
 
 class EnvironmentVariableInjectorTest {
@@ -48,16 +48,20 @@ class EnvironmentVariableInjectorTest {
     }
 
     companion object {
-        private val NORMAL_ENVIRONMENT: EnvironmentConfigs = EnvironmentConfigs.from(mapOf(
-            "auth_token" to "AUTH_TOKEN",
-            "username" to "admin",
-            "password" to "123456"
-        ), true)
-        private val SPECIFIC_ENVIRONMENT: EnvironmentConfigs = EnvironmentConfigs.from(mapOf(
-            "auth_token" to "AUTH_TOKEN",
-            "username" to "{{password}}",
-            "password" to "123456"
-        ), true)
+        private val NORMAL_ENVIRONMENT: EnvironmentConfigs = EnvironmentConfigs.from(
+            mapOf(
+                "auth_token" to "AUTH_TOKEN",
+                "username" to "admin",
+                "password" to "123456"
+            ), true
+        )
+        private val SPECIFIC_ENVIRONMENT: EnvironmentConfigs = EnvironmentConfigs.from(
+            mapOf(
+                "auth_token" to "AUTH_TOKEN",
+                "username" to "{{password}}",
+                "password" to "123456"
+            ), true
+        )
     }
 }
 

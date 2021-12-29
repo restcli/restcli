@@ -2,14 +2,9 @@ package uos.dev.restcli.executor
 
 import com.github.ajalt.mordant.TermColors
 import mu.KotlinLogging
-import okhttp3.Interceptor
-import okhttp3.MediaType
+import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
 import okhttp3.internal.tls.OkHostnameVerifier
 import okhttp3.logging.HttpLoggingInterceptor
 import org.apache.commons.validator.routines.RegexValidator
@@ -17,8 +12,8 @@ import org.apache.commons.validator.routines.UrlValidator
 import org.intellij.lang.annotations.Language
 import uos.dev.restcli.configs.EnvironmentConfigs
 import uos.dev.restcli.parser.Request
-import java.util.concurrent.TimeUnit
 import java.security.cert.CertificateException
+import java.util.concurrent.TimeUnit
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
