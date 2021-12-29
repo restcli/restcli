@@ -78,7 +78,7 @@
 The fastest way to get rest cli is to download the jar from [releases tab](https://github.com/restcli/restcli/releases)
 
 ```
-Usage: rest-cli [-hHkV] [-d=<environmentFilesDirectory>] [-D=<decorator>]
+Usage: rest-cli [-hkV] [-d=<environmentFilesDirectory>] [-D=<decorator>]
                 [-e=<environmentName>] [-l=<logLevel>] [-t=<requestTimeout>]
                 [-G=<String=String>]... [-P=<String=String>]... FILES...
 IntelliJ RestCli
@@ -95,8 +95,6 @@ IntelliJ RestCli
   -G, --global-env=<String=String>
                    Public environment variables
   -h, --help       Show this help message and exit.
-  -H, --hide-private-in-logs
-                   Allows to hide private variables in logs
   -k, --insecure   Disable ssl validation
   -l, --log-level=<logLevel>
                    Config log level while the executor running.
