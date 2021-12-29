@@ -3,6 +3,7 @@ package uos.dev.restcli.parser
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import uos.dev.restcli.configs.DefaultMessageObfuscator
 import uos.dev.restcli.configs.EnvironmentConfigs
 
 class EnvironmentVariableInjectorTest {
@@ -43,8 +44,10 @@ class EnvironmentVariableInjectorTest {
     @DisplayName("Obfuscate private variable")
     fun obfuscatePrivateVariable() {
         val input = "Authorization: Basic {{username}} {{password}}"
-        val result = environmentVariableInjector.inject(input, true, NORMAL_ENVIRONMENT)
-        assertThat(result).isEqualTo("Authorization: Basic *** ***")
+        val result = environmentVariableInjector.inject(input, NORMAL_ENVIRONMENT)
+        val obfuscator = DefaultMessageObfuscator(NORMAL_ENVIRONMENT)
+        val actual = obfuscator.obfuscate(result)
+        assertThat(actual).isEqualTo("Authorization: Basic *** ***")
     }
 
     companion object {

@@ -10,7 +10,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.apache.commons.validator.routines.RegexValidator
 import org.apache.commons.validator.routines.UrlValidator
 import org.intellij.lang.annotations.Language
-import uos.dev.restcli.configs.EnvironmentConfigs
+import uos.dev.restcli.configs.MessageObfuscator
 import uos.dev.restcli.parser.Request
 import java.security.cert.CertificateException
 import java.util.concurrent.TimeUnit
@@ -22,20 +22,17 @@ import okhttp3.Request as OkhttpRequest
 
 class OkhttpRequestExecutor(
     private val logLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.BODY,
+    obfuscator: MessageObfuscator,
     private val insecure: Boolean,
     private val requestTimeout: Long,
-    private val environment: EnvironmentConfigs,
-    private val hidePrivateInLogs: Boolean
 ) : RequestExecutor {
     @Suppress("RegExpRedundantEscape")
     @Language("RegExp")
     private val urlValidator: UrlValidator = UrlValidator(
-        RegexValidator("^[a-zA-Z0-9]([a-zA-Z0-9\\-\\.]*[a-zA-Z0-9])?(:\\d+)?"),
-        UrlValidator.ALLOW_LOCAL_URLS
+        RegexValidator("^[a-zA-Z0-9]([a-zA-Z0-9\\-\\.]*[a-zA-Z0-9])?(:\\d+)?"), UrlValidator.ALLOW_LOCAL_URLS
     )
     private val loggingInterceptor: Interceptor =
-        HttpLoggingInterceptor(CustomLogger(this.environment, this.hidePrivateInLogs))
-            .apply { setLevel(logLevel) }
+        HttpLoggingInterceptor(CustomLogger(obfuscator)).apply { setLevel(logLevel) }
 
     private val hostnameVerifier = if (insecure) HostnameVerifier { _, _ -> true } else OkHostnameVerifier
 
@@ -66,17 +63,13 @@ class OkhttpRequestExecutor(
         return this
     }
 
-    private val okHttpClient: OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(loggingInterceptor)
-        .hostnameVerifier(hostnameVerifier)
-        .addSSLFactory()
-        .build()
+    private val okHttpClient: OkHttpClient =
+        OkHttpClient.Builder().addInterceptor(loggingInterceptor).hostnameVerifier(hostnameVerifier).addSSLFactory()
+            .build()
 
     override fun execute(request: Request): Response {
-        val client = okHttpClient.newBuilder()
-            .followRedirects(request.isFollowRedirects)
-            .callTimeout(requestTimeout, TimeUnit.MILLISECONDS)
-            .build()
+        val client = okHttpClient.newBuilder().followRedirects(request.isFollowRedirects)
+            .callTimeout(requestTimeout, TimeUnit.MILLISECONDS).build()
         val builder = OkhttpRequest.Builder()
         val requestTarget = obtainRequestTarget(request)
             ?: throw UnsupportedOperationException("Can't execute request target: ${request.requestTarget}")
@@ -93,8 +86,7 @@ class OkhttpRequestExecutor(
         if (parts.isEmpty()) {
             return null
         }
-        val builder = MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
+        val builder = MultipartBody.Builder().setType(MultipartBody.FORM)
         parts.forEach { part ->
             if (part.fileName != null) {
                 builder.addFormDataPart(part.name, part.fileName, part.createRequestBody())
@@ -123,8 +115,7 @@ class OkhttpRequestExecutor(
         val host = request.headers[hostKey] ?: return null
 
         // 3. Now, the host exist. We will ensure that the host starts with http/https prefix.
-        val isStartWithHttp = host.startsWith("http://") ||
-                host.startsWith("https://")
+        val isStartWithHttp = host.startsWith("http://") || host.startsWith("https://")
         val hostWithHttpPrefix = if (isStartWithHttp) host else "http://$host"
 
         return when {
@@ -142,8 +133,7 @@ class OkhttpRequestExecutor(
         }
     }
 
-    private fun Request.Part.createRequestBody(): RequestBody =
-        body.orEmpty().toRequestBody(contentType)
+    private fun Request.Part.createRequestBody(): RequestBody = body.orEmpty().toRequestBody(contentType)
 
     private val Request.Part.contentType: MediaType?
         get() {
@@ -153,16 +143,12 @@ class OkhttpRequestExecutor(
             return headerContentType.value.toMediaTypeOrNull()
         }
 
-    private class CustomLogger(private val environment: EnvironmentConfigs, private val hidePrivateInLogs: Boolean) :
-        HttpLoggingInterceptor.Logger {
+    private class CustomLogger(private val obfuscator: MessageObfuscator) : HttpLoggingInterceptor.Logger {
         private val logger = KotlinLogging.logger {}
         private val t: TermColors = TermColors()
         override fun log(message: String) {
-            if (hidePrivateInLogs) {
-                logger.info(t.gray(this.environment.obfuscate(message)))
-            } else {
-                logger.info(t.gray(message))
-            }
+            val log = obfuscator.obfuscate(message)
+            logger.info(t.gray(log))
         }
     }
 }

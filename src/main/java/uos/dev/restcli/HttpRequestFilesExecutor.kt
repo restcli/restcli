@@ -2,7 +2,10 @@ package uos.dev.restcli
 
 import com.github.ajalt.mordant.TermColors
 import mu.KotlinLogging
+import uos.dev.restcli.configs.DefaultMessageObfuscator
 import uos.dev.restcli.configs.EnvironmentConfigs
+import uos.dev.restcli.configs.MessageObfuscator
+import uos.dev.restcli.configs.PrivateConfigDecorator
 import uos.dev.restcli.executor.OkhttpRequestExecutor
 import uos.dev.restcli.jsbridge.JsClient
 import uos.dev.restcli.parser.Parser
@@ -22,7 +25,7 @@ class HttpRequestFilesExecutor constructor(
     private val environmentFilesDirectory: String = "",
     private val insecure: Boolean,
     private val requestTimeout: Long,
-    private val hidePrivateInLogs: Boolean
+    private val decorator: PrivateConfigDecorator
 ) : Runnable {
     private val parser: Parser = Parser()
     private val jsClient: JsClient = JsClient()
@@ -38,12 +41,12 @@ class HttpRequestFilesExecutor constructor(
         }
         val environment =
             environmentName?.let { EnvironmentLoader().load(environmentFilesDirectory, it) } ?: EnvironmentConfigs()
+        val obfuscator = DefaultMessageObfuscator(environment, decorator)
         val executor = OkhttpRequestExecutor(
             logLevel.toOkHttpLoggingLevel(),
+            obfuscator,
             insecure,
             requestTimeout,
-            environment,
-            hidePrivateInLogs
         )
         val testGroupReports = mutableListOf<TestGroupReport>()
         httpFilePaths.forEach { httpFilePath ->
@@ -53,7 +56,8 @@ class HttpRequestFilesExecutor constructor(
             executeHttpRequestFile(
                 httpFilePath,
                 environment,
-                executor
+                executor,
+                obfuscator
             )
             logger.info("\n__________________________________________________\n")
 
@@ -74,7 +78,8 @@ class HttpRequestFilesExecutor constructor(
     private fun executeHttpRequestFile(
         httpFilePath: String,
         environment: EnvironmentConfigs,
-        executor: OkhttpRequestExecutor
+        executor: OkhttpRequestExecutor,
+        obfuscator: MessageObfuscator
     ) {
         val requests = try {
             parser.parse(httpFilePath)
@@ -113,11 +118,7 @@ class HttpRequestFilesExecutor constructor(
                 }
             }
 
-            if (requestIndex < 0 || requestIndex >= requests.size) {
-                return
-            }
-
-            val rawRequest = requests[requestIndex]
+            val rawRequest = requests.getOrNull(requestIndex) ?: return
 
             runCatching {
                 val jsGlobalEnv = EnvironmentConfigs.from(jsClient.globalEnvironment(), false)
@@ -127,21 +128,14 @@ class HttpRequestFilesExecutor constructor(
                     environment,
                     jsGlobalEnv
                 )
-                val obfuscatedRequest = requestEnvironmentInjector.inject(
-                    rawRequest,
-                    customEnvironment,
-                    environment,
-                    jsGlobalEnv,
-                    true
-                )
 
                 val trace = TestGroupReport.Trace(
                     httpTestFilePath = httpFilePath,
-                    scriptHandlerStartLine = obfuscatedRequest.scriptHandlerStartLine
+                    scriptHandlerStartLine = request.scriptHandlerStartLine
                 )
-                TestReportStore.addTestGroupReport(obfuscatedRequest.requestTarget, trace)
+                TestReportStore.addTestGroupReport(obfuscator.obfuscate(request.requestTarget), trace)
                 logger.info("\n__________________________________________________\n")
-                logger.info(t.bold("##### ${obfuscatedRequest.method.name} ${obfuscatedRequest.requestTarget} #####"))
+                logger.info(t.bold("##### ${request.method.name} ${obfuscator.obfuscate(request.requestTarget)} #####"))
                 executeSingleRequest(executor, request)
             }.onFailure {
                 logger.error { t.red(it.message.orEmpty()) }

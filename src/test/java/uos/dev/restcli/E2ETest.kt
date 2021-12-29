@@ -25,7 +25,6 @@ class E2ETest {
             httpFilePaths = arrayOf(javaClass.getResource("/requests/${fileName}").path)
             environmentFilesDirectory = javaClass.getResource("/requests/").path
             decorator = ConfigDecorator.THREE_STAR
-            hidePrivateInLogs = true
         }
 
         // When
@@ -99,7 +98,7 @@ class E2ETest {
         val exitCode = restCli.call()
 
         // Then
-        assertThat(exitCode).isEqualTo(1)
+        assertThat(exitCode).isEqualTo(0)
 
         assertThat(TestReportStore.testGroupReports.all { it.testReports.isNotEmpty() }).isTrue()
     }

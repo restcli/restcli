@@ -12,14 +12,12 @@ class RequestEnvironmentInjector(
         request: Request,
         customEnvironment: CustomEnvironment,
         environment: EnvironmentConfigs,
-        jsGlobalEnv: EnvironmentConfigs,
-        decoratePrivate: Boolean = false
+        jsGlobalEnv: EnvironmentConfigs
     ): Request {
 
 
         fun envInject(source: String): String = environmentVariableInjector.inject(
             source,
-            decoratePrivate,
             customEnvironment.privateEnv,
             customEnvironment.publicEnv,
             jsGlobalEnv,

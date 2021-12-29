@@ -1,7 +1,7 @@
 package uos.dev.restcli.configs
 
 class EnvironmentConfigs(
-    private val configs: Map<String, EnvironmentConfig>,
+    val configs: Map<String, EnvironmentConfig>,
     val configDecorator: PrivateConfigDecorator
 ) {
 
@@ -19,22 +19,7 @@ class EnvironmentConfigs(
 
     fun containsKey(key: String): Boolean = configs.containsKey(key)
 
-    fun getValue(key: String, decorated: Boolean = false): String? =
-        if (configs.containsKey(key)) {
-            if (!decorated || !configs[key]!!.isPrivate) {
-                configs[key]!!.value
-            } else {
-                configDecorator.decorate(configs[key]!!.value)
-            }
-        } else {
-            null
-        }
-
-    fun obfuscate(message: String): String {
-        return configs.entries.fold(message) { acc, entry ->
-            acc.replace(this.getValue(entry.key)!!, this.getValue(entry.key, true)!!)
-        }
-    }
+    fun getValue(key: String): String? = configs[key]?.value
 
     companion object {
         var defaultDecorator: PrivateConfigDecorator = ThreeStarConfigDecorator
