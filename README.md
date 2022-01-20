@@ -140,6 +140,12 @@ This software uses the following open-source packages:
 - [picnic](https://github.com/JakeWharton/picnic) - A Kotlin DSL and Java/Kotlin builder API for constructing HTML-like tables that can be rendered to text.
 - [mordant](https://github.com/ajalt/mordant) - Full-featured text styling for Kotlin command-line applications.
 
+Thanks Jetbrains for a [free license](https://www.jetbrains.com/community/opensource/#support)
+
+<a href="https://www.jetbrains.com/community/opensource/#support">
+  <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" alt="JetBrains Logo (Main) logo." width="200" />
+</a>
+
 ## Support
 
 If you need help, please don't hesitate to [file an issue](https://github.com/restcli/restcli/issues/new).
