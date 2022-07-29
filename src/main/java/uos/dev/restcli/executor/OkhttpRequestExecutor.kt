@@ -71,6 +71,7 @@ class OkhttpRequestExecutor(
         val client = okHttpClient.newBuilder().followRedirects(request.isFollowRedirects)
             .connectTimeout(requestTimeout, TimeUnit.MILLISECONDS)
             .readTimeout(requestTimeout, TimeUnit.MILLISECONDS)
+            .writeTimeout(requestTimeout, TimeUnit.MILLISECONDS)
             .callTimeout(requestTimeout, TimeUnit.MILLISECONDS).build()
         val builder = OkhttpRequest.Builder()
         val requestTarget = obtainRequestTarget(request)
