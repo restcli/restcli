@@ -7,23 +7,23 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Response
 import okhttp3.ResponseBody
 import org.apache.commons.text.StringEscapeUtils
+import org.graalvm.polyglot.Context
+import org.graalvm.polyglot.HostAccess
 import org.intellij.lang.annotations.Language
-import javax.script.ScriptEngine
-import javax.script.ScriptEngineManager
 
-class JsClient(private val engine: ScriptEngine) {
-    constructor(javaVersion: JavaVersion) : this(ScriptEngineManager().getEngineByName(javaVersion.jsEngineName))
+class JsClient(private val context: Context) {
+    constructor(javaVersion: JavaVersion) : this(Context.newBuilder().allowAllAccess(true).allowHostAccess(HostAccess.ALL).build())
     constructor() : this(JavaVersion())
 
     private val logger = KotlinLogging.logger {}
 
     init {
         val reader = javaClass.classLoader.getResourceAsStream("client.js")?.reader()
-        engine.eval(reader)
+        context.eval("js", reader?.readText())
     }
 
     fun execute(testScript: String) {
-        engine.eval(testScript)
+        context.eval("js", testScript)
     }
 
     // TODO: Make abstract from okhttp response.
@@ -76,8 +76,8 @@ class JsClient(private val engine: ScriptEngine) {
         log("===== UPDATE RESPONSE SCRIPT ====")
         log(script)
         log("=================================")
-        engine.eval(script)
-        engine.eval("response.contentType")
+        context.eval("js", script)
+        context.eval("js", "response.contentType")
     }
 
     private val ResponseBody.isJsonContent: Boolean
@@ -97,8 +97,12 @@ class JsClient(private val engine: ScriptEngine) {
     @Suppress("UNCHECKED_CAST")
     fun globalEnvironment(): Map<String, String> {
         @Language("JavaScript")
-        val result = engine.eval("client.global.store") as? Map<String, String>
+        val result = context.eval("js", "client.global.store") as? Map<String, String>
         return result ?: emptyMap()
+    }
+
+    fun close() {
+        context.close();
     }
 
     companion object {
