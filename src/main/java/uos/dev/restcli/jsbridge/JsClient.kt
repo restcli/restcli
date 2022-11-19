@@ -12,8 +12,7 @@ import org.graalvm.polyglot.HostAccess
 import org.intellij.lang.annotations.Language
 
 class JsClient(private val context: Context) {
-    constructor(javaVersion: JavaVersion) : this(Context.newBuilder().allowAllAccess(true).allowHostAccess(HostAccess.ALL).build())
-    constructor() : this(JavaVersion())
+    constructor() : this(Context.newBuilder().allowAllAccess(true).allowHostAccess(HostAccess.ALL).build())
 
     private val logger = KotlinLogging.logger {}
 
