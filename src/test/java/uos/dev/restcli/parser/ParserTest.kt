@@ -1,6 +1,7 @@
 package uos.dev.restcli.parser
 
 import com.google.common.truth.Truth.assertWithMessage
+import okio.ByteString.Companion.encodeUtf8
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -172,10 +173,10 @@ class ParserTest {
                     method = RequestMethod.POST,
                     requestTarget = "https://httpbin.org/post",
                     headers = mapOf("Content-Type" to "application/json"),
-                    body = "{\n" +
+                    body = ("{\n" +
                             "  \"id\": 999,\n" +
                             "  \"value\": \"content\"\n" +
-                            "}"
+                            "}").encodeUtf8()
                 )
             ),
             createParserTestCase(
@@ -192,7 +193,7 @@ class ParserTest {
                     headers = mapOf(
                         "Content-Type" to "application/x-www-form-urlencoded"
                     ),
-                    body = "id=999&value=content"
+                    body = "id=999&value=content".encodeUtf8()
                 )
             ),
             createParserTestCase(
@@ -225,7 +226,7 @@ class ParserTest {
                                 "Content-Disposition" to "form-data; name=\"element-name\"",
                                 "Content-Type" to "text/plain"
                             ),
-                            body = "Name"
+                            body = "Name".encodeUtf8()
                         ),
                         Request.Part(
                             name = "data",
@@ -233,10 +234,10 @@ class ParserTest {
                                 "Content-Disposition" to "form-data; name=\"data\"; filename=\"data.json\"",
                                 "Content-Type" to "application/json"
                             ),
-                            body = "{\n" +
+                            body = ("{\n" +
                                     "  \"name\": \"my-name\",\n" +
                                     "  \"params\": [1, 2, 3]\n" +
-                                    "}",
+                                    "}").encodeUtf8(),
                             fileName = "data.json"
                         )
                     )
@@ -261,12 +262,12 @@ class ParserTest {
                     headers = mapOf(
                         "Content-Type" to "application/json"
                     ),
-                    body = "{\n" +
+                    body = ("{\n" +
                             "  \"id\": {{\$uuid}},\n" +
                             "  \"price\": {{\$randomInt}},\n" +
                             "  \"ts\": {{\$timestamp}},\n" +
                             "  \"value\": \"content\"\n" +
-                            "}"
+                            "}").encodeUtf8()
                 )
             ),
             createParserTestCase(

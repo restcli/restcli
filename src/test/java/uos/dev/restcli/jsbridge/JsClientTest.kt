@@ -14,13 +14,13 @@ class JsClientTest {
     @Test
     @EnabledForJreRange(max = JRE.JAVA_14)
     fun nashorn() {
-        testGlobalEnvironment(JsClient(JavaVersion("1.8")))
+        testGlobalEnvironment(JsClient())
     }
 
     @Test
     @EnabledForJreRange(min = JRE.JAVA_15)
     fun graaljs() {
-        testGlobalEnvironment(JsClient(JavaVersion("15")))
+        testGlobalEnvironment(JsClient())
     }
 
     @ParameterizedTest
