@@ -42,15 +42,19 @@ class EnvironmentVariableInjectorImpl(
         }
         var result = source.utf8()
         val matches = VARIABLE_REGEX.findAll(source.utf8()).toList()
-        // MUST replace variable string reversed for keeping match index.
-        matches.asReversed().forEach {
-            val variableName = it.groupValues[VARIABLE_GROUP_INDEX]
-            val variableValue = obtainVariableValue(variableName, *environments)
-            if (variableValue is VariableValue.Value) {
-                result = result.replaceRange(it.range, variableValue.value)
+        return if (matches.isNotEmpty()) {
+            // MUST replace variable string reversed for keeping match index.
+            matches.asReversed().forEach {
+                val variableName = it.groupValues[VARIABLE_GROUP_INDEX]
+                val variableValue = obtainVariableValue(variableName, *environments)
+                if (variableValue is VariableValue.Value) {
+                    result = result.replaceRange(it.range, variableValue.value)
+                }
             }
+            result.encodeUtf8()
+        } else {
+            source;
         }
-        return result.encodeUtf8()
     }
 
     private fun obtainVariableValue(
