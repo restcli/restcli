@@ -9,6 +9,7 @@ import okhttp3.ResponseBody
 import org.apache.commons.text.StringEscapeUtils
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.HostAccess
+import org.graalvm.polyglot.Value
 import org.intellij.lang.annotations.Language
 
 class JsClient(private val context: Context) {
@@ -94,13 +95,38 @@ class JsClient(private val context: Context) {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun globalEnvironment(): Map<String, String> {
+    fun globalEnvironment(): Map<String, Any?> {
 
         @Language("JavaScript")
         val value = context.eval("js", "client.global.store")
-        value.memberKeys.forEach { globalVariables[it] = value.getMember(it).asString() }
+        value.memberKeys.forEach { globalVariables[it] = convertValue(value.getMember(it)) }
         return globalVariables
     }
+
+    private fun convertValue(value: Value?): Any? =
+        value?.let {
+            if (value.hasMembers()) {
+                return value.memberKeys.map { it to convertValue(value.getMember(it)) }.toMap()
+            } else if (value.hasArrayElements()) {
+                return (0 until value.arraySize).map { value.getArrayElement(it) }.toList()
+            } else if (value.isBoolean) {
+                return value.asBoolean()
+            } else if (value.isDate) {
+                return value.asDate()
+            } else if (value.isDuration) {
+                return value.asDuration()
+            } else if (value.isString) {
+                return value.asString()
+            } else if (value.isInstant) {
+                return value.asInstant()
+            } else if (value.isIterator) {
+                return value.hasIterator()
+            } else if (value.isNumber) {
+                return value.asDouble()
+            } else if (value.isTime) {
+                return value.asTime()
+            }
+        }
 
     fun close() {
         context.close();
@@ -109,7 +135,7 @@ class JsClient(private val context: Context) {
     companion object {
         private val JSON_MEDIA_TYPE = "application/json; charset=utf-8".toMediaType()
         private const val DEBUG = false
-        private val globalVariables = mutableMapOf<String, String>()
+        private val globalVariables = mutableMapOf<String, Any?>()
     }
 
     class JavaVersion(private val versionElements: String = System.getProperty("java.version")) {
