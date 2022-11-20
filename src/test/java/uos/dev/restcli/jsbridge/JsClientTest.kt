@@ -12,21 +12,12 @@ import uos.dev.restcli.jsbridge.JsClient.JavaVersion
 class JsClientTest {
 
     @Test
-    @EnabledForJreRange(max = JRE.JAVA_14)
-    fun nashorn() {
-        testGlobalEnvironment(JsClient())
-    }
-
-    @Test
-    @EnabledForJreRange(min = JRE.JAVA_15)
     fun graaljs() {
         testGlobalEnvironment(JsClient())
     }
 
     @ParameterizedTest
     @CsvSource(
-        "1.8.0_265,nashorn",
-        "14,nashorn",
         "15,graal.js"
     )
     fun testJavaVersion(version: String, engineName: String) {

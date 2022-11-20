@@ -95,9 +95,10 @@ class JsClient(private val context: Context) {
 
     @Suppress("UNCHECKED_CAST")
     fun globalEnvironment(): Map<String, String> {
+
         @Language("JavaScript")
-        val result = context.eval("js", "client.global.store") as? Map<String, String>
-        globalVariables + (result ?: emptyMap())
+        val value = context.eval("js", "client.global.store")
+        value.memberKeys.forEach { globalVariables[it] = value.getMember(it).asString() }
         return globalVariables
     }
 
@@ -108,7 +109,7 @@ class JsClient(private val context: Context) {
     companion object {
         private val JSON_MEDIA_TYPE = "application/json; charset=utf-8".toMediaType()
         private const val DEBUG = false
-        private val globalVariables = emptyMap<String, String>()
+        private val globalVariables = mutableMapOf<String, String>()
     }
 
     class JavaVersion(private val versionElements: String = System.getProperty("java.version")) {
