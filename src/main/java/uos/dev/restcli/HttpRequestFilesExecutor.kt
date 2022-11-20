@@ -49,10 +49,11 @@ class HttpRequestFilesExecutor constructor(
             requestTimeout,
         )
         val testGroupReports = mutableListOf<TestGroupReport>()
+        TestReportStore.clear()
         httpFilePaths.forEach { httpFilePath ->
             logger.info("\n__________________________________________________\n")
             logger.info(t.bold("HTTP REQUEST FILE: $httpFilePath"))
-            TestReportStore.clear()
+            testGroupReports.clear();
             executeHttpRequestFile(
                 httpFilePath,
                 environment,

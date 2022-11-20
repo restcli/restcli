@@ -1,7 +1,8 @@
 package uos.dev.restcli
 
 import com.google.common.truth.Truth.assertThat
-import org.junit.Test
+import org.junit.Ignore
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import uos.dev.restcli.Resource.getResourcePath
@@ -79,6 +80,31 @@ class E2ETest {
     }
 
     @Test
+    fun `should fail if any of the requests fails`() {
+        val paths = arrayOf(
+            "requests-with-failing-test.http",
+            "requests-with-passing-test.http",
+        )
+
+        // Given
+        val httpFilePaths = paths.map { getResourcePath("/requests/$it") }.toTypedArray()
+        val restCli = RestCli().apply {
+            environmentName = "test"
+            logLevel = HttpLoggingLevel.BASIC
+            this.httpFilePaths = httpFilePaths
+            environmentFilesDirectory = getResourcePath("/requests/")
+        }
+
+        // When
+        val exitCode = restCli.call()
+
+        // Then
+        assertThat(exitCode).isEqualTo(1)
+
+        assertThat(TestReportStore.testGroupReports.all { it.testReports.isNotEmpty() }).isTrue()
+    }
+
+    @Ignore
     fun `should share variables between two request files`() {
         val paths = arrayOf(
             "requests-share-var-between-files1.http",
