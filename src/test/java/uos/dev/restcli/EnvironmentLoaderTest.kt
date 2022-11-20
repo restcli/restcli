@@ -3,6 +3,7 @@ package uos.dev.restcli
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import uos.dev.restcli.Resource.getResourcePath
 import uos.dev.restcli.configs.EnvironmentConfigs
 import uos.dev.restcli.configs.NoopConfigDecorator
@@ -29,6 +30,18 @@ class EnvironmentLoaderTest {
         ).forEach { entry ->
             assertThat(env.containsKey(entry.key)).isTrue()
             assertThat(env.getValue(entry.key)).isEqualTo(entry.value)
+        }
+    }
+
+    @Test
+    fun failed_to_load_http_client_no_environment() {
+        val environmentFilesDirectory = getResourcePath("/requests")
+        EnvironmentConfigs.changeDefaultDecorator(NoopConfigDecorator)
+        assertThrows<IllegalArgumentException> {
+            EnvironmentLoader().load(
+                environmentFilesDirectory,
+                "not_valid_environmentName"
+            )
         }
     }
 }

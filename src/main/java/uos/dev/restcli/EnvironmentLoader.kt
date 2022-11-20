@@ -39,7 +39,8 @@ class EnvironmentLoader {
             return null
         }
         val config = JsonParser.parseReader(file.reader())
-        return config.asJsonObject.get(environmentName).asJsonObject
+        return config.asJsonObject.get(environmentName)?.asJsonObject
+            ?: throw IllegalArgumentException("Can't find selected environment for $environmentName")
     }
 
     private val JsonElement.asStringOrNull: String?
