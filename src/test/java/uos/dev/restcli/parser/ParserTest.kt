@@ -176,7 +176,7 @@ class ParserTest {
                     body = ("{\n" +
                             "  \"id\": 999,\n" +
                             "  \"value\": \"content\"\n" +
-                            "}").encodeUtf8()
+                            "}\n").encodeUtf8()
                 )
             ),
             createParserTestCase(
@@ -193,7 +193,7 @@ class ParserTest {
                     headers = mapOf(
                         "Content-Type" to "application/x-www-form-urlencoded"
                     ),
-                    body = "id=999&value=content".encodeUtf8()
+                    body = "id=999&value=content\n".encodeUtf8()
                 )
             ),
             createParserTestCase(
@@ -226,7 +226,7 @@ class ParserTest {
                                 "Content-Disposition" to "form-data; name=\"element-name\"",
                                 "Content-Type" to "text/plain"
                             ),
-                            body = "Name".encodeUtf8()
+                            body = "Name\n".encodeUtf8()
                         ),
                         Request.Part(
                             name = "data",
@@ -267,7 +267,7 @@ class ParserTest {
                             "  \"price\": {{\$randomInt}},\n" +
                             "  \"ts\": {{\$timestamp}},\n" +
                             "  \"value\": \"content\"\n" +
-                            "}").encodeUtf8()
+                            "}\n").encodeUtf8()
                 )
             ),
             createParserTestCase(

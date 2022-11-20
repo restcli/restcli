@@ -8,12 +8,21 @@ import okhttp3.Response
 import okhttp3.ResponseBody
 import org.apache.commons.text.StringEscapeUtils
 import org.graalvm.polyglot.Context
+import org.graalvm.polyglot.Engine
 import org.graalvm.polyglot.HostAccess
 import org.graalvm.polyglot.Value
 import org.intellij.lang.annotations.Language
 
 class JsClient(private val context: Context) {
-    constructor() : this(Context.newBuilder().allowAllAccess(true).allowHostAccess(HostAccess.ALL).build())
+    constructor() : this(
+        Context.newBuilder().allowAllAccess(true)
+            .engine(
+                Engine.newBuilder()
+                    .option("engine.WarnInterpreterOnly", "false")
+                    .build()
+            )
+            .allowHostAccess(HostAccess.ALL).build()
+    )
 
     private val logger = KotlinLogging.logger {}
 
@@ -136,30 +145,5 @@ class JsClient(private val context: Context) {
         private val JSON_MEDIA_TYPE = "application/json; charset=utf-8".toMediaType()
         private const val DEBUG = false
         private val globalVariables = mutableMapOf<String, Any?>()
-    }
-
-    class JavaVersion(private val versionElements: String = System.getProperty("java.version")) {
-        init {
-            if (useGraalJs()) {
-                System.setProperty("polyglot.js.nashorn-compat", "true")
-            }
-        }
-
-        val jsEngineName: String
-            get() = if (useGraalJs()) "graal.js" else "nashorn"
-
-        private fun useGraalJs(): Boolean {
-            val versionElements = versionElements.split(".")
-            val discard = versionElements[0].toInt()
-            return if (discard == 1) {
-                versionElements[1].toInt()
-            } else {
-                discard
-            } >= NASHORN_REMOVED_VERSION
-        }
-
-        companion object {
-            private const val NASHORN_REMOVED_VERSION = 15
-        }
     }
 }
