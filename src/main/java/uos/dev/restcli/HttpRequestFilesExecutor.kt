@@ -139,6 +139,7 @@ class HttpRequestFilesExecutor constructor(
                 logger.info("\n__________________________________________________\n")
                 logger.info(t.bold("##### ${request.method.name} ${obfuscator.obfuscate(request.requestTarget)} #####"))
                 executeSingleRequest(executor, request)
+                EnvironmentConfigs.from(jsClient.globalEnvironment(), false)
                 jsClient.close()
             }.onFailure {
                 logger.error { t.red(it.message.orEmpty()) }

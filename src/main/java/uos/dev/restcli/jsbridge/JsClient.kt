@@ -97,7 +97,8 @@ class JsClient(private val context: Context) {
     fun globalEnvironment(): Map<String, String> {
         @Language("JavaScript")
         val result = context.eval("js", "client.global.store") as? Map<String, String>
-        return result ?: emptyMap()
+        globalVariables + (result ?: emptyMap())
+        return globalVariables
     }
 
     fun close() {
@@ -107,6 +108,7 @@ class JsClient(private val context: Context) {
     companion object {
         private val JSON_MEDIA_TYPE = "application/json; charset=utf-8".toMediaType()
         private const val DEBUG = false
+        private val globalVariables = emptyMap<String, String>()
     }
 
     class JavaVersion(private val versionElements: String = System.getProperty("java.version")) {
