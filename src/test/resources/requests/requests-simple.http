@@ -1,0 +1,2 @@
+### GET a simple request
+GET https://httpbin.org/ip

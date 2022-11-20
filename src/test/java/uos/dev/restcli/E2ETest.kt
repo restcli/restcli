@@ -3,6 +3,7 @@ package uos.dev.restcli
 import com.google.common.truth.Truth.assertThat
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import uos.dev.restcli.Resource.getResourcePath
@@ -54,6 +55,67 @@ class E2ETest {
         val exitCode = restCli.call()
         // Then
         assertThat(exitCode).isEqualTo(0)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        value = ["requests-simple.http"]
+    )
+    fun `accept env define in private env only`(fileName: String) {
+        // Given
+        println("Test file: $fileName")
+        val restCli = RestCli().apply {
+            environmentName = "env_on_private_only"
+            logLevel = HttpLoggingLevel.BASIC
+            httpFilePaths = arrayOf(getResourcePath("/requests/${fileName}"))
+            environmentFilesDirectory = getResourcePath("/requests/")
+            insecure = true
+        }
+
+        // When
+        val exitCode = restCli.call()
+        // Then
+        assertThat(exitCode).isEqualTo(0)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        value = ["requests-simple.http"]
+    )
+    fun `accept env define in public env only`(fileName: String) {
+        // Given
+        println("Test file: $fileName")
+        val restCli = RestCli().apply {
+            environmentName = "env_on_public_only"
+            logLevel = HttpLoggingLevel.BASIC
+            httpFilePaths = arrayOf(getResourcePath("/requests/${fileName}"))
+            environmentFilesDirectory = getResourcePath("/requests/")
+            insecure = true
+        }
+
+        // When
+        val exitCode = restCli.call()
+        // Then
+        assertThat(exitCode).isEqualTo(0)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        value = ["requests-simple.http"]
+    )
+    fun `throw error if env is not define on both private or public`(fileName: String) {
+        println("Test file: $fileName")
+        val restCli = RestCli().apply {
+            environmentName = "no_exist_env"
+            logLevel = HttpLoggingLevel.BASIC
+            httpFilePaths = arrayOf(getResourcePath("/requests/${fileName}"))
+            environmentFilesDirectory = getResourcePath("/requests/")
+            insecure = true
+        }
+
+        val exception = assertThrows<RuntimeException> { restCli.call() }
+
+        assertThat(exception.message?.contains("is not found")).isTrue()
     }
 
     @ParameterizedTest

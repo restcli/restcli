@@ -3,6 +3,7 @@ package uos.dev.restcli
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import mu.KotlinLogging
 import uos.dev.restcli.configs.EnvironmentConfig
 import uos.dev.restcli.configs.EnvironmentConfigs
 import java.io.File
@@ -11,10 +12,18 @@ import java.io.File
  * A loader class for support loading environment variables for http client.
  */
 class EnvironmentLoader {
+    private val logger = KotlinLogging.logger {}
 
     fun load(environmentFilesDirectory: String, environmentName: String): EnvironmentConfigs {
         val privateEnvConfig = loadConfig(environmentFilesDirectory, PRIVATE_ENV_FILE, environmentName)
         val publicEnvConfig = loadConfig(environmentFilesDirectory, PUBLIC_ENV_FILE, environmentName)
+
+        if (publicEnvConfig == null && privateEnvConfig == null) {
+            val errorMsg = "The selected environment: `$environmentName` is not found on both private/public env."
+            logger.error { errorMsg }
+            throw IllegalArgumentException(errorMsg)
+        }
+
         val publicConfigs = getEnvironmentConfigs(publicEnvConfig, false)
         val privateConfigs = getEnvironmentConfigs(privateEnvConfig, true)
 
@@ -39,8 +48,12 @@ class EnvironmentLoader {
             return null
         }
         val config = JsonParser.parseReader(file.reader())
-        return config.asJsonObject.get(environmentName)?.asJsonObject
-            ?: throw IllegalArgumentException("Can't find selected environment for $environmentName")
+        val env = config.asJsonObject.get(environmentName)
+        if (env == null) {
+            logger.warn { "The selected environment: `$environmentName` is not found on $httpClientEnvConfigFilePath" }
+            return null
+        }
+        return env.asJsonObject
     }
 
     private val JsonElement.asStringOrNull: String?
