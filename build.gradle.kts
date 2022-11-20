@@ -6,9 +6,6 @@ plugins {
     `maven-publish`
 }
 
-group = "com.github.restcli"
-version = "2.0.0"
-
 repositories {
     mavenCentral()
     maven { setUrl("https://jitpack.io") }
