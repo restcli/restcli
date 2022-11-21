@@ -6,7 +6,7 @@ package uos.dev.restcli.parser;
 //%debug
 %line
 %unicode
-%state S_REQUEST_SEPARATOR, S_REQUEST_LINE, S_HEADER, S_BODY, S_MULTILE_PART, S_SCRIPT_HANDLER, S_RESPONSE_REFERENCE
+%state S_REQUEST_SEPARATOR, S_SCRIPT_INIT, S_REQUEST_LINE, S_HEADER, S_BODY, S_MULTILE_PART, S_SCRIPT_HANDLER, S_RESPONSE_REFERENCE
 %state S_MULTIPLE_PART_HEADER, S_MULTIPLE_PART_BODY
 
 %{
@@ -89,6 +89,14 @@ private Yytoken createTokenHandlerFileScript() {
   return new Yytoken(TokenType.TYPE_HANDLER_FILE_SCRIPT, filePath, yyline);
 }
 
+private Yytoken createTokenInitFileScript() {
+  if (yytext().charAt(0) != '>') {
+    throwError();
+  }
+  String filePath = yytext().trim().substring(1).trim();
+  return new Yytoken(TokenType.TYPE_INIT_FILE_SCRIPT, filePath, yyline);
+}
+
 private Yytoken createAndSaveFieldNameToken(TokenType type) {
   String fieldName = yytext().trim();
   currentFieldName = fieldName;
@@ -103,6 +111,16 @@ private Yytoken createTokenEmbeddedScriptHandler() {
   int end = text.lastIndexOf(closeScript);
   String script = text.substring(start, end).trim();
   return new Yytoken(TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT, script, yyline);
+}
+
+private Yytoken createTokenEmbeddedScriptInit() {
+  String text = yytext();
+  String openScript = "{%";
+  String closeScript = "%" + "}";
+  int start = text.indexOf(openScript) + openScript.length();
+  int end = text.lastIndexOf(closeScript);
+  String script = text.substring(start, end).trim();
+  return new Yytoken(TokenType.TYPE_INIT_EMBEDDED_SCRIPT, script, yyline);
 }
 
 private Yytoken createFieldValueToken() {
@@ -164,6 +182,11 @@ FilePath = {LineTail}
 MessageLineFile = "<"{RequiredWhiteSpace}{FilePath}
 
 MultiplePartBoundary = \-\-{LineTail}
+// Init handler.
+InitHandlerEmbeddedScript = "<"{RequiredWhiteSpace}"{%"~"%}"{OptionalWhiteSpace}{LineTerminator}*
+InitHandlerFileScript = "<"{RequiredWhiteSpace}{FilePath}
+InitHandler = "<"{RequiredWhiteSpace}({FilePath}|"{%")
+
 // Response handler.
 ResponseHandlerEmbeddedScript = ">"{RequiredWhiteSpace}"{%"~"%}"{OptionalWhiteSpace}{LineTerminator}*
 ResponseHandlerFileScript = ">"{RequiredWhiteSpace}{FilePath}
@@ -196,7 +219,17 @@ FallbackCharacter = [^]
   {ConfigRequestName}                      { return createTokenRequestName(); }
   {LineComment}                            { return createTokenNormal(TokenType.TYPE_COMMENT); }
   {AnySpace}+                              { T("Ignore any space in S_REQUEST_SEPARATOR"); }
-  {FallbackCharacter}                      { yypushback(yylength()); switchState(S_REQUEST_LINE);}
+  {FallbackCharacter}                      { yypushback(yylength()); switchState(S_SCRIPT_INIT);}
+}
+
+<S_SCRIPT_INIT> {
+  {InitHandlerEmbeddedScript}          { switchState(S_REQUEST_LINE);
+                                             return createTokenEmbeddedScriptInit();
+                                           }
+  {InitHandlerFileScript}              { switchState(S_REQUEST_LINE);
+                                             return createTokenInitFileScript();
+                                           }
+  {FallbackCharacter}                      { yypushback(yylength()); switchState(S_SCRIPT_INIT); }
 }
 
 <S_REQUEST_LINE> {
