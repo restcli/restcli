@@ -10,7 +10,9 @@ data class Request(
     val httpVersion: String = DEFAULT_HTTP_VERSION,
     val headers: Map<String, String> = emptyMap(),
     val body: ByteString? = null,
+    val scriptInit: String? = null,
     val scriptHandler: String? = null,
+    val scriptInitStartLine: Int = -1,
     val scriptHandlerStartLine: Int = -1,
     val responseReference: String? = null,
     val parts: List<Part> = mutableListOf(),
@@ -47,8 +49,10 @@ data class Request(
         var httpVersion: String = DEFAULT_HTTP_VERSION,
         val headers: MutableMap<String, String> = mutableMapOf(),
         val rawBody: MutableList<ByteString> = mutableListOf(),
+        val rawScriptInit: MutableList<String> = mutableListOf(),
         val rawScriptHandler: MutableList<String> = mutableListOf(),
         var scriptHandlerStartLine: Int = -1,
+        var scriptInitStartLine: Int = -1,
         val rawResponseHandler: MutableList<String> = mutableListOf(),
         var rawResponseReference: String? = null,
         val parts: MutableList<Part.Builder> = mutableListOf(),
@@ -71,7 +75,9 @@ data class Request(
                 httpVersion = httpVersion,
                 headers = headers,
                 body = rawBody.joinToStringAndRemoveBarrier(),
+                scriptInit = rawScriptInit.joinToStringAndRemoveBarrier(),
                 scriptHandler = rawScriptHandler.joinToStringAndRemoveBarrier(),
+                scriptInitStartLine = scriptInitStartLine,
                 scriptHandlerStartLine = scriptHandlerStartLine,
                 responseReference = rawResponseReference?.trim(),
                 parts = parts.map { it.build() },
@@ -108,6 +114,6 @@ data class Request(
             map { it.toByteArray() }
                 .takeIf { it.isNotEmpty() }
                 ?.reduce { a, b -> a + b }
-                ?.let { a -> a.toByteString() }
+                ?.toByteString()
     }
 }

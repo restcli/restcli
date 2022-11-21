@@ -207,7 +207,7 @@ FallbackCharacter = [^]
   {AnySpace}+                              { T("Ignore any space in YYINITIAL"); }
   {FallbackCharacter}		                   { T("In YYINITIAL but got " + yytext() + " switch to S_REQUEST_LINE");
                                              yypushback(yylength());
-                                             switchState(S_REQUEST_LINE);
+                                             switchState(S_SCRIPT_INIT);
                                            }
 }
 
@@ -229,7 +229,7 @@ FallbackCharacter = [^]
   {InitHandlerFileScript}              { switchState(S_REQUEST_LINE);
                                              return createTokenInitFileScript();
                                            }
-  {FallbackCharacter}                      { yypushback(yylength()); switchState(S_SCRIPT_INIT); }
+  {FallbackCharacter}                      { yypushback(yylength()); switchState(S_REQUEST_LINE); }
 }
 
 <S_REQUEST_LINE> {

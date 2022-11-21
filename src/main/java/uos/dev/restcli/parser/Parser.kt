@@ -101,7 +101,16 @@ class Parser {
                 TokenType.TYPE_RESPONSE_REFERENCE -> builder.rawResponseReference = token.value
                 TokenType.TYPE_COMMENT -> Unit
                 TokenType.TYPE_INIT_FILE_SCRIPT,
-                TokenType.TYPE_INIT_EMBEDDED_SCRIPT,
+                TokenType.TYPE_INIT_EMBEDDED_SCRIPT -> {
+                    val script = if (token.type == TokenType.TYPE_INIT_FILE_SCRIPT) {
+                        Request.wrapContentWithBarrier(readFileContent(token.value))
+                    } else {
+                        token.value
+                    }
+                    builder.rawScriptInit.add(script)
+                    builder.scriptInitStartLine = token.lineNumber + 1
+                }
+
                 TokenType.TYPE_HANDLER_FILE_SCRIPT,
                 TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT -> {
                     val script = if (token.type == TokenType.TYPE_HANDLER_FILE_SCRIPT) {

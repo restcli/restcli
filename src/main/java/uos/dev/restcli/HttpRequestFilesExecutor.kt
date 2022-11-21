@@ -153,6 +153,17 @@ class HttpRequestFilesExecutor constructor(
             TestReportStore.addTestGroupReport(obfuscator.obfuscate(request.requestTarget), trace)
             logger.info("\n__________________________________________________\n")
             logger.info(t.bold("##### ${request.method.name} ${obfuscator.obfuscate(request.requestTarget)} #####"))
+            request.scriptInit?.let<String, Unit> { script ->
+                val testTitle = t.bold("PRE-REQUEST:")
+                logger.info("\n$testTitle")
+                runCatching {
+                    jsClient.execute(script)
+                }.onFailure {
+                    logger.error { t.red(it.message.orEmpty()) }
+                    //TestReportStore.addTestReport("eval script", false, it.message, script)
+                }
+            }
+
             runCatching { executor.execute(request) }
                 .onSuccess { response ->
                     jsClient.updateResponse(response)
