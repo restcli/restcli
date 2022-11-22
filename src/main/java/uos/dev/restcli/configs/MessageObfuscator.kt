@@ -12,7 +12,7 @@ class DefaultMessageObfuscator(
         return environmentConfigs.configs.entries.fold(message) { acc, entry ->
             val isPrivate = entry.value.isPrivate
             val value = entry.value.value
-            if (isPrivate) acc.replace(value, decorator.decorate(value)) else acc
+            if (isPrivate) acc.replace(value.toString(), decorator.decorate(value.toString())) else acc
         }
     }
 }

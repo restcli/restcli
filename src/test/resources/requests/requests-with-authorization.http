@@ -49,7 +49,9 @@ Content-Type: application/json
   "token": "my-secret-token"
 }
 
-> {% client.global.set("auth_token", response.body.json.token); %}
+> {%
+client.log(JSON.stringify(response.body.valueOf()))
+    client.global.set("auth_token", response.body.json.token); %}
 
 ### Authorization by token, part 2. Use token to authorize.
 GET https://httpbin.org/headers

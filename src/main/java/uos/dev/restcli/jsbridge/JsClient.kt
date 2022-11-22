@@ -7,23 +7,32 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Response
 import okhttp3.ResponseBody
 import org.apache.commons.text.StringEscapeUtils
+import org.graalvm.polyglot.Context
+import org.graalvm.polyglot.Engine
+import org.graalvm.polyglot.HostAccess
+import org.graalvm.polyglot.Value
 import org.intellij.lang.annotations.Language
-import javax.script.ScriptEngine
-import javax.script.ScriptEngineManager
 
-class JsClient(private val engine: ScriptEngine) {
-    constructor(javaVersion: JavaVersion) : this(ScriptEngineManager().getEngineByName(javaVersion.jsEngineName))
-    constructor() : this(JavaVersion())
+class JsClient(private val context: Context) {
+    constructor() : this(
+        Context.newBuilder().allowAllAccess(true)
+            .engine(
+                Engine.newBuilder()
+                    .option("engine.WarnInterpreterOnly", "false")
+                    .build()
+            )
+            .allowHostAccess(HostAccess.ALL).build()
+    )
 
     private val logger = KotlinLogging.logger {}
 
     init {
         val reader = javaClass.classLoader.getResourceAsStream("client.js")?.reader()
-        engine.eval(reader)
+        context.eval("js", reader?.readText())
     }
 
     fun execute(testScript: String) {
-        engine.eval(testScript)
+        context.eval("js", testScript)
     }
 
     // TODO: Make abstract from okhttp response.
@@ -76,8 +85,8 @@ class JsClient(private val engine: ScriptEngine) {
         log("===== UPDATE RESPONSE SCRIPT ====")
         log(script)
         log("=================================")
-        engine.eval(script)
-        engine.eval("response.contentType")
+        context.eval("js", script)
+        context.eval("js", "response.contentType")
     }
 
     private val ResponseBody.isJsonContent: Boolean
@@ -95,39 +104,46 @@ class JsClient(private val engine: ScriptEngine) {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun globalEnvironment(): Map<String, String> {
+    fun globalEnvironment(): Map<String, Any?> {
+
         @Language("JavaScript")
-        val result = engine.eval("client.global.store") as? Map<String, String>
-        return result ?: emptyMap()
+        val value = context.eval("js", "client.global.store")
+        value.memberKeys.forEach { globalVariables[it] = convertValue(value.getMember(it)) }
+        return globalVariables
+    }
+
+    private fun convertValue(value: Value?): Any? =
+        value?.let {
+            if (value.hasMembers()) {
+                return value.memberKeys.map { it to convertValue(value.getMember(it)) }.toMap()
+            } else if (value.hasArrayElements()) {
+                return (0 until value.arraySize).map { value.getArrayElement(it) }.toList()
+            } else if (value.isBoolean) {
+                return value.asBoolean()
+            } else if (value.isDate) {
+                return value.asDate()
+            } else if (value.isDuration) {
+                return value.asDuration()
+            } else if (value.isString) {
+                return value.asString()
+            } else if (value.isInstant) {
+                return value.asInstant()
+            } else if (value.isIterator) {
+                return value.hasIterator()
+            } else if (value.isNumber) {
+                return value.asDouble()
+            } else if (value.isTime) {
+                return value.asTime()
+            }
+        }
+
+    fun close() {
+        context.close();
     }
 
     companion object {
         private val JSON_MEDIA_TYPE = "application/json; charset=utf-8".toMediaType()
         private const val DEBUG = false
-    }
-
-    class JavaVersion(private val versionElements: String = System.getProperty("java.version")) {
-        init {
-            if (useGraalJs()) {
-                System.setProperty("polyglot.js.nashorn-compat", "true")
-            }
-        }
-
-        val jsEngineName: String
-            get() = if (useGraalJs()) "graal.js" else "nashorn"
-
-        private fun useGraalJs(): Boolean {
-            val versionElements = versionElements.split(".")
-            val discard = versionElements[0].toInt()
-            return if (discard == 1) {
-                versionElements[1].toInt()
-            } else {
-                discard
-            } >= NASHORN_REMOVED_VERSION
-        }
-
-        companion object {
-            private const val NASHORN_REMOVED_VERSION = 15
-        }
+        private val globalVariables = mutableMapOf<String, Any?>()
     }
 }

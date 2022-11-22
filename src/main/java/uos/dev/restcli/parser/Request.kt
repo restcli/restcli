@@ -1,12 +1,15 @@
 package uos.dev.restcli.parser
 
+import okio.ByteString
+import okio.ByteString.Companion.toByteString
+
 data class Request(
     val name: String? = null,
     val method: RequestMethod = RequestMethod.GET,
     val requestTarget: String,
     val httpVersion: String = DEFAULT_HTTP_VERSION,
     val headers: Map<String, String> = emptyMap(),
-    val body: String? = null,
+    val body: ByteString? = null,
     val scriptHandler: String? = null,
     val scriptHandlerStartLine: Int = -1,
     val responseReference: String? = null,
@@ -19,14 +22,14 @@ data class Request(
     data class Part(
         val name: String,
         val headers: Map<String, String>,
-        val body: String? = null,
+        val body: ByteString? = null,
         val fileName: String? = null
     ) {
         data class Builder @JvmOverloads constructor(
             var name: String = "",
             var fileName: String? = null,
             val headers: MutableMap<String, String> = mutableMapOf(),
-            val rawBody: MutableList<String> = mutableListOf()
+            val rawBody: MutableList<ByteString> = mutableListOf()
         ) {
             fun build(): Part = Part(
                 name = name,
@@ -43,7 +46,7 @@ data class Request(
         var requestTarget: String? = null,
         var httpVersion: String = DEFAULT_HTTP_VERSION,
         val headers: MutableMap<String, String> = mutableMapOf(),
-        val rawBody: MutableList<String> = mutableListOf(),
+        val rawBody: MutableList<ByteString> = mutableListOf(),
         val rawScriptHandler: MutableList<String> = mutableListOf(),
         var scriptHandlerStartLine: Int = -1,
         val rawResponseHandler: MutableList<String> = mutableListOf(),
@@ -93,7 +96,6 @@ data class Request(
         private val BARRIER: String = java.util.UUID.randomUUID().toString()
 
         fun wrapContentWithBarrier(content: String): String = "$BARRIER$content$BARRIER"
-
         private fun removeBarrierFromContent(content: String): String = content.replace(BARRIER, "")
 
         private fun List<String>.joinToStringAndRemoveBarrier(): String? =
@@ -101,5 +103,11 @@ data class Request(
                 .trim()
                 .takeIf { it.isNotEmpty() }
                 ?.let(::removeBarrierFromContent)
+
+        private fun List<ByteString>.joinToStringAndRemoveBarrier(): ByteString? =
+            map { it.toByteArray() }
+                .takeIf { it.isNotEmpty() }
+                ?.reduce { a, b -> a + b }
+                ?.let { a -> a.toByteString() }
     }
 }

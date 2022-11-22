@@ -1,5 +1,8 @@
 package uos.dev.restcli.parser
 
+import okio.ByteString
+import okio.ByteString.Companion.encodeUtf8
+import okio.ByteString.Companion.toByteString
 import java.io.File
 import java.io.FileReader
 import java.io.Reader
@@ -35,6 +38,11 @@ class Parser {
         fun readFileContent(filePath: String): String {
             val absoluteFilePath = if (File(filePath).isAbsolute) filePath else Paths.get(basedir, filePath).toString()
             return File(absoluteFilePath).readText()
+        }
+
+        fun readFileContentByte(filePath: String): ByteString {
+            val absoluteFilePath = if (File(filePath).isAbsolute) filePath else Paths.get(basedir, filePath).toString()
+            return File(absoluteFilePath).readBytes().toByteString()
         }
 
         while (true) {
@@ -75,9 +83,9 @@ class Parser {
                 TokenType.TYPE_BODY_FILE_REF,
                 TokenType.TYPE_BODY_MESSAGE -> {
                     val bodyMessage = if (token.type == TokenType.TYPE_BODY_FILE_REF) {
-                        Request.wrapContentWithBarrier(readFileContent(token.value))
+                        readFileContentByte(token.value)
                     } else {
-                        token.value
+                        token.value.encodeUtf8()
                     }
                     if (lexer.isMultiplePart) {
                         builder.parts.last().rawBody.add(bodyMessage)

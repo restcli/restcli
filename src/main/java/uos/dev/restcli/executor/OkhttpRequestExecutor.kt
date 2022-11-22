@@ -7,6 +7,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.internal.tls.OkHostnameVerifier
 import okhttp3.logging.HttpLoggingInterceptor
+import okio.ByteString
 import org.apache.commons.validator.routines.RegexValidator
 import org.apache.commons.validator.routines.UrlValidator
 import org.intellij.lang.annotations.Language
@@ -94,7 +95,7 @@ class OkhttpRequestExecutor(
             if (part.fileName != null) {
                 builder.addFormDataPart(part.name, part.fileName, part.createRequestBody())
             } else {
-                builder.addFormDataPart(part.name, part.body.orEmpty())
+                builder.addFormDataPart(part.name, part.body?.utf8().orEmpty())
             }
         }
         return builder.build()
@@ -136,7 +137,7 @@ class OkhttpRequestExecutor(
         }
     }
 
-    private fun Request.Part.createRequestBody(): RequestBody = body.orEmpty().toRequestBody(contentType)
+    private fun Request.Part.createRequestBody(): RequestBody = (body ?: ByteString.of()).toRequestBody(contentType)
 
     private val Request.Part.contentType: MediaType?
         get() {

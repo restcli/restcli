@@ -19,7 +19,7 @@ class EnvironmentConfigs(
 
     fun containsKey(key: String): Boolean = configs.containsKey(key)
 
-    fun getValue(key: String): String? = configs[key]?.value
+    fun getValue(key: String): Any? = configs[key]?.value
 
     companion object {
         var defaultDecorator: PrivateConfigDecorator = ThreeStarConfigDecorator
@@ -28,7 +28,7 @@ class EnvironmentConfigs(
             defaultDecorator = decorator
         }
 
-        fun from(configs: Map<String, String>, isPrivate: Boolean) =
+        fun from(configs: Map<String, Any?>, isPrivate: Boolean) =
             EnvironmentConfigs(configs.mapValues { EnvironmentConfig(it.value, isPrivate) }, defaultDecorator)
 
         fun from(configs: Map<String, String>, isPrivate: Boolean, decorator: PrivateConfigDecorator) =

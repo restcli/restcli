@@ -1,6 +1,8 @@
 package uos.dev.restcli.parser
 
 import mu.KotlinLogging
+import okio.ByteString
+import okio.ByteString.Companion.encodeUtf8
 import uos.dev.restcli.configs.EnvironmentConfigs
 
 interface EnvironmentVariableInjector {
@@ -9,6 +11,7 @@ interface EnvironmentVariableInjector {
      * The strategy is taken the first environment that has the variable define.
      */
     fun inject(source: String, vararg environments: EnvironmentConfigs): String
+    fun inject(source: ByteString, vararg environments: EnvironmentConfigs): ByteString
 }
 
 class EnvironmentVariableInjectorImpl(
@@ -31,6 +34,27 @@ class EnvironmentVariableInjectorImpl(
             }
         }
         return result
+    }
+
+    override fun inject(source: ByteString, vararg environments: EnvironmentConfigs): ByteString {
+        if (environments.isEmpty()) {
+            return source
+        }
+        var result = source.utf8()
+        val matches = VARIABLE_REGEX.findAll(source.utf8()).toList()
+        return if (matches.isNotEmpty()) {
+            // MUST replace variable string reversed for keeping match index.
+            matches.asReversed().forEach {
+                val variableName = it.groupValues[VARIABLE_GROUP_INDEX]
+                val variableValue = obtainVariableValue(variableName, *environments)
+                if (variableValue is VariableValue.Value) {
+                    result = result.replaceRange(it.range, variableValue.value)
+                }
+            }
+            result.encodeUtf8()
+        } else {
+            source;
+        }
     }
 
     private fun obtainVariableValue(

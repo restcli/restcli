@@ -1,5 +1,6 @@
 package uos.dev.restcli.parser
 
+import okio.ByteString
 import uos.dev.restcli.CustomEnvironment
 import uos.dev.restcli.configs.EnvironmentConfigs
 import java.util.*
@@ -17,6 +18,14 @@ class RequestEnvironmentInjector(
 
 
         fun envInject(source: String): String = environmentVariableInjector.inject(
+            source,
+            customEnvironment.privateEnv,
+            customEnvironment.publicEnv,
+            jsGlobalEnv,
+            environment
+        )
+
+        fun envInject(source: ByteString): ByteString = environmentVariableInjector.inject(
             source,
             customEnvironment.privateEnv,
             customEnvironment.publicEnv,
