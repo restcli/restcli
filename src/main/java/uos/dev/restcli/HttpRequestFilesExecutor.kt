@@ -138,7 +138,7 @@ class HttpRequestFilesExecutor constructor(
     ) {
         runCatching {
             val jsClient = JsClient()
-            val jsGlobalEnv = EnvironmentConfigs.from(jsClient.globalEnvironment(), false)
+            var jsGlobalEnv = EnvironmentConfigs.from(jsClient.globalEnvironment(), false)
             var request = requestEnvironmentInjector.inject(
                 rawRequest,
                 customEnvironment,
@@ -158,7 +158,7 @@ class HttpRequestFilesExecutor constructor(
                 logger.info("\n$testTitle")
                 runCatching {
                     jsClient.execute(script)
-                    jsClient.globalEnvironment()
+                    jsGlobalEnv = EnvironmentConfigs.from(jsClient.globalEnvironment(), false)
                     request = requestEnvironmentInjector.inject(
                         rawRequest,
                         customEnvironment,
