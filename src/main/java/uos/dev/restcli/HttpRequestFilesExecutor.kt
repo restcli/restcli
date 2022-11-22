@@ -139,7 +139,7 @@ class HttpRequestFilesExecutor constructor(
         runCatching {
             val jsClient = JsClient()
             val jsGlobalEnv = EnvironmentConfigs.from(jsClient.globalEnvironment(), false)
-            val request = requestEnvironmentInjector.inject(
+            var request = requestEnvironmentInjector.inject(
                 rawRequest,
                 customEnvironment,
                 environment,
@@ -158,6 +158,13 @@ class HttpRequestFilesExecutor constructor(
                 logger.info("\n$testTitle")
                 runCatching {
                     jsClient.execute(script)
+                    jsClient.globalEnvironment()
+                    request = requestEnvironmentInjector.inject(
+                        rawRequest,
+                        customEnvironment,
+                        environment,
+                        jsGlobalEnv
+                    )
                 }.onFailure {
                     logger.error { t.red(it.message.orEmpty()) }
                     //TestReportStore.addTestReport("eval script", false, it.message, script)
@@ -185,7 +192,7 @@ class HttpRequestFilesExecutor constructor(
                         logger.info(t.yellow("[SKIP TEST] Because: ") + it.message.orEmpty())
                     }
                 }
-            EnvironmentConfigs.from(jsClient.globalEnvironment(), false)
+            jsClient.globalEnvironment()
             jsClient.close()
         }.onFailure {
             logger.error { t.red(it.message.orEmpty()) }
