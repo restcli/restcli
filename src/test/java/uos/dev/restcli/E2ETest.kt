@@ -166,7 +166,7 @@ class E2ETest {
         assertThat(TestReportStore.testGroupReports.all { it.testReports.isNotEmpty() }).isTrue()
     }
 
-    @Ignore
+    @Test
     fun `should share variables between two request files`() {
         val paths = arrayOf(
             "requests-share-var-between-files1.http",
