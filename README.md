@@ -1,3 +1,14 @@
+Jetbrains released a new cli client.
+
+Please check it.
+
+This repository will no longer active development.
+
+Thank you for trying & feedback.
+
+I learn so much from all you guys here.
+
+Blog: [http-client-cli-run-requests-and-tests-on-ci](https://blog.jetbrains.com/idea/2022/12/http-client-cli-run-requests-and-tests-on-ci/)
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-9-orange.svg?style=flat-square)](#contributors-)
