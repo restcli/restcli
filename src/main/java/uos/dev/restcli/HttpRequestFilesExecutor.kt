@@ -28,7 +28,6 @@ class HttpRequestFilesExecutor constructor(
     private val decorator: PrivateConfigDecorator
 ) : Runnable {
     private val parser: Parser = Parser()
-    private var jsClient: JsClient = JsClient()
     private val requestEnvironmentInjector: RequestEnvironmentInjector =
         RequestEnvironmentInjector()
     private val logger = KotlinLogging.logger {}
@@ -53,7 +52,7 @@ class HttpRequestFilesExecutor constructor(
         httpFilePaths.forEach { httpFilePath ->
             logger.info("\n__________________________________________________\n")
             logger.info(t.bold("HTTP REQUEST FILE: $httpFilePath"))
-            testGroupReports.clear();
+            testGroupReports.clear()
             executeHttpRequestFile(
                 httpFilePath,
                 environment,
@@ -119,58 +118,86 @@ class HttpRequestFilesExecutor constructor(
                 }
             }
 
-            val rawRequest = requests.getOrNull(requestIndex) ?: return
-
-            runCatching {
-                jsClient = JsClient()
-                val jsGlobalEnv = EnvironmentConfigs.from(jsClient.globalEnvironment(), false)
-                val request = requestEnvironmentInjector.inject(
-                    rawRequest,
-                    customEnvironment,
-                    environment,
-                    jsGlobalEnv
-                )
-
-                val trace = TestGroupReport.Trace(
-                    httpTestFilePath = httpFilePath,
-                    scriptHandlerStartLine = request.scriptHandlerStartLine
-                )
-                TestReportStore.addTestGroupReport(obfuscator.obfuscate(request.requestTarget), trace)
-                logger.info("\n__________________________________________________\n")
-                logger.info(t.bold("##### ${request.method.name} ${obfuscator.obfuscate(request.requestTarget)} #####"))
-                executeSingleRequest(executor, request)
-                EnvironmentConfigs.from(jsClient.globalEnvironment(), false)
-                jsClient.close()
-            }.onFailure {
-                logger.error { t.red(it.message.orEmpty()) }
-                TestReportStore.addTestReport("-", false, it.message, it.message)
-            }
+            executeSingleRequest(
+                requests.getOrNull(requestIndex) ?: return,
+                environment,
+                httpFilePath,
+                obfuscator,
+                executor
+            )
 
         }
     }
 
-    private fun executeSingleRequest(executor: OkhttpRequestExecutor, request: Request) {
-        runCatching { executor.execute(request) }
-            .onSuccess { response ->
-                jsClient.updateResponse(response)
-                request.scriptHandler?.let { script ->
-                    val testTitle = t.bold("TESTS:")
-                    logger.info("\n$testTitle")
-                    runCatching {
-                        jsClient.execute(script)
-                    }.onFailure {
-                        logger.error { t.red(it.message.orEmpty()) }
-                        TestReportStore.addTestReport("eval script", false, it.message, script)
+    private fun executeSingleRequest(
+        rawRequest: Request,
+        environment: EnvironmentConfigs,
+        httpFilePath: String,
+        obfuscator: MessageObfuscator,
+        executor: OkhttpRequestExecutor
+    ) {
+        runCatching {
+            val jsClient = JsClient()
+            var jsGlobalEnv = EnvironmentConfigs.from(jsClient.globalEnvironment(), false)
+            var request = requestEnvironmentInjector.inject(
+                rawRequest,
+                customEnvironment,
+                environment,
+                jsGlobalEnv
+            )
+
+            val trace = TestGroupReport.Trace(
+                httpTestFilePath = httpFilePath,
+                scriptHandlerStartLine = request.scriptHandlerStartLine
+            )
+            TestReportStore.addTestGroupReport(obfuscator.obfuscate(request.requestTarget), trace)
+            logger.info("\n__________________________________________________\n")
+            logger.info(t.bold("##### ${request.method.name} ${obfuscator.obfuscate(request.requestTarget)} #####"))
+            request.scriptInit?.let<String, Unit> { script ->
+                val testTitle = t.bold("PRE-REQUEST:")
+                logger.info("\n$testTitle")
+                runCatching {
+                    jsClient.execute(script)
+                    jsGlobalEnv = EnvironmentConfigs.from(jsClient.globalEnvironment(), false)
+                    request = requestEnvironmentInjector.inject(
+                        rawRequest,
+                        customEnvironment,
+                        environment,
+                        jsGlobalEnv
+                    )
+                }.onFailure {
+                    logger.error { t.red(it.message.orEmpty()) }
+                    //TestReportStore.addTestReport("eval script", false, it.message, script)
+                }
+            }
+
+            runCatching { executor.execute(request) }
+                .onSuccess { response ->
+                    jsClient.updateResponse(response)
+                    request.scriptHandler?.let<String, Unit> { script ->
+                        val testTitle = t.bold("TESTS:")
+                        logger.info("\n$testTitle")
+                        runCatching {
+                            jsClient.execute(script)
+                        }.onFailure {
+                            logger.error { t.red(it.message.orEmpty()) }
+                            TestReportStore.addTestReport("eval script", false, it.message, script)
+                        }
                     }
                 }
-            }
-            .onFailure {
-                TestReportStore.addTestReport("Http", false, it.message, it.message)
-                val hasScriptHandler = request.scriptHandler != null
-                if (hasScriptHandler) {
-                    logger.info(t.yellow("[SKIP TEST] Because: ") + it.message.orEmpty())
+                .onFailure {
+                    TestReportStore.addTestReport("Http", false, it.message, it.message)
+                    val hasScriptHandler = request.scriptHandler != null
+                    if (hasScriptHandler) {
+                        logger.info(t.yellow("[SKIP TEST] Because: ") + it.message.orEmpty())
+                    }
                 }
-            }
+            jsClient.globalEnvironment()
+            jsClient.close()
+        }.onFailure {
+            logger.error { t.red(it.message.orEmpty()) }
+            TestReportStore.addTestReport("-", false, it.message, it.message)
+        }
     }
 
     companion object {

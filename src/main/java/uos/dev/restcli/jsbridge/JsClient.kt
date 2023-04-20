@@ -109,6 +109,10 @@ class JsClient(private val context: Context) {
         @Language("JavaScript")
         val value = context.eval("js", "client.global.store")
         value.memberKeys.forEach { globalVariables[it] = convertValue(value.getMember(it)) }
+        context.getBindings("js")
+            .getMember("client")
+            .getMember("global")
+            .putMember("store", globalVariables)
         return globalVariables
     }
 

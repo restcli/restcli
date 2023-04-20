@@ -62,6 +62,7 @@ class Parser {
                     }
                     headerName = token.value
                 }
+
                 TokenType.TYPE_FIELD_VALUE -> {
                     val nonNullHeaderName = headerName
                         ?: throw IllegalStateException("Header name is null, but got header value ${token.value}")
@@ -80,6 +81,7 @@ class Parser {
                     }
                     headerName = null
                 }
+
                 TokenType.TYPE_BODY_FILE_REF,
                 TokenType.TYPE_BODY_MESSAGE -> {
                     val bodyMessage = if (token.type == TokenType.TYPE_BODY_FILE_REF) {
@@ -93,10 +95,22 @@ class Parser {
                         builder.rawBody.add(bodyMessage)
                     }
                 }
+
                 TokenType.TYPE_BLANK -> Unit
                 // TODO: Figure out what should we do with response reference.
                 TokenType.TYPE_RESPONSE_REFERENCE -> builder.rawResponseReference = token.value
                 TokenType.TYPE_COMMENT -> Unit
+                TokenType.TYPE_INIT_FILE_SCRIPT,
+                TokenType.TYPE_INIT_EMBEDDED_SCRIPT -> {
+                    val script = if (token.type == TokenType.TYPE_INIT_FILE_SCRIPT) {
+                        Request.wrapContentWithBarrier(readFileContent(token.value))
+                    } else {
+                        token.value
+                    }
+                    builder.rawScriptInit.add(script)
+                    builder.scriptInitStartLine = token.lineNumber + 1
+                }
+
                 TokenType.TYPE_HANDLER_FILE_SCRIPT,
                 TokenType.TYPE_HANDLER_EMBEDDED_SCRIPT -> {
                     val script = if (token.type == TokenType.TYPE_HANDLER_FILE_SCRIPT) {
@@ -107,6 +121,7 @@ class Parser {
                     builder.rawScriptHandler.add(script)
                     builder.scriptHandlerStartLine = token.lineNumber + 1
                 }
+
                 TokenType.TYPE_NO_REDIRECT -> builder.isFollowRedirects = false
                 TokenType.TYPE_NO_COOKIE_JAR -> builder.isNoCookieJar = true
                 TokenType.TYPE_NO_LOG -> builder.isNoLog = true
